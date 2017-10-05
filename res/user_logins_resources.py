@@ -3,6 +3,20 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import base64
+
+user_role_fields = {
+    'name': fields.String,
+    'id': fields.Integer
+}
+user_fields = {
+    'id': fields.Integer,
+    'first_name': fields.String,
+    'last_name': fields.String,
+    'client_id': fields.Integer,
+    'lock_state': fields.Boolean,
+    'user_role_id': fields.Integer,
+    'user_role': fields.Nested(user_role_fields)
+}
 user_login_fields = {
     'id': fields.Integer,
     'login': fields.String,
@@ -10,7 +24,8 @@ user_login_fields = {
     'token': fields.String,
     'user_id': fields.Integer,
     'registration_date': fields.DateTime,
-    'last_login_date': fields.DateTime
+    'last_login_date': fields.DateTime,
+    'user_data': fields.Nested(user_fields)
 }
 
 
@@ -22,7 +37,7 @@ class UserAuthResource(Resource):
             login = json_data["login"]
             password = json_data["password"]
             t = bytes(password, 'utf-8')
-            password =str(base64.b64encode(t))
+            password = str(base64.b64encode(t))
             user_login = session.query(UserLogins).filter(
                 UserLogins.login == login and UserLogins.password == password).first()
             if not user_login:
@@ -57,8 +72,8 @@ class UserLoginResource(Resource):
             json_data = request.get_json(force=True)
             user_login = session.query(UserLogins).filter(UserLogins.id == id).first()
             user_login.login = json_data['login']
-            t = bytes(json_data["password"],'utf-8')
-            user_login.password =str(base64.b64encode(t))
+            t = bytes(json_data["password"], 'utf-8')
+            user_login.password = str(base64.b64encode(t))
             user_login.user_id = json_data["user_id"]
 
             session.add(user_login)
@@ -78,7 +93,7 @@ class UserLoginListResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            en_pass =str(base64.b64encode(json_data["password"]))
+            en_pass = str(base64.b64encode(json_data["password"]))
             user_login = UserLogins(login=json_data["login"], password=en_pass,
                                     user_id=json_data["user_id"])
             session.add(user_login)

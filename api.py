@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from json_encoder import AlchemyEncoder
+<<<<<<< HEAD
 from flask_cors import CORS
 
 #init application
@@ -9,6 +10,13 @@ app = Flask(__name__)
 #cors = CORS(app, resources={r"/login/*": {"origins": "*"}})
 CORS(app)
 
+=======
+from flask.ext.cors import CORS
+
+#init application
+app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+>>>>>>> 3fa7325355fc3ef902acb1417f368434d86a74a8
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
 app.json_encoder =json_encoder

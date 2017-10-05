@@ -34,7 +34,7 @@ class Users(Base):
     lock_state = Column('lock_state', Boolean)
     client_id = Column('client_id', ForeignKey('clients.id'))
     user_role_id = Column('user_role_id', ForeignKey('user_roles.id'))
-    user_logins = relationship("UserLogins", backref="user_login")
+    user_data = relationship("UserLogins", backref="user_data")
     def __init__(self, first_name, last_name, lock_state, client_id, user_role_id):
         self.first_name = first_name
         self.last_name = last_name
