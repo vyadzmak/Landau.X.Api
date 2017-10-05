@@ -1,14 +1,19 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from json_encoder import AlchemyEncoder
+from flask_cors import CORS
+
 #init application
 app = Flask(__name__)
+
+#cors = CORS(app, resources={r"/login/*": {"origins": "*"}})
+CORS(app)
+
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
 app.json_encoder =json_encoder
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 api = Api(app)
-
 #import resources
 from res.user_roles_resources import *
 from res.client_types_resources import *
