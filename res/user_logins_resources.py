@@ -2,6 +2,7 @@ from db_models.models import UserLogins
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+from sqlalchemy import and_
 import base64
 
 user_role_fields = {
@@ -38,8 +39,10 @@ class UserAuthResource(Resource):
             password = json_data["password"]
             t = bytes(password, 'utf-8')
             password = str(base64.b64encode(t))
-            user_login = session.query(UserLogins).filter(
-                UserLogins.login == login and UserLogins.password == password).first()
+            user_login = session.query(UserLogins).filter(and_(
+                UserLogins.login == login,
+                UserLogins.password == password))\
+                .first()
             if not user_login:
                 abort(403, message="User doesn't exist")
 
