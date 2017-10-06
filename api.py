@@ -54,7 +54,7 @@ api.add_resource(LogListResource, '/log', endpoint='log')
 api.add_resource(UploadFile, '/upload', endpoint='upload')
 
 #projects
-api.add_resource(UserProjectList, '/userProjects/<int:id>', endpoint='projectDocuments')
+api.add_resource(UserProjectList, '/userProjects/<int:id>', endpoint='userProjects')
 api.add_resource(ProjectListResource, '/projects', endpoint='projects')
 api.add_resource(ProjectResource, '/project/<int:id>', endpoint='project')
 
