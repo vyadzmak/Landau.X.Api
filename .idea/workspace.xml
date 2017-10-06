@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b9255eb-beb4-47a5-b237-fc53173ae547" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/documents_resources.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api.py" afterPath="$PROJECT_DIR$/api.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db_models/models.py" afterPath="$PROJECT_DIR$/db_models/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/projects_resources.py" afterPath="$PROJECT_DIR$/res/projects_resources.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/users_resources.py" afterPath="$PROJECT_DIR$/res/users_resources.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="api.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="58" column="75" lean-forward="false" selection-start-line="58" selection-start-column="75" selection-end-line="58" selection-end-column="75" />
+            <state relative-caret-position="170">
+              <caret line="58" column="72" lean-forward="false" selection-start-line="58" selection-start-column="72" selection-end-line="58" selection-end-column="72" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -34,7 +30,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_models/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="285">
@@ -49,8 +45,8 @@
       <file leaf-file-name="projects_resources.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/res/projects_resources.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="1" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
+            <state relative-caret-position="170">
+              <caret line="43" column="21" lean-forward="false" selection-start-line="43" selection-start-column="6" selection-end-line="43" selection-end-column="21" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -128,8 +124,8 @@
         <option value="$PROJECT_DIR$/res/users_resources.py" />
         <option value="$PROJECT_DIR$/res/projects_resources.py" />
         <option value="$PROJECT_DIR$/res/documents_resources.py" />
-        <option value="$PROJECT_DIR$/api.py" />
         <option value="$PROJECT_DIR$/db_models/models.py" />
+        <option value="$PROJECT_DIR$/api.py" />
       </list>
     </option>
   </component>
@@ -290,8 +286,8 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22861843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22861843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -643,20 +639,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/users_resources.py">
+    <entry file="file://$PROJECT_DIR$/res/projects_resources.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-446">
-          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="170">
+          <caret line="43" column="21" lean-forward="false" selection-start-line="43" selection-start-column="6" selection-end-line="43" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api.py">
+    <entry file="file://$PROJECT_DIR$/db_models/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="58" column="75" lean-forward="false" selection-start-line="58" selection-start-column="75" selection-end-line="58" selection-end-column="75" />
+        <state relative-caret-position="285">
+          <caret line="38" column="49" lean-forward="false" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -671,22 +669,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/projects_resources.py">
+    <entry file="file://$PROJECT_DIR$/res/users_resources.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="1" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-446">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db_models/models.py">
+    <entry file="file://$PROJECT_DIR$/api.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="38" column="49" lean-forward="false" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
+        <state relative-caret-position="170">
+          <caret line="58" column="72" lean-forward="false" selection-start-line="58" selection-start-column="72" selection-end-line="58" selection-end-column="72" />
           <folding>
-            <element signature="e#0#29#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
