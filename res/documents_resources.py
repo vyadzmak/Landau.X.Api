@@ -2,7 +2,7 @@ from db_models.models import Documents
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
-
+import json
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -71,6 +71,7 @@ class DocumentResource(Resource):
     @marshal_with(f_document_fields)
     def get(self, id):
         document = session.query(Documents).filter(Documents.id == id).first()
+        document.data =json.dumps(document.data)
         if not document:
             abort(404, message="Document {} doesn't exist".format(id))
         return document
