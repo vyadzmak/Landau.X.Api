@@ -66,12 +66,24 @@ class ProjectDocumentListResource(Resource):
             abort(404, message="Documents not found")
         return documents
 
+import jsonpickle
+def encode(ob):
+    try:
+        jsonpickle.set_preferred_backend('json')
+        jsonpickle.set_encoder_options('json', ensure_ascii=False);
+        jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
+        json_s = jsonpickle.encode(ob, unpicklable=False)
+        return json_s
+    except Exception as e:
+        print(str(e))
+        return ""
 
 class DocumentResource(Resource):
     @marshal_with(f_document_fields)
     def get(self, id):
         document = session.query(Documents).filter(Documents.id == id).first()
-        document.data =json.dumps(document.data)
+        # document.data = json.dumps(document.data, ensure_ascii=False)
+        document.data =encode(document.data)
         if not document:
             abort(404, message="Document {} doesn't exist".format(id))
         return document
