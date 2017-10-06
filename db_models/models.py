@@ -136,6 +136,7 @@ class DocumentStates(Base):
     def __init__(self, name):
         self.name = name
 
+#documents
 class Documents(Base):
     __tablename__ = 'documents'
     id = Column(Integer, primary_key=True)
@@ -143,7 +144,7 @@ class Documents(Base):
     file_path = Column(String(256))
     file_size = Column(Float)
     created_date = Column(DateTime)
-    content = Column(JSON)
+    data = Column(JSON)
 
     document_state_id = Column('document_state_id',ForeignKey('document_states.id'))
     project_id = Column('project_id', ForeignKey('projects.id'))
@@ -158,8 +159,29 @@ class Documents(Base):
         self.file_size = file_size
         self.document_state_id=1
 
+#reports
+class Reports(Base):
+    __tablename__ = 'reports'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256))
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
 
+    def __init__(self,projectId, name,data):
+        self.project_id = projectId
+        self.name =name
+        self.data= data
 
+#report forms
+class ReportForms(Base):
+    __tablename__ = 'report_forms'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    report_id = Column('report_id', ForeignKey('reports.id'))
+
+    def __init__(self,reportId, data):
+        self.report_id = reportId
+        self.data = data
 
 if __name__ == "__main__":
     from sqlalchemy import create_engine

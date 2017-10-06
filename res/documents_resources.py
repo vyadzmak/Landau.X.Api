@@ -40,10 +40,23 @@ document_fields = {
     'document_state': fields.Nested(document_state_fields),
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
-    'content': fields.String
+
 
 }
 
+f_document_fields = {
+    'id': fields.Integer,
+    'file_name': fields.String,
+    'file_path': fields.String,
+    'file_size': fields.Float,
+    'created_date': fields.DateTime,
+    'document_state_id': fields.Integer,
+    'document_state': fields.Nested(document_state_fields),
+    'user_id': fields.Integer,
+    'user_data': fields.Nested(user_fields),
+    'data': fields.String
+
+}
 
 class ProjectDocumentListResource(Resource):
     @marshal_with(document_fields)
@@ -55,7 +68,7 @@ class ProjectDocumentListResource(Resource):
 
 
 class DocumentResource(Resource):
-    @marshal_with(document_fields)
+    @marshal_with(f_document_fields)
     def get(self, id):
         document = session.query(Documents).filter(Documents.id == id).first()
         if not document:
@@ -76,7 +89,7 @@ class DocumentResource(Resource):
         json_data = request.get_json(force=True)
         document = session.query(Documents).filter(Documents.id == id).first()
         document.document_state_id = json_data["document_state_id"]
-        document.content = json_data["content"]
+        document.data = json_data["data"]
         session.add(document)
         session.commit()
         return document, 201

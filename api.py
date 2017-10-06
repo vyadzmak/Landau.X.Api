@@ -24,7 +24,7 @@ from res.log_resources import *
 from res.upload_resources import *
 from res.projects_resources import *
 from res.documents_resources import *
-
+from res.reports_resources import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -63,7 +63,12 @@ api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endp
 api.add_resource(DocumentListResource, '/documents', endpoint='documents')
 api.add_resource(DocumentResource, '/document/<int:id>', endpoint='document')
 
-#documents
+#reports
+api.add_resource(ProjectReportResource, '/projectReport/<int:id>', endpoint='projectReport')
+api.add_resource(ReportListResource, '/reports', endpoint='reports')
+api.add_resource(ReportResource, '/report/<int:id>', endpoint='report')
+
+#report forms
 
 #start application
 if __name__ == '__main__':
