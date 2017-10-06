@@ -13,8 +13,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-
 class UploadFile(Resource):
     def post(self):
         try:
@@ -24,7 +22,13 @@ class UploadFile(Resource):
             session.add(project)
             session.commit()
             if (project.id>-1):
-                files= request.files.getlist("")
+                f_list =[]
+                files =[]
+                for t in request.files:
+                    f_list = request.files.getlist(str(t))
+                    for j_file in f_list:
+                        files.append(j_file)
+                #files= request.files.getlist("file[]")
                 for file in files:
                     print(file.filename)
                     if file and allowed_file(file.filename):
