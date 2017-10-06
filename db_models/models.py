@@ -35,6 +35,9 @@ class Users(Base):
     client_id = Column('client_id', ForeignKey('clients.id'))
     user_role_id = Column('user_role_id', ForeignKey('user_roles.id'))
     user_data = relationship("UserLogins", backref="user_data")
+    user_project_data = relationship("Projects", backref="user_data")
+    user_documents_data = relationship("Documents", backref="user_data")
+
     def __init__(self, first_name, last_name, lock_state, client_id, user_role_id):
         self.first_name = first_name
         self.last_name = last_name
@@ -103,7 +106,7 @@ class ProjectStates(Base):
     __tablename__ = 'project_states'
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
-    users = relationship("Projects", backref="project_state")
+    states = relationship("Projects", backref="project_state")
 
     def __init__(self, name):
         self.name = name

@@ -22,6 +22,9 @@ from res.users_resources import *
 from res.user_logins_resources import *
 from res.log_resources import *
 from res.upload_resources import *
+from res.projects_resources import *
+from res.documents_resources import *
+
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -49,6 +52,13 @@ api.add_resource(LogListResource, '/log', endpoint='log')
 
 #upload files
 api.add_resource(UploadFile, '/upload', endpoint='upload')
+
+#projects
+api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endpoint='projectDocuments')
+api.add_resource(DocumentListResource, '/documents', endpoint='documents')
+api.add_resource(DocumentResource, '/document/<int:id>', endpoint='document')
+
+#documents
 
 #start application
 if __name__ == '__main__':

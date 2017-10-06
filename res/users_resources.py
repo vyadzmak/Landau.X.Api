@@ -29,6 +29,7 @@ user_fields = {
 }
 
 
+
 class UserResource(Resource):
     @marshal_with(user_fields)
     def get(self, id):

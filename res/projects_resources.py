@@ -7,15 +7,6 @@ user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
 }
-user_fields = {
-    'id': fields.Integer,
-    'first_name': fields.String,
-    'last_name': fields.String,
-    'client_id': fields.Integer,
-    'lock_state': fields.Boolean,
-    'user_role_id': fields.Integer,
-    'user_role': fields.Nested(user_role_fields)
-}
 
 client_fields = {
     'id': fields.Integer(attribute="id"),
@@ -23,22 +14,40 @@ client_fields = {
     'registration_date': fields.DateTime(attribute="registration_date"),
     'registration_number': fields.String(attribute="registration_number")
 }
+user_fields = {
+    'id': fields.Integer,
+    'first_name': fields.String,
+    'last_name': fields.String,
+    'client_id': fields.Integer,
+    'lock_state': fields.Boolean,
+    'user_role_id': fields.Integer,
+    'user_role': fields.Nested(user_role_fields),
+    'client': fields.Nested(client_fields)
 
+}
 project_state_fields = {
-    'id':fields.Integer,
-    'name':fields.String
+    'id': fields.Integer,
+    'name': fields.String
 }
 
 project_fields = {
     'id': fields.Integer,
     'name': fields.String,
     'creation_date': fields.DateTime,
+    'state_id': fields.Integer,
     'project_state': fields.Nested(project_state_fields),
     'user_id': fields.Integer,
-    'user': fields.Nested(user_fields)
+    'user_data': fields.Nested(user_fields)
 
 }
 
+class UserProjectList(Resource):
+    @marshal_with(project_fields)
+    def get(self, id):
+        projects = session.query(Projects).filter(Projects.user_id == id).all()
+        if not projects:
+            abort(404, message="Projects not found")
+        return projects
 
 class ProjectResource(Resource):
     @marshal_with(project_fields)
@@ -69,7 +78,7 @@ class ProjectResource(Resource):
         return project, 201
 
 
-class UserListResource(Resource):
+class ProjectListResource(Resource):
     @marshal_with(project_fields)
     def get(self):
         projects = session.query(Projects).all()
