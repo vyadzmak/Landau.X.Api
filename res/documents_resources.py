@@ -3,6 +3,7 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
+import re
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -71,8 +72,8 @@ def encode(ob):
     try:
         jsonpickle.set_preferred_backend('json')
         jsonpickle.set_encoder_options('json', ensure_ascii=False);
-        jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
-        json_s = jsonpickle.encode(ob, unpicklable=False)
+        #jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
+        json_s = jsonpickle.encode(ob, unpicklable=True)
         return json_s
     except Exception as e:
         print(str(e))
@@ -81,9 +82,9 @@ def encode(ob):
 class DocumentResource(Resource):
     @marshal_with(f_document_fields)
     def get(self, id):
+        document ={}
         document = session.query(Documents).filter(Documents.id == id).first()
-        # document.data = json.dumps(document.data, ensure_ascii=False)
-        document.data =encode(document.data)
+
         if not document:
             abort(404, message="Document {} doesn't exist".format(id))
         return document
@@ -100,9 +101,10 @@ class DocumentResource(Resource):
     def put(self, id):
 
         json_data = request.get_json(force=True)
+        json_data = json.loads(json_data)
         document = session.query(Documents).filter(Documents.id == id).first()
         document.document_state_id = json_data["document_state_id"]
-        document.data = json_data["data"]
+        document.data = encode(json_data["data"])
         session.add(document)
         session.commit()
         return document, 201

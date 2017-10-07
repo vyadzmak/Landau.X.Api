@@ -12,7 +12,7 @@ CORS(app)
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
 app.json_encoder =json_encoder
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 api = Api(app)
 #import resources
 from res.user_roles_resources import *
