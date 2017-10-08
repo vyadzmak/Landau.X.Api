@@ -25,6 +25,8 @@ from res.upload_resources import *
 from res.projects_resources import *
 from res.documents_resources import *
 from res.reports_resources import *
+from res.details_resources import *
+
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -69,6 +71,7 @@ api.add_resource(ReportListResource, '/reports', endpoint='reports')
 api.add_resource(ReportResource, '/report/<int:id>', endpoint='report')
 
 #report forms
+api.add_resource(CellDetailsListResource, '/cellDetails', endpoint='cellDetails')
 
 #start application
 if __name__ == '__main__':

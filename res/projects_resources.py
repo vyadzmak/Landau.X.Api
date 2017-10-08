@@ -44,7 +44,7 @@ project_fields = {
 class UserProjectList(Resource):
     @marshal_with(project_fields)
     def get(self, id):
-        projects = session.query(Projects).filter(Projects.user_id == id).all()
+        projects = session.query(Projects).filter(Projects.user_id == id).all().order_by(Projects.id.desc())
         if not projects:
             abort(404, message="Projects not found")
         return projects
