@@ -2,7 +2,7 @@ from db_models.models import Reports
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
-
+import json
 report_fields = {
     'id': fields.Integer,
     'name': fields.String,
@@ -10,7 +10,17 @@ report_fields = {
     'project_id': fields.Integer
 
 }
-
+import jsonpickle
+def encode(ob):
+    try:
+        jsonpickle.set_preferred_backend('json')
+        jsonpickle.set_encoder_options('json', ensure_ascii=False);
+        #jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
+        json_s = jsonpickle.encode(ob, unpicklable=True)
+        return json_s
+    except Exception as e:
+        print(str(e))
+        return ""
 class ProjectReportResource(Resource):
     @marshal_with(report_fields)
     def get(self, id):
@@ -57,11 +67,14 @@ class ReportListResource(Resource):
     @marshal_with(report_fields)
     def post(self):
         try:
+            t = request
             json_data = request.get_json(force=True)
+            json_data = json.loads(json_data)
 
-            reports = Reports(projectId=json_data["projectId"],name = json_data["name"],data =json_data["data"])
+            reports = Reports(projectId=json_data["projectId"],name = json_data["name"],data =encode(json_data["data"]))
             session.add(reports)
             session.commit()
             return reports, 201
+            #return "OK"
         except Exception as e:
             abort(400, message="Error while adding record Document")
