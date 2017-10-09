@@ -2,7 +2,7 @@ from db_models.models import Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
-
+import json
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -69,10 +69,13 @@ class ProjectResource(Resource):
     def put(self, id):
 
         json_data = request.get_json(force=True)
+        json_data = json.loads(json_data)
         project = session.query(Projects).filter(Projects.id == id).first()
-        project.user_id = json_data['user_id']
+        #project.user_id = json_data['user_id']
         project.state_id = json_data["state_id"]
-        project.name = json_data["name"]
+        if (json_data["name"]!=""):
+            project.name = json_data["name"]
+
         session.add(project)
         session.commit()
         return project, 201
