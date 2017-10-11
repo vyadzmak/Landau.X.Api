@@ -104,6 +104,7 @@ class DocumentResource(Resource):
         json_data = json.loads(json_data)
         document = session.query(Documents).filter(Documents.id == id).first()
         document.document_state_id = json_data["document_state_id"]
+        document.document_type_id = json_data["document_type_id"]
         document.data = encode(json_data["data"])
         session.add(document)
         session.commit()

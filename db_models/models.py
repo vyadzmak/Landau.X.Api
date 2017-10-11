@@ -145,8 +145,9 @@ class Documents(Base):
     file_size = Column(Float)
     created_date = Column(DateTime)
     data = Column(JSON)
-
+    document_type_id = Column(Integer)
     document_state_id = Column('document_state_id',ForeignKey('document_states.id'))
+
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
@@ -177,10 +178,14 @@ class ReportForms(Base):
     __tablename__ = 'report_forms'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
-    report_id = Column('report_id', ForeignKey('reports.id'))
-
-    def __init__(self,reportId, data):
-        self.report_id = reportId
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    element_number =Column(Integer)
+    period = Column(DateTime)
+    def __init__(self,projectId,elementNumber,period, data):
+        self.project_id = projectId
+        self.element_number = elementNumber
+        t =datetime.datetime.strptime(period, "%Y-%m-%d %H:%M:%S")
+        self.period = t
         self.data = data
 
 if __name__ == "__main__":

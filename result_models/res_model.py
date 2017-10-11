@@ -3,6 +3,8 @@ import time
 import locale
 import math
 import result_models.res_transaction as t
+import result_models.osv_transaction as o_t
+
 class TableItem():
     def __init__(self):
         pass
@@ -27,7 +29,7 @@ class TableHeader():
 
 
 class TableModel():
-    def __init__(self,headers, documents):
+    def __init__(self,headers, documents, doc_id):
         try:
             self.headers = []
             for h in headers:
@@ -35,11 +37,31 @@ class TableModel():
 
             self.footers = []
             self.items = []
-            for document in documents:
-                for transaction in document:
+            if (doc_id==2):
+                for document in documents:
+                    for transaction in document:
+                            r = o_t.Transaction(
+                                transaction["account"],
+                                #date, document, analyticDebet, analyticCredit,accountDebet, accountCredit, valueDebet, valueCredit
+                                transaction["startPeriodBalanceDebet"],
+                                transaction["startPeriodBalanceCredit"],
+                                transaction["periodTransactionsDebet"],
+                                transaction["periodTransactionsCredit"],
+                                transaction["endPeriodBalanceDebet"],
+                                transaction["endPeriodBalanceCredit"],
+
+
+                            )
+
+
+                            r.style = "text-xs-center"
+                            self.items.append(r)
+            elif (doc_id==1):
+                for document in documents:
+                    for transaction in document:
                         r = t.Transaction(
                             transaction["period"],
-                            #date, document, analyticDebet, analyticCredit,accountDebet, accountCredit, valueDebet, valueCredit
+                            # date, document, analyticDebet, analyticCredit,accountDebet, accountCredit, valueDebet, valueCredit
                             transaction["document"],
                             transaction["analyticsDebet"],
                             transaction["analyticsCredit"],
@@ -49,18 +71,6 @@ class TableModel():
                             transaction["valueCredit"]
 
                         )
-
-                        # r.analyticsCredit = '\n'.split(str(e) for e in r.analyticsCredit)
-                        # r.analyticsDebet = '\n'.join(str(e) for e in r.analyticsDebet)
-                        # r.document = '\n'.join(str(e) for e in r.document)
-                        #
-                        # if (r.valueCredit == ""):
-                        #     r.valueCredit = 0
-                        # if (r.valueDebet == ""):
-                        #     r.valueDebet = 0
-                        #
-                        # r.valueDebet = '{:0,.2f}'.format(round(r.valueDebet, 2))
-                        # r.valueCredit = '{:0,.2f}'.format(round(r.valueCredit, 2))
 
                         r.style = "text-xs-center"
                         self.items.append(r)
@@ -72,7 +82,7 @@ class TableModel():
 
 
 class FormModel():
-    def __init__(self, headers,results):
-        self.tableData = TableModel(headers,results)
+    def __init__(self, headers,results,doc_id):
+        self.tableData = TableModel(headers,results,doc_id)
         pass
 
