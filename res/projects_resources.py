@@ -1,7 +1,8 @@
-from db_models.models import Projects
+from db_models.models import Projects, ReportForms,Reports,Documents
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+from sqlalchemy import desc
 import json
 user_role_fields = {
     'name': fields.String,
@@ -44,7 +45,7 @@ project_fields = {
 class UserProjectList(Resource):
     @marshal_with(project_fields)
     def get(self, id):
-        projects = session.query(Projects).filter(Projects.user_id == id).all().order_by(Projects.id.desc())
+        projects = session.query(Projects).filter(Projects.user_id == id).all().order_by(desc(Projects.id))
         if not projects:
             abort(404, message="Projects not found")
         return projects
@@ -58,12 +59,29 @@ class ProjectResource(Resource):
         return project
 
     def delete(self, id):
+        docs = session.query(Documents).filter(Documents.project_id==id).all()
+        reports = session.query(Reports).filter(Reports.project_id==id).all()
+        reportForms = session.query(ReportForms).filter(ReportForms.project_id==id).all()
+
+        for doc in docs:
+            session.delete(doc)
+            session.commit()
+
+        for report in reports:
+            session.delete(report)
+            session.commit()
+
+        for report_form in reportForms:
+            session.delete(report_form)
+            session.commit()
+
         project = session.query(Projects).filter(Projects.id == id).first()
+
         if not project:
             abort(404, message="Project {} doesn't exist".format(id))
         session.delete(project)
         session.commit()
-        return {}, 204
+        return {}, 200
 
     @marshal_with(project_fields)
     def put(self, id):
@@ -84,7 +102,7 @@ class ProjectResource(Resource):
 class ProjectListResource(Resource):
     @marshal_with(project_fields)
     def get(self):
-        projects = session.query(Projects).all()
+        projects = session.query(Projects).order_by(Projects.id.desc()).all()
         return projects
 
     @marshal_with(project_fields)
@@ -97,3 +115,4 @@ class ProjectListResource(Resource):
             return project, 201
         except Exception as e:
             abort(400, message="Error while adding record Project")
+

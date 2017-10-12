@@ -2,6 +2,15 @@ from db_models.models import Users
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+user_login_fields = {
+    'id': fields.Integer,
+    'login': fields.String,
+    'password': fields.String,
+    'token': fields.String,
+    'user_id': fields.Integer,
+    'registration_date': fields.DateTime,
+    'last_login_date': fields.DateTime,
+}
 
 client_fields = {
     'id': fields.Integer(attribute="id"),
@@ -24,8 +33,8 @@ user_fields = {
     'client_id': fields.Integer,
     'client': fields.Nested(client_fields),
     'user_role_id': fields.Integer,
-    'user_role': fields.Nested(user_role_fields)
-
+    'user_role': fields.Nested(user_role_fields),
+    'login_data': fields.Nested(user_login_fields)
 }
 
 

@@ -67,6 +67,7 @@ class UserLogins(Base):
     registration_date = Column('registration_date', DateTime)
     last_login_date = Column('last_login_date', DateTime, nullable=True)
     user_id = Column('user_id', ForeignKey('users.id'))
+    user_login_data = relationship("Users", backref="login_data")
 
     def __init__(self,login,password,user_id):
         self.login = login
