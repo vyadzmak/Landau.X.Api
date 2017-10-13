@@ -39,7 +39,7 @@ user_fields = {
 
 
 class ClientUsersListResource(Resource):
-    @marshal_with(client_fields)
+    @marshal_with(user_fields)
     def get(self,id):
         users = session.query(Users).filter(Users.client_id==id).all()
         return users
