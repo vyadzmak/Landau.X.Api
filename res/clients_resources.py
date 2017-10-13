@@ -19,6 +19,9 @@ client_fields = {
 }
 
 
+
+
+
 class ClientResource(Resource):
     @marshal_with(client_fields)
     def get(self, id):

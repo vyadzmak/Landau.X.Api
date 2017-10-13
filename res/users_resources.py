@@ -1,4 +1,4 @@
-from db_models.models import Users
+from db_models.models import Users, UserLogins
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -38,6 +38,11 @@ user_fields = {
 }
 
 
+class ClientUsersListResource(Resource):
+    @marshal_with(client_fields)
+    def get(self,id):
+        users = session.query(Users).filter(Users.client_id==id).all()
+        return users
 
 class UserResource(Resource):
     @marshal_with(user_fields)
@@ -84,6 +89,13 @@ class UserListResource(Resource):
                          lock_state=json_data["lock_state"], client_id=json_data["client_id"],
                          user_role_id=json_data["user_role_id"])
             session.add(user)
+            l = json_data["login_data"][0]
+            session.commit()
+            user_id = user.id
+            log =l["login"]
+            passw =l["password"]
+            login = UserLogins(log,passw,user_id)
+            session.add(login)
             session.commit()
             return user, 201
         except Exception as e:

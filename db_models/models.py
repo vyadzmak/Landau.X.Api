@@ -73,6 +73,7 @@ class UserLogins(Base):
         self.login = login
         self.password = password
         self.user_id = user_id
+        self.registration_date = datetime.datetime.now()
     pass
 
 

@@ -42,6 +42,7 @@ api.add_resource(ClientListResource, '/clients', endpoint='clients')
 api.add_resource(ClientResource, '/client/<int:id>', endpoint='client')
 
 #users
+api.add_resource(ClientUsersListResource, '/clientUsers', endpoint='client-users')
 api.add_resource(UserListResource, '/users', endpoint='users')
 api.add_resource(UserResource, '/user/<int:id>', endpoint='user')
 

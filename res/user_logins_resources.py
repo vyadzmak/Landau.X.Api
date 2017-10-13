@@ -1,9 +1,11 @@
-from db_models.models import UserLogins
+from db_models.models import UserLogins, Log
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import and_
 import base64
+import  copy
+import datetime
 
 user_role_fields = {
     'name': fields.String,
@@ -37,17 +39,28 @@ class UserAuthResource(Resource):
             json_data = request.get_json(force=True)
             login = json_data["login"]
             password = json_data["password"]
+            o_password = copy.copy(password)
             t = bytes(password, 'utf-8')
             password = str(base64.b64encode(t))
             user_login = session.query(UserLogins).filter(and_(
                 UserLogins.login == login,
                 UserLogins.password == password))\
                 .first()
-            if not user_login:
+            if user_login is None:
+                message = "Попытка авторизации с IP адреса " + request.remote_addr + ". Данными Login=" + login + " Password=" + o_password
+                log = Log(message)
+                session.add(log)
                 abort(403, message="User doesn't exist")
-
+            user_login.last_login_date = datetime.datetime.now()
+            session.add(user_login)
+            message = "Пользователь "+user_login.user_data.first_name+" "+user_login.user_data.last_name+" зашел в кабинет (компания " +user_login.user_data.client.name+")"
+            log = Log(message)
+            session.add(log)
+            session.commit()
             return user_login
         except Exception as e:
+
+
             abort(400, message="Error Auth")
 
 
