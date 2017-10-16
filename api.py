@@ -27,7 +27,8 @@ from res.documents_resources import *
 from res.reports_resources import *
 from res.details_resources import *
 from res.reports_forms_resources import *
-
+from res.project_analysis_log_resources import *
+from res.project_analysis_resources import  *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -72,10 +73,22 @@ api.add_resource(ProjectReportResource, '/projectReport/<int:id>', endpoint='pro
 api.add_resource(ReportListResource, '/reports', endpoint='reports')
 api.add_resource(ReportResource, '/report/<int:id>', endpoint='report')
 
-#report forms
+#cell details
 api.add_resource(CellDetailsListResource, '/cellDetails', endpoint='cellDetails')
 
+#report forms
 api.add_resource(ReportFormsListResource, '/reportForms', endpoint='reportForms')
+
+#project analysis log
+api.add_resource(ProjectSelectAnalysisLogResource,'/projectSelectAnalysisLog/<int:id>', endpoint='projectSelectAnalysisLog')
+api.add_resource(ProjectAnalysisLogResource,'/projectAnalysisLog/<int:id>', endpoint='projectAnalysisLog')
+api.add_resource(ProjectAnalysisLogListResource,'/projectAnalysisLogs', endpoint='projectsAnalysisLog')
+
+
+#project analysis data
+api.add_resource(ProjectSelectAnalysisResource,'/projectSelectAnalysis/<int:id>', endpoint='projectSelectAnalysis')
+api.add_resource(ProjectAnalysisResource,'/projectAnalysis/<int:id>', endpoint='projectAnalysis')
+api.add_resource(ProjectAnalysisListResource,'/projectAnalysis', endpoint='projectsAnalysis')
 
 #start application
 if __name__ == '__main__':

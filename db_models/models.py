@@ -190,6 +190,24 @@ class ReportForms(Base):
         self.period = t
         self.data = data
 
+class ProjectAnalysisLog(Base):
+    __tablename__ = 'project_analysis_log'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    def __init__(self,projectId, data):
+        self.project_id = projectId
+        self.data = data
+
+class ProjectAnalysis(Base):
+    __tablename__ = 'project_analysis'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    def __init__(self,projectId, data):
+        self.project_id = projectId
+        self.data = data
+
 if __name__ == "__main__":
     from sqlalchemy import create_engine
     from settings import DB_URI
