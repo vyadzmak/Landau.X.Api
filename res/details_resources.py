@@ -5,6 +5,7 @@ from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
 import result_models.res_model as r_m
 from sqlalchemy import and_
+import modules.details_converter as details_converter
 import jsonpickle
 import datetime
 def encode(ob):
@@ -43,23 +44,11 @@ class CellDetailsListResource(Resource):
                     Documents.document_type_id==d_id)
 
                 ).all()
-                headers = []
-                result =[]
-                for d in docs:
+                model = details_converter.convert_details_by_period(docs,month,year,type_id)
 
-                    rr = json.loads(d.data)
-                    try:
-                        itms =rr["tableData"]["items"]
-                        if (len(headers)==0):
-                            headers =rr["tableData"]["headers"]
-                        tb = [t for t in itms if (str(t["month"])==month and str(t["year"])==year and str(t["typeId"])==str(type_id))]
-                        if (len(tb)>0):
-                            result.append(tb)
-                    except Exception as e:
-                        t=0
 
-                form = r_m.FormModel(headers,result,d_id)
-                yy = encode(form)
+                # form = r_m.FormModel(headers,result,d_id)
+                yy = encode(model)
                 return yy
             else:
                 analytical_type = json_data["analytical_type"]
