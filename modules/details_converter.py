@@ -34,35 +34,36 @@ def convert_details_by_period(documents,month,year,type_id):
             for t in r:
                 clear_table.append(t)
         form = a_f_m.AForm()
-        #################################################
-        form.add_row("Графики")
-        row = form.get_last_row()
+        if (str(type_id).startswith('2')):
+            #################################################
+            form.add_row("Графики")
+            row = form.get_last_row()
 
-        # генерируем круговые диаграммы
-        column_names = [['string', 'Наименование'], ['number', 'Показатели']]
-        c_values = [['account', 'periodTransactionsDebet', 'Обороты за период по дебету'],
-                    ['account', 'periodTransactionsCredit', 'Обороты за период по кредиту']
-                    ]
+            # генерируем круговые диаграммы
+            column_names = [['string', 'Наименование'], ['number', 'Показатели']]
+            c_values = [['account', 'periodTransactionsDebet', 'Обороты за период по дебету'],
+                        ['account', 'periodTransactionsCredit', 'Обороты за период по кредиту']
+                        ]
 
-        for c in c_values:
-            values = []
+            for c in c_values:
+                values = []
 
-            for detail in clear_table:
-                f_val = detail[c[0]]#(getattr(detail, c[0]))
-                res = Decimal(sub(r'[^\d.]', '',  detail[c[1]]))
-                s_val = float(res)#(getattr(detail, c[1]))
+                for detail in clear_table:
+                    f_val = detail[c[0]]#(getattr(detail, c[0]))
+                    res = Decimal(sub(r'[^\d.]', '',  detail[c[1]]))
+                    s_val = float(res)#(getattr(detail, c[1]))
 
-                v = [f_val, s_val]
-                values.append(v)
+                    v = [f_val, s_val]
+                    values.append(v)
 
-            s_c_b.generate_balance_pie_charts(row, 'PieChart',
-                                              c[2],
-                                              400,
-                                              c[2], "", False, column_names, values)
+                s_c_b.generate_balance_pie_charts(row, 'PieChart',
+                                                  c[2],
+                                                  400,
+                                                  c[2], "", False, column_names, values)
 
 
-            ##############################
-        #################################################
+                ##############################
+            #################################################
         form.add_row("Данные")
         table = t_d_m.TableData()
         table.headers = headers
