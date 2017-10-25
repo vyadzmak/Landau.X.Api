@@ -55,7 +55,14 @@ def convert_details_by_period(documents,month,year,type_id):
 
                     v = [f_val, s_val]
                     values.append(v)
+                all_nulls =True
 
+                for v in values:
+                    if (v[1]!=0):
+                        all_nulls =False
+                        break
+                if (all_nulls):
+                    continue
                 s_c_b.generate_balance_pie_charts(row, 'PieChart',
                                                   c[2],
                                                   400,
