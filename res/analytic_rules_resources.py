@@ -93,7 +93,7 @@ class AnalyticRulesResource(Resource):
     def put(self, id):
 
         json_data = request.get_json(force=True)
-        json_data = json.loads(json_data)
+        #json_data = json.loads(json_data)
         analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
         if (json_data["is_default"]!=None and json_data["is_default"]!=""):
             analytic_rule.is_default = json_data["is_default"]
