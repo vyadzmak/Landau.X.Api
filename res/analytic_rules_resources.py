@@ -64,7 +64,7 @@ class ClientAnalyticRulesDefaultResource(Resource):
 class ClientAnalyticRulesList(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):
-        analytic_rules = session.query(AnalyticRules).filter(AnalyticRules.client_id == id).all().order_by(desc(AnalyticRules.id))
+        analytic_rules = session.query(AnalyticRules).filter(AnalyticRules.client_id == id).all()
         if not analytic_rules:
             abort(404, message="Analytic Rules not found")
         return analytic_rules
