@@ -95,10 +95,13 @@ class AnalyticRulesResource(Resource):
         json_data = request.get_json(force=True)
         json_data = json.loads(json_data)
         analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
+        if (json_data["is_default"]!=None and json_data["is_default"]!=""):
+            analytic_rule.is_default = json_data["is_default"]
 
-        analytic_rule.is_default = json_data["is_default"]
         analytic_rule.name = json_data["name"]
-        analytic_rule.data = json_data["data"]
+
+        if (json_data["data"] != None and json_data["data"] != ""):
+            analytic_rule.data = json_data["data"]
 
         session.add(analytic_rule)
         session.commit()
