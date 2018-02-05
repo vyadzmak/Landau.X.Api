@@ -36,6 +36,7 @@ project_state_fields = {
 analytic_rules_fields = {
     'id': fields.Integer,
     'name': fields.String,
+    'is_default': fields.Boolean,
     'created_date': fields.DateTime,
     'data':fields.String,
     'client_id':fields.Integer,
@@ -95,13 +96,18 @@ class AnalyticRulesResource(Resource):
         json_data = request.get_json(force=True)
         #json_data = json.loads(json_data)
         analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
-        if (json_data["is_default"]!=None and json_data["is_default"]!=""):
-            analytic_rule.is_default = json_data["is_default"]
-
+        matching_is_default = [s for s in json_data if "is_default" in s]
+        matching_data = [s for s in json_data if "data" in s]
         analytic_rule.name = json_data["name"]
 
-        if (json_data["data"] != None and json_data["data"] != ""):
-            analytic_rule.data = json_data["data"]
+        if (len(matching_is_default)>0):
+            if (json_data["is_default"]!=None and json_data["is_default"]!=""):
+                analytic_rule.is_default = json_data["is_default"]
+
+
+        if (len(matching_data)):
+            if (json_data["data"] != None and json_data["data"] != ""):
+                analytic_rule.data = json_data["data"]
 
         session.add(analytic_rule)
         session.commit()
