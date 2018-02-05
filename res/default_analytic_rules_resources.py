@@ -35,6 +35,7 @@ class DefaultAnalyticRulesResource(Resource):
 
         json_data = request.get_json(force=True)
         json_data = json.loads(json_data)
+        json_data = json.dumps(json_data,ensure_ascii=False)
         default_analytic_rules = session.query(DefaultAnalyticRules).filter(DefaultAnalyticRules.id == id).first()
         default_analytic_rules.data = json_data
 

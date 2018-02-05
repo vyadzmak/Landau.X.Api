@@ -56,7 +56,7 @@ class ClientAnalyticRulesDefaultResource(Resource):
             AnalyticRules.client_id == id),
             AnalyticRules.is_default == True
         ).first()
-        analytic_rules.data = serializator.encode(analytic_rules.data)
+        #analytic_rules.data = serializator.encode(analytic_rules.data)
         if not analytic_rules:
             abort(404, message="Analytic Rules not found")
         return analytic_rules
@@ -74,7 +74,7 @@ class AnalyticRulesResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):
         analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
-        analytic_rule.data = serializator.encode(analytic_rule.data)
+        #analytic_rule.data = serializator.encode(analytic_rule.data)
         if not analytic_rule:
             abort(404, message="Analytic Rules {} doesn't exist".format(id))
         return analytic_rule
@@ -108,7 +108,7 @@ class AnalyticRulesResource(Resource):
 class AnalyticRulesListResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self):
-        analytic_rules = session.query(AnalyticRules).order_by(AnalyticRules.id.desc()).all()
+        analytic_rules = session.query(AnalyticRules).all()
         return analytic_rules
 
     @marshal_with(analytic_rules_fields)
