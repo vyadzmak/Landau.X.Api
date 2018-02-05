@@ -2,6 +2,7 @@ from db_models.models import Users, UserLogins
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+import base64
 user_login_fields = {
     'id': fields.Integer,
     'login': fields.String,
@@ -94,7 +95,10 @@ class UserListResource(Resource):
             user_id = user.id
             log =l["login"]
             passw =l["password"]
-            login = UserLogins(log,passw,user_id)
+
+            en_pass = str(base64.b64encode(bytes(passw, "utf-8")))
+
+            login = UserLogins(log,en_pass,user_id)
             session.add(login)
             session.commit()
             return user, 201

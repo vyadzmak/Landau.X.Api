@@ -37,6 +37,7 @@ class Users(Base):
     user_data = relationship("UserLogins", backref="user_data")
     user_project_data = relationship("Projects", backref="user_data")
     user_documents_data = relationship("Documents", backref="user_data")
+    analytic_rules_data = relationship("AnalyticRules", backref="user_data")
 
     def __init__(self, first_name, last_name, lock_state, client_id, user_role_id):
         self.first_name = first_name
@@ -95,6 +96,8 @@ class Clients(Base):
     lock_state = Column('lock_state', Boolean)
     client_type_id = Column('client_type_id', ForeignKey('client_types.id'))
     user_client = relationship("Users", backref="client")
+    analytic_rules_data = relationship("AnalyticRules", backref="client_data")
+
     def __init__(self, name, registration_number, lock_state, client_type_id):
         self.name = name
         self.registration_number = registration_number
@@ -169,11 +172,13 @@ class Reports(Base):
     name = Column(String(256))
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
+    analytic_rule_id = Column('analytic_rule_id', ForeignKey('analytic_rules.id'))
 
-    def __init__(self,projectId, name,data):
+    def __init__(self,projectId, name,data,analytic_rule_id):
         self.project_id = projectId
         self.name =name
         self.data= data
+        self.analytic_rule_id = analytic_rule_id
 
 #report forms
 class ReportForms(Base):
@@ -206,6 +211,33 @@ class ProjectAnalysis(Base):
     project_id = Column('project_id', ForeignKey('projects.id'))
     def __init__(self,projectId, data):
         self.project_id = projectId
+        self.data = data
+
+class DefaultAnalyticRules(Base):
+    __tablename__ = 'default_analytic_rules'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+
+    def __init__(self,data):
+        self.data = data
+
+class AnalyticRules(Base):
+    __tablename__ = 'analytic_rules'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    is_default =Column(Boolean)
+    user_id = Column('user_id', ForeignKey('users.id'))
+    client_id = Column('client_id', ForeignKey('clients.id'))
+    created_date = Column(DateTime)
+    data = Column(JSON)
+
+
+    def __init__(self,name,is_default, user_id,client_id,data):
+        self.name =name
+        self.is_default = is_default
+        self.user_id = user_id
+        self.client_id = client_id
+        self.created_date = datetime.datetime.now()
         self.data = data
 
 if __name__ == "__main__":

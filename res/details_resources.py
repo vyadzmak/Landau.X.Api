@@ -35,7 +35,7 @@ class CellDetailsListResource(Resource):
             period = json_data["period"]
             if (analytical==False):
                 d_id = 1
-                if (doc_type=='2'):
+                if (doc_type==2):
                     d_id =2
 
 

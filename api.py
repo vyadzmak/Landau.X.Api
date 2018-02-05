@@ -29,6 +29,9 @@ from res.details_resources import *
 from res.reports_forms_resources import *
 from res.project_analysis_log_resources import *
 from res.project_analysis_resources import  *
+from res.default_analytic_rules_resources import *
+from res.analytic_rules_resources import *
+
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -90,7 +93,16 @@ api.add_resource(ProjectSelectAnalysisResource,'/projectSelectAnalysis/<int:id>'
 api.add_resource(ProjectAnalysisResource,'/projectAnalysis/<int:id>', endpoint='projectAnalysis')
 api.add_resource(ProjectAnalysisListResource,'/projectAnalysis', endpoint='projectsAnalysis')
 
+#default analytic rules
+api.add_resource(DefaultAnalyticRulesResource,'/defaultAnalyticsRules/<int:id>',endpoint ='defaultAnalyticRules' )
+api.add_resource(DefaultAnalyticRulesListResource,'/defaultAnalyticsRules', endpoint='defaultAnalyticsRules')
+
+#default analytic rules
+api.add_resource(AnalyticRulesResource,'/analyticsRules/<int:id>',endpoint ='analyticRules' )
+api.add_resource(AnalyticRulesListResource,'/analyticsRules', endpoint='analyticsRules')
+
 #start application
 if __name__ == '__main__':
     #u_s.get_user_roles()
+    #, ssl_context = 'adhoc'
     app.run(debug=True)
