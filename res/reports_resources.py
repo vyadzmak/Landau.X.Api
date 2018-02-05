@@ -14,7 +14,7 @@ import jsonpickle
 def encode(ob):
     try:
         jsonpickle.set_preferred_backend('json')
-        jsonpickle.set_encoder_options('json', ensure_ascii=False);
+        jsonpickle.set_encoder_options('json', ensure_ascii=False)
         #jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
         json_s = jsonpickle.encode(ob, unpicklable=True)
         return json_s

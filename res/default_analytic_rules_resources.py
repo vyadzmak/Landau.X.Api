@@ -3,6 +3,7 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
+import modules.serializator as serializator
 import json
 
 default_analytic_rules_fields = {
@@ -15,6 +16,7 @@ class DefaultAnalyticRulesResource(Resource):
     @marshal_with(default_analytic_rules_fields)
     def get(self, id):
         default_analytic_rules = session.query(DefaultAnalyticRules).filter(DefaultAnalyticRules.id == id).first()
+        default_analytic_rules.data = serializator.encode(default_analytic_rules.data)
         if not default_analytic_rules:
                 abort(404, message="Analytic Rules {} doesn't exist".format(id))
         return default_analytic_rules
@@ -34,7 +36,7 @@ class DefaultAnalyticRulesResource(Resource):
         json_data = request.get_json(force=True)
         json_data = json.loads(json_data)
         default_analytic_rules = session.query(DefaultAnalyticRules).filter(DefaultAnalyticRules.id == id).first()
-        default_analytic_rules = json_data["data"]
+        default_analytic_rules.data = json_data
 
         session.add(default_analytic_rules)
         session.commit()

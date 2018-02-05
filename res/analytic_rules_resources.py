@@ -5,6 +5,7 @@ from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
 from sqlalchemy import and_
 import json
+import modules.serializator as serializator
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -55,7 +56,7 @@ class ClientAnalyticRulesDefaultResource(Resource):
             AnalyticRules.client_id == id),
             AnalyticRules.is_default == True
         ).first()
-
+        analytic_rules.data = serializator.encode(analytic_rules.data)
         if not analytic_rules:
             abort(404, message="Analytic Rules not found")
         return analytic_rules
@@ -72,10 +73,11 @@ class ClientAnalyticRulesList(Resource):
 class AnalyticRulesResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):
-        project = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
-        if not project:
+        analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
+        analytic_rule.data = serializator.encode(analytic_rule.data)
+        if not analytic_rule:
             abort(404, message="Analytic Rules {} doesn't exist".format(id))
-        return project
+        return analytic_rule
 
     def delete(self, id):
 
