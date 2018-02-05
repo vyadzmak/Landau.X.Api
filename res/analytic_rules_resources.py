@@ -3,6 +3,7 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
+from sqlalchemy import and_
 import json
 user_role_fields = {
     'name': fields.String,
@@ -42,6 +43,23 @@ analytic_rules_fields = {
     'user_data': fields.Nested(user_fields)
 
 }
+class ClientAnalyticRulesDefaultResource(Resource):
+    @marshal_with(analytic_rules_fields)
+    def get(self, id):
+        # user_login = session.query(UserLogins).filter(and_(
+        #     UserLogins.login == login,
+        #     UserLogins.password == password)) \
+        #     .first()
+        #
+        analytic_rules = session.query(AnalyticRules).filter(and_(
+            AnalyticRules.client_id == id),
+            AnalyticRules.is_default == True
+        ).first()
+
+        if not analytic_rules:
+            abort(404, message="Analytic Rules not found")
+        return analytic_rules
+
 
 class ClientAnalyticRulesList(Resource):
     @marshal_with(analytic_rules_fields)
