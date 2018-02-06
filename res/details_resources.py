@@ -34,9 +34,9 @@ class CellDetailsListResource(Resource):
             analytical_type = json_data["analytical_type"]
             period = json_data["period"]
             if (analytical==False):
-                d_id = 1
-                if (doc_type==2):
-                    d_id =2
+                d_id = 2
+                if (doc_type==3):
+                    d_id =1
 
 
                 docs =session.query(Documents).filter(and_(

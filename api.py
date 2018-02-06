@@ -94,10 +94,12 @@ api.add_resource(ProjectAnalysisResource,'/projectAnalysis/<int:id>', endpoint='
 api.add_resource(ProjectAnalysisListResource,'/projectAnalysis', endpoint='projectsAnalysis')
 
 #default analytic rules
+api.add_resource(SimpleDefaultAnalyticRulesResource,'/simpleDefaultAnalyticsRules/<int:id>',endpoint ='simpleDefaultAnalyticRules' )
 api.add_resource(DefaultAnalyticRulesResource,'/defaultAnalyticsRules/<int:id>',endpoint ='defaultAnalyticRules' )
 api.add_resource(DefaultAnalyticRulesListResource,'/defaultAnalyticsRules', endpoint='defaultAnalyticsRules')
 
 #default analytic rules
+api.add_resource(SimpleAnalyticRulesResource,'/simpleAnalyticsRules/<int:id>',endpoint ='simpleAnalyticRules' )
 api.add_resource(AnalyticRulesResource,'/analyticsRules/<int:id>',endpoint ='analyticRules' )
 api.add_resource(AnalyticRulesListResource,'/analyticsRules', endpoint='analyticsRules')
 

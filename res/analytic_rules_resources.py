@@ -93,6 +93,23 @@ class ClientAnalyticRulesList(Resource):
             abort(404, message="Analytic Rules not found")
         return analytic_rules
 
+class SimpleAnalyticRulesResource(Resource):
+
+
+    @marshal_with(analytic_rules_fields)
+    def put(self, id):
+
+        json_data = request.get_json(force=True)
+        json_data = json.loads(json_data)
+        json_data = json.dumps(json_data, ensure_ascii=False)
+        analytic_rule = session.query(AnalyticRules).filter(AnalyticRules.id == id).first()
+        analytic_rule.data = json_data
+
+        session.add(analytic_rule)
+        session.commit()
+        return analytic_rule, 201
+
+
 class AnalyticRulesResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):

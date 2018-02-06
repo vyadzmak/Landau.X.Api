@@ -12,6 +12,20 @@ default_analytic_rules_fields = {
 
 }
 
+class SimpleDefaultAnalyticRulesResource(Resource):
+    @marshal_with(default_analytic_rules_fields)
+    def put(self, id):
+
+        json_data = request.get_json(force=True)
+        json_data = json.loads(json_data)
+        json_data = json.dumps(json_data,ensure_ascii=False)
+        default_analytic_rules = session.query(DefaultAnalyticRules).filter(DefaultAnalyticRules.id == id).first()
+        default_analytic_rules.data = json_data
+
+        session.add(default_analytic_rules)
+        session.commit()
+        return default_analytic_rules, 201
+
 class DefaultAnalyticRulesResource(Resource):
     @marshal_with(default_analytic_rules_fields)
     def get(self, id):
