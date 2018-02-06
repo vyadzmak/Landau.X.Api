@@ -67,11 +67,11 @@ class ReportListResource(Resource):
     @marshal_with(report_fields)
     def post(self):
         try:
-            t = request
+
             json_data = request.get_json(force=True)
             json_data = json.loads(json_data)
 
-            reports = Reports(projectId=json_data["projectId"],name = json_data["name"],data =encode(json_data["data"]))
+            reports = Reports(projectId=json_data["projectId"],name = json_data["name"],analytic_rule_id=json_data["schemaId"],data =encode(json_data["data"]))
             session.add(reports)
             session.commit()
             return reports, 201

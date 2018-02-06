@@ -3,7 +3,7 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
-import modules.serializator as serializator
+import modules.json_serializator as serializator
 import json
 
 default_analytic_rules_fields = {

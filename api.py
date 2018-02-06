@@ -103,6 +103,7 @@ api.add_resource(AnalyticRulesListResource,'/analyticsRules', endpoint='analytic
 
 api.add_resource(ClientAnalyticRulesDefaultResource,'/analyticsRulesDefault/<int:id>',endpoint ='analyticRulesDefault' )
 api.add_resource(ClientAnalyticRulesList,'/analyticsRulesClient/<int:id>',endpoint ='analyticRulesClient' )
+api.add_resource(UserClientAnalyticRulesDefaultResource,'/analyticsRulesUserClient/<int:id>',endpoint ='analyticsRulesUserClient' )
 #start application
 if __name__ == '__main__':
     #u_s.get_user_roles()

@@ -47,7 +47,8 @@ class UploadFile(Resource):
                     else:
                         # return error
                         return {}
-                tt = "python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "+str(project.id)
+
+                tt = "python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "+str(project.id)+" "+str(userId)
                 #os.system(tt)
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}

@@ -1,11 +1,11 @@
-from db_models.models import AnalyticRules
+from db_models.models import AnalyticRules,Users
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
 from sqlalchemy import and_
 import json
-import modules.serializator as serializator
+import modules.json_serializator as serializator
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -45,6 +45,28 @@ analytic_rules_fields = {
     'user_data': fields.Nested(user_fields)
 
 }
+
+
+class UserClientAnalyticRulesDefaultResource(Resource):
+    @marshal_with(analytic_rules_fields)
+    def get(self, id):
+        user_client = session.query(Users).filter(Users.id==id).first()
+
+        if not user_client:
+            abort(404, message="User Client not found")
+
+        client_id = user_client.client_id
+
+        analytic_rules = session.query(AnalyticRules).filter(and_(
+            AnalyticRules.client_id == client_id),
+            AnalyticRules.is_default == True
+        ).first()
+        #analytic_rules.data = serializator.encode(analytic_rules.data)
+        if not analytic_rules:
+            abort(404, message="Analytic Rules not found")
+        return analytic_rules
+
+
 class ClientAnalyticRulesDefaultResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):
