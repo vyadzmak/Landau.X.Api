@@ -1,4 +1,4 @@
-from db_models.models import Projects, ReportForms,Reports,Documents, ProjectAnalysisLog, ProjectAnalysis
+from db_models.models import Projects, ReportForms,Reports,Documents, ProjectAnalysisLog, ProjectAnalysis, ProjectControlLog
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -64,6 +64,7 @@ class ProjectResource(Resource):
         reportForms = session.query(ReportForms).filter(ReportForms.project_id==id).all()
         logs = session.query(ProjectAnalysisLog).filter(ProjectAnalysisLog.project_id==id).all()
         analysis = session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id==id).all()
+        control_logs = session.query(ProjectControlLog).filter(ProjectControlLog.project_id==id).all()
 
         for doc in docs:
             session.delete(doc)
@@ -83,6 +84,10 @@ class ProjectResource(Resource):
 
         for analys in analysis:
             session.delete(analys)
+            session.commit()
+
+        for log in control_logs:
+            session.delete(log)
             session.commit()
 
         project = session.query(Projects).filter(Projects.id == id).first()

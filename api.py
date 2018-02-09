@@ -100,6 +100,7 @@ api.add_resource(DefaultAnalyticRulesListResource,'/defaultAnalyticsRules', endp
 
 #default analytic rules
 api.add_resource(SimpleAnalyticRulesResource,'/simpleAnalyticsRules/<int:id>',endpoint ='simpleAnalyticRules' )
+api.add_resource(SimpleAnalyticRulesListResource,'/simpleAnalyticsRulesList',endpoint ='simpleAnalyticRulesList' )
 api.add_resource(AnalyticRulesResource,'/analyticsRules/<int:id>',endpoint ='analyticRules' )
 api.add_resource(AnalyticRulesListResource,'/analyticsRules', endpoint='analyticsRules')
 

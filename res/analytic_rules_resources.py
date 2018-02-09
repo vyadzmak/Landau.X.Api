@@ -93,6 +93,25 @@ class ClientAnalyticRulesList(Resource):
             abort(404, message="Analytic Rules not found")
         return analytic_rules
 
+
+class SimpleAnalyticRulesListResource(Resource):
+    @marshal_with(analytic_rules_fields)
+    def post(self):
+        try:
+            json_data = request.get_json(force=True)
+            json_data = json.loads(json_data)
+            json_data = json.dumps(json_data, ensure_ascii=False)
+            analytic_rule = AnalyticRules("Правила для Казахстана",
+                is_default=True,
+                client_id=2,
+                user_id=1,
+                data=json_data)
+            session.add(analytic_rule)
+            session.commit()
+            return analytic_rule, 201
+        except Exception as e:
+            abort(400, message="Error while adding record Analytic Rule")
+
 class SimpleAnalyticRulesResource(Resource):
 
 
