@@ -20,7 +20,9 @@ def convert_details_by_period(documents,month,year,type_id):
                 if (len(headers) == 0):
                     headers = rr["rows"][0]["cells"][0]["tableData"]["headers"]
                 tb = [t for t in itms if
-                      (str(t["month"]) == month and str(t["year"]) == year and str(t["typeId"]) == str(type_id))]
+                      (str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(type_id))]
+
+
                 if (len(tb) > 0):
                     result.append(tb)
 

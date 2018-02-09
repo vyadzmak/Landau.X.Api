@@ -31,7 +31,7 @@ from res.project_analysis_log_resources import *
 from res.project_analysis_resources import  *
 from res.default_analytic_rules_resources import *
 from res.analytic_rules_resources import *
-
+from res.project_control_log_resources import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -106,6 +106,13 @@ api.add_resource(AnalyticRulesListResource,'/analyticsRules', endpoint='analytic
 api.add_resource(ClientAnalyticRulesDefaultResource,'/analyticsRulesDefault/<int:id>',endpoint ='analyticRulesDefault' )
 api.add_resource(ClientAnalyticRulesList,'/analyticsRulesClient/<int:id>',endpoint ='analyticRulesClient' )
 api.add_resource(UserClientAnalyticRulesDefaultResource,'/analyticsRulesUserClient/<int:id>',endpoint ='analyticsRulesUserClient' )
+
+#control log
+
+api.add_resource(ProjectSelectControlLogResource,'/projectSelectControlLog/<int:id>', endpoint='projectSelectControlLog')
+api.add_resource(ProjectControlLogResource,'/projectControlLog/<int:id>', endpoint='projectControlLog')
+api.add_resource(ProjectControlLogListResource,'/projectControlLog', endpoint='projectsControlLog')
+
 #start application
 if __name__ == '__main__':
     #u_s.get_user_roles()
