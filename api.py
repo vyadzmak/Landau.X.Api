@@ -7,8 +7,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 #cors = CORS(app, resources={r"/login/*": {"origins": "*"}})
-CORS(app,allow_headers=[
-    "Content-Type", "Authorization", "Access-Control-Allow-Credentials","Access-Control-Expose-Headers"])
+CORS(app,
+     expose_headers = ["Access-Token","Uid"])
 
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
