@@ -32,6 +32,7 @@ from res.project_analysis_resources import  *
 from res.default_analytic_rules_resources import *
 from res.analytic_rules_resources import *
 from res.project_control_log_resources import *
+from res.export_resources import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -113,6 +114,10 @@ api.add_resource(UserClientAnalyticRulesDefaultResource,'/analyticsRulesUserClie
 api.add_resource(ProjectSelectControlLogResource,'/projectSelectControlLog/<int:id>', endpoint='projectSelectControlLog')
 api.add_resource(ProjectControlLogResource,'/projectControlLog/<int:id>', endpoint='projectControlLog')
 api.add_resource(ProjectControlLogListResource,'/projectControlLog', endpoint='projectsControlLog')
+
+
+api.add_resource(ExportDefaultAnalyticRulesResource,'/exportDefaultSchema', endpoint='exportDefaultSchema')
+api.add_resource(ExportAnalyticRulesResource,'/exportSchema/<int:id>', endpoint='exportSchema')
 
 #start application
 if __name__ == '__main__':

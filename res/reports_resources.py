@@ -1,4 +1,4 @@
-from db_models.models import Reports
+from db_models.models import Reports, Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -70,11 +70,16 @@ class ReportListResource(Resource):
 
             json_data = request.get_json(force=True)
             json_data = json.loads(json_data)
-
-            reports = Reports(projectId=json_data["projectId"],name = json_data["name"],analytic_rule_id=json_data["schemaId"],data =encode(json_data["data"]))
-            session.add(reports)
+            project_id = json_data["projectId"]
+            report = session.query(Reports).filter(Reports.project_id == project_id).first()
+            if (report==None):
+                report = Reports(projectId=json_data["projectId"], name=json_data["name"],
+                                  analytic_rule_id=json_data["schemaId"], data=encode(json_data["data"]))
+            else:
+                report.data = encode(json_data["data"])
+            session.add(report)
             session.commit()
-            return reports, 201
+            return report, 201
             #return "OK"
         except Exception as e:
             abort(400, message="Error while adding record Document")
