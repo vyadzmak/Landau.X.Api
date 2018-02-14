@@ -5,8 +5,10 @@ import os
 import werkzeug
 from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from db_models.models import Projects, Documents,Clients,Users
+from db_models.models import Projects, Documents,Clients,Users, DefaultAnalyticRules,AnalyticRules
 import uuid
+import json
+import modules.json_serializator as j_serializator
 import subprocess
 
 
@@ -23,7 +25,15 @@ class ImportDefaultAnalyticRulesResource(Resource):
                     files.append(j_file)
 
             json_file = files[0]
+            content =json_file.stream.read()
+            data = json.loads(content)
 
+            s_data = j_serializator.encode(data)
+
+            default_analytic_rule = session.query(DefaultAnalyticRules).first()
+            default_analytic_rule.data = s_data
+            session.add(default_analytic_rule)
+            session.commit()
             # for file in files:
             #     print(file.filename)
             return {"State": "OK"}
@@ -47,8 +57,15 @@ class ImportAnalyticRulesResource(Resource):
 
             json_file = files[0]
 
-            # for file in files:
-            #     print(file.filename)
+            content = json_file.stream.read()
+            data = json.loads(content)
+            name = data["name"]
+
+            s_data = j_serializator.encode(data)
+
+            analityc_rules = AnalyticRules(name,False,userId,client_id,s_data)
+            session.add(analityc_rules)
+            session.commit()
             return {"State": "OK"}
         except Exception as e:
             return {"State": "Error"}
