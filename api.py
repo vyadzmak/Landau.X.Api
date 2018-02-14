@@ -7,7 +7,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 #cors = CORS(app, resources={r"/login/*": {"origins": "*"}})
-CORS(app)
+CORS(app,allow_headers=[
+    "Content-Type", "Authorization", "Access-Control-Allow-Credentials","Access-Control-Expose-Headers"])
 
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
@@ -33,6 +34,7 @@ from res.default_analytic_rules_resources import *
 from res.analytic_rules_resources import *
 from res.project_control_log_resources import *
 from res.export_resources import *
+from res.import_resources import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -118,6 +120,11 @@ api.add_resource(ProjectControlLogListResource,'/projectControlLog', endpoint='p
 
 api.add_resource(ExportDefaultAnalyticRulesResource,'/exportDefaultSchema', endpoint='exportDefaultSchema')
 api.add_resource(ExportAnalyticRulesResource,'/exportSchema/<int:id>', endpoint='exportSchema')
+
+
+api.add_resource(ImportDefaultAnalyticRulesResource,'/importDefaultSchema', endpoint='importDefaultSchema')
+api.add_resource(ImportAnalyticRulesResource,'/importSchema', endpoint='importSchema')
+#api.add_resource(ImportAnalyticRulesResource,'/importSchema/<int:id>', endpoint='importSchema')
 
 #start application
 if __name__ == '__main__':
