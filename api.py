@@ -13,7 +13,7 @@ CORS(app, expose_headers = ["Access-Token","Uid","Content-Disposition"])
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
 app.json_encoder =json_encoder
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
 api = Api(app)
 #import resources
 from res.user_roles_resources import *
@@ -72,6 +72,7 @@ api.add_resource(ProjectResource, '/project/<int:id>', endpoint='project')
 #documents
 api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endpoint='projectDocuments')
 api.add_resource(DocumentListResource, '/documents', endpoint='documents')
+api.add_resource(BatchDocumentListResource, '/batchDocuments', endpoint='batchDocuments')
 api.add_resource(DocumentResource, '/document/<int:id>', endpoint='document')
 
 #reports

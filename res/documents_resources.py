@@ -3,7 +3,24 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
-import re
+import copy
+import zlib
+import base64
+
+def to_bytes(bytes_or_str):
+    if isinstance(bytes_or_str, str):
+        value = bytes_or_str.encode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value # Instance of bytes
+
+
+def to_str(bytes_or_str):
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -52,9 +69,9 @@ f_document_fields = {
     'file_size': fields.Float,
     'created_date': fields.DateTime,
     'document_state_id': fields.Integer,
-    'document_state': fields.Nested(document_state_fields),
+    #'document_state': fields.Nested(document_state_fields),
     'user_id': fields.Integer,
-    'user_data': fields.Nested(user_fields),
+    #'user_data': fields.Nested(user_fields),
     'data': fields.String
 
 }
@@ -79,15 +96,48 @@ def encode(ob):
         print(str(e))
         return ""
 
+
+class BatchDocumentListResource(Resource):
+    @marshal_with(document_fields)
+    def post(self):
+        try:
+            json_data = request.get_json(force=True)
+            items = json.loads(json_data)
+
+            for item in items:
+                _id = int(item["id"])
+                document = session.query(Documents).filter(Documents.id == _id).first()
+                document.document_state_id = item["document_state_id"]
+                document.document_type_id = item["document_type_id"]
+                document.data = encode(item["data"])
+                session.add(document)
+                session.commit()
+            return {}, 201
+        except Exception as e:
+            abort(400, message="Error while adding record Document")
 class DocumentResource(Resource):
     @marshal_with(f_document_fields)
     def get(self, id):
         document ={}
-        document = session.query(Documents).filter(Documents.id == id).first()
 
+        document = session.query(Documents).filter(Documents.id == id).first()
         if not document:
             abort(404, message="Document {} doesn't exist".format(id))
-        return document
+        result_document = copy.deepcopy(document)
+
+        s_cmpstr = result_document.data
+        s_cmpstr = s_cmpstr.replace("b'", "")
+        s_cmpstr = s_cmpstr.replace("'", "")
+        b_cmpstr = to_bytes(s_cmpstr)
+        b_cmpstr = base64.b64decode(b_cmpstr)
+        dec = zlib.decompress(b_cmpstr)
+        rr = to_str(dec)
+        #result_document.document_state = document.document_state
+        result_document.data =  rr
+
+
+
+        return result_document
 
     def delete(self, id):
         document = session.query(Documents).filter(Documents.id == id).first()

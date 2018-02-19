@@ -46,6 +46,19 @@ analytic_rules_fields = {
 
 }
 
+f_analytic_rules_fields = {
+    'id': fields.Integer,
+    'name': fields.String,
+    'is_default': fields.Boolean,
+    'created_date': fields.DateTime,
+    #'data':fields.String,
+    'client_id':fields.Integer,
+    'client_data':fields.Nested(client_fields),
+    'user_id': fields.Integer,
+    'user_data': fields.Nested(user_fields)
+
+}
+
 
 class UserClientAnalyticRulesDefaultResource(Resource):
     @marshal_with(analytic_rules_fields)
@@ -86,7 +99,7 @@ class ClientAnalyticRulesDefaultResource(Resource):
 
 
 class ClientAnalyticRulesList(Resource):
-    @marshal_with(analytic_rules_fields)
+    @marshal_with(f_analytic_rules_fields)
     def get(self, id):
         analytic_rules = session.query(AnalyticRules).filter(AnalyticRules.client_id == id).all()
         if not analytic_rules:
@@ -173,7 +186,7 @@ class AnalyticRulesResource(Resource):
 
 
 class AnalyticRulesListResource(Resource):
-    @marshal_with(analytic_rules_fields)
+    @marshal_with(f_analytic_rules_fields)
     def get(self):
         analytic_rules = session.query(AnalyticRules).all()
         return analytic_rules

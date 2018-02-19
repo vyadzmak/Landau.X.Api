@@ -5,7 +5,24 @@ import models.analytic_form_model as a_f_m
 import modules.static_chart_builder as s_c_b
 from decimal import Decimal
 from re import sub
-def convert_details_by_period(documents,month,year,type_id):
+import zlib
+import base64
+
+def to_bytes(bytes_or_str):
+    if isinstance(bytes_or_str, str):
+        value = bytes_or_str.encode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value # Instance of bytes
+
+
+def to_str(bytes_or_str):
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value # Instance of str
+def convert_details_by_period(documents,month,year,type_id,analysis_type):
     try:
         result = ""
         headers = []
@@ -13,7 +30,15 @@ def convert_details_by_period(documents,month,year,type_id):
 
         for d in documents:
 
-            rr = json.loads(d.data)
+            s_cmpstr = str(d.data)
+            s_cmpstr =s_cmpstr.replace("b'","")
+            s_cmpstr =s_cmpstr.replace("'","")
+            b_cmpstr =to_bytes(s_cmpstr)
+            b_cmpstr =base64.b64decode(b_cmpstr)
+            rr = to_str(zlib.decompress(b_cmpstr))
+            f_cmpstr = rr
+            #f_cmpstr = f_cmpstr.replace("'", "")
+            rr = json.loads(f_cmpstr)
             try:
                 itms = rr["rows"][0]["cells"][0]["tableData"]["items"]
 
@@ -36,7 +61,7 @@ def convert_details_by_period(documents,month,year,type_id):
             for t in r:
                 clear_table.append(t)
         form = a_f_m.AForm()
-        if (str(type_id).startswith('2')):
+        if (str(type_id).startswith('2') and analysis_type==1):
             #################################################
             form.add_row("Графики")
             row = form.get_last_row()

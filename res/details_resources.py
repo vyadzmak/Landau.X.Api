@@ -33,18 +33,24 @@ class CellDetailsListResource(Resource):
             analytical = json_data["analytical"]
             analytical_type = json_data["analytical_type"]
             period = json_data["period"]
+            #получаем тип анализа по карточкам=0 по ОСВ =1
+
+            analysis_type =json_data["analysis_type"]
+            selection_document_id=2
+
+            if (analytical==False and analysis_type==0):
+                selection_document_id=1
+
             if (analytical==False):
-                d_id = 2
-                if (doc_type==3):
-                    d_id =1
+
 
 
                 docs =session.query(Documents).filter(and_(
                     Documents.project_id==project_id,
-                    Documents.document_type_id==d_id)
+                    Documents.document_type_id==selection_document_id)
 
                 ).all()
-                model = details_converter.convert_details_by_period(docs,month,year,type_id)
+                model = details_converter.convert_details_by_period(docs,month,year,type_id,analysis_type)
 
 
                 # form = r_m.FormModel(headers,result,d_id)
