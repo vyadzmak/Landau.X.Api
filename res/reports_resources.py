@@ -72,8 +72,14 @@ class ReportListResource(Resource):
             json_data = json.loads(json_data)
             project_id = json_data["projectId"]
             report = session.query(Reports).filter(Reports.project_id == project_id).first()
+
+            project_name = json_data["name"]
+
+            if (len(project_name)>30):
+                project_name = project_name[:30]
+                project_name+="..."
             if (report==None):
-                report = Reports(projectId=json_data["projectId"], name=json_data["name"],
+                report = Reports(projectId=json_data["projectId"], name=project_name,
                                   analytic_rule_id=json_data["schemaId"], data=encode(json_data["data"]))
             else:
                 report.data = encode(json_data["data"])

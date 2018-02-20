@@ -10,7 +10,12 @@ import uuid
 import json
 import modules.json_serializator as j_serializator
 import subprocess
-
+def to_str(bytes_or_str):
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value
 
 class ImportDefaultAnalyticRulesResource(Resource):
     def post(self):
@@ -43,6 +48,7 @@ class ImportDefaultAnalyticRulesResource(Resource):
 
 class ImportAnalyticRulesResource(Resource):
     def post(self):
+        c=""
         try:
             f = request.form
             userId = f.get('userId')
@@ -58,7 +64,10 @@ class ImportAnalyticRulesResource(Resource):
             json_file = files[0]
 
             content = json_file.stream.read()
-            data = json.loads(content)
+            s_cmpstr= to_str(content)
+            # s_cmpstr = s_cmpstr.replace("b'", "")
+            # s_cmpstr = s_cmpstr.replace("'", "")
+            data = json.loads(s_cmpstr)
             name = data["name"]
 
             s_data = j_serializator.encode(data)
@@ -68,4 +77,5 @@ class ImportAnalyticRulesResource(Resource):
             session.commit()
             return {"State": "OK"}
         except Exception as e:
-            return {"State": "Error"}
+            s ="Error: "+ str(e)
+            return {"State": s+"; content: "+c}

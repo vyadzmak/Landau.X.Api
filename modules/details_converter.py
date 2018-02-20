@@ -7,7 +7,7 @@ from decimal import Decimal
 from re import sub
 import zlib
 import base64
-
+import copy
 def to_bytes(bytes_or_str):
     if isinstance(bytes_or_str, str):
         value = bytes_or_str.encode() # uses 'utf-8' for encoding
@@ -30,8 +30,12 @@ def convert_details_by_period(documents,month,year,type_id,analysis_type):
 
         for d in documents:
 
-            s_cmpstr = str(d.data)
-            s_cmpstr =s_cmpstr.replace("b'","")
+            s_cmpstr = copy.deepcopy(d.data)
+            bc = s_cmpstr.count("b'")
+
+            s_cmpstr =s_cmpstr.replace("b'","",1)
+            qc = s_cmpstr.count("'")
+
             s_cmpstr =s_cmpstr.replace("'","")
             b_cmpstr =to_bytes(s_cmpstr)
             b_cmpstr =base64.b64decode(b_cmpstr)
@@ -61,7 +65,7 @@ def convert_details_by_period(documents,month,year,type_id,analysis_type):
             for t in r:
                 clear_table.append(t)
         form = a_f_m.AForm()
-        if (str(type_id).startswith('2') and analysis_type==1):
+        if (str(type_id).startswith('2') and str(analysis_type)=='1'):
             #################################################
             form.add_row("Графики")
             row = form.get_last_row()

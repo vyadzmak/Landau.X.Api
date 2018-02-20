@@ -41,6 +41,11 @@ class CellDetailsListResource(Resource):
             if (analytical==False and analysis_type==0):
                 selection_document_id=1
 
+            if (analytical==False and analysis_type==1):
+                selection_document_id=2
+
+            if (doc_type==3):
+                selection_document_id=1
             if (analytical==False):
 
 

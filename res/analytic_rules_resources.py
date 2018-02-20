@@ -79,7 +79,12 @@ class UserClientAnalyticRulesDefaultResource(Resource):
             abort(404, message="Analytic Rules not found")
         return analytic_rules
 
-
+def to_str(bytes_or_str):
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode() # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value
 class ClientAnalyticRulesDefaultResource(Resource):
     @marshal_with(analytic_rules_fields)
     def get(self, id):

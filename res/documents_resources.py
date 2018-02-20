@@ -126,7 +126,7 @@ class DocumentResource(Resource):
         result_document = copy.deepcopy(document)
 
         s_cmpstr = result_document.data
-        s_cmpstr = s_cmpstr.replace("b'", "")
+        s_cmpstr = s_cmpstr.replace("b'", "",1)
         s_cmpstr = s_cmpstr.replace("'", "")
         b_cmpstr = to_bytes(s_cmpstr)
         b_cmpstr = base64.b64decode(b_cmpstr)
