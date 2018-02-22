@@ -66,12 +66,19 @@ class UserResource(Resource):
 
         json_data = request.get_json(force=True)
         user = session.query(Users).filter(Users.id == id).first()
-        user.first_name = json_data['name']
-        user.last_name = json_data["registration_number"]
+        user.first_name = json_data['first_name']
+        user.last_name = json_data['last_name']
+        user.registration_number = json_data["registration_number"]
         user.lock_state = json_data["lock_state"]
         user.client_id = json_data["client_id"]
         user.user_role_id = json_data["user_role_id"]
+
         session.add(user)
+
+        user_login = session.query(UserLogins).filter(UserLogins.user_id==id).first()
+
+
+
         session.commit()
         return user, 201
 

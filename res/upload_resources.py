@@ -8,12 +8,15 @@ from werkzeug.utils import secure_filename
 from db_models.models import Projects,Documents
 import uuid
 import subprocess
+from pathlib import Path
 UPLOAD_FOLDER = 'd:\\uploads'
 ALLOWED_EXTENSIONS = set(['xls','xlsx'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def generate_file_name():
+    pass
 class UploadFile(Resource):
     def post(self):
         try:
@@ -30,13 +33,23 @@ class UploadFile(Resource):
                     for j_file in f_list:
                         files.append(j_file)
                 #files= request.files.getlist("file[]")
+                dir_id = str(uuid.uuid4().hex)
+                project_folder = os.path.join(UPLOAD_FOLDER, dir_id)
                 for file in files:
-                    print(file.filename)
+
+
+                    if not os.path.exists(project_folder):
+                        os.makedirs(project_folder)
                     if file and allowed_file(file.filename):
                         # From flask uploading tutorial
-                        filename =str(secure_filename(file.filename)).lower()
-                        sec_name =(str(uuid.uuid1()))+'.'+filename
-                        file_path = os.path.join(UPLOAD_FOLDER,sec_name)
+                        filename =file.filename #str(secure_filename(file.filename)).lower()
+                        v = Path(filename)
+                        short_name = Path(filename).stem
+                        extension =  Path(filename).suffix
+                        file_id =str(uuid.uuid4().hex)
+                        result_file_name = short_name+"_"+file_id+extension
+                        print("Save to "+result_file_name)
+                        file_path = os.path.join(project_folder,result_file_name)
                         file.save(file_path)
                         file_size = os.path.getsize(file_path)
                         document = Documents(project.id,userId,file.filename,file_path,file_size)
