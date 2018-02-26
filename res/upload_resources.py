@@ -7,10 +7,13 @@ from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from db_models.models import Projects,Documents
 import uuid
+
 import subprocess
 from pathlib import Path
-UPLOAD_FOLDER = 'd:\\uploads'
-ALLOWED_EXTENSIONS = set(['xls','xlsx'])
+from settings import ENGINE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
+
+#UPLOAD_FOLDER = 'd:\\uploads'
+#ALLOWED_EXTENSIONS = set(['xls','xlsx'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -61,9 +64,11 @@ class UploadFile(Resource):
                         # return error
                         return {}
 
-                tt = "python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "+str(project.id)+" "+str(userId)
+                #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
+                tt = ENGINE_PATH+str(project.id)+" "+str(userId)
                 #os.system(tt)
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}
         except Exception as e:
             return {"State":"Error"}
+
