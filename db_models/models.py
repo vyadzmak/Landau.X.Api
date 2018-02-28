@@ -240,6 +240,13 @@ class AnalyticRules(Base):
         self.created_date = datetime.datetime.now()
         self.data = data
 
+class ConsolidateDataParams(Base):
+    __tablename__ = 'consolidate_data_params'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    def __init__(self,data):
+        self.data = data
+
 
 class ProjectControlLog(Base):
     __tablename__ = 'project_control_log'
@@ -250,7 +257,16 @@ class ProjectControlLog(Base):
         self.project_id = projectId
         self.data = data
 
-        
+class TransferCellsParams(Base):
+    __tablename__ = 'transfer_cells_params'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    def __init__(self,projectId, data):
+        self.project_id = projectId
+        self.data = data
+
+
 if __name__ == "__main__":
     from sqlalchemy import create_engine
     from settings import DB_URI

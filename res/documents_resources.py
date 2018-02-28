@@ -134,9 +134,6 @@ class DocumentResource(Resource):
         rr = to_str(dec)
         #result_document.document_state = document.document_state
         result_document.data =  rr
-
-
-
         return result_document
 
     def delete(self, id):

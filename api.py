@@ -35,8 +35,9 @@ from res.analytic_rules_resources import *
 from res.project_control_log_resources import *
 from res.export_resources import *
 from res.import_resources import *
-
-
+from res.consolidate_data_resources import *
+from res.transfer_cells_resources import *
+from res.analytic_rule_elements_resource import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -115,20 +116,33 @@ api.add_resource(ClientAnalyticRulesList,'/analyticsRulesClient/<int:id>',endpoi
 api.add_resource(UserClientAnalyticRulesDefaultResource,'/analyticsRulesUserClient/<int:id>',endpoint ='analyticsRulesUserClient' )
 
 #control log
-
 api.add_resource(ProjectSelectControlLogResource,'/projectSelectControlLog/<int:id>', endpoint='projectSelectControlLog')
 api.add_resource(ProjectControlLogResource,'/projectControlLog/<int:id>', endpoint='projectControlLog')
 api.add_resource(ProjectControlLogListResource,'/projectControlLog', endpoint='projectsControlLog')
 
-
+#export analytic rules
 api.add_resource(ExportDefaultAnalyticRulesResource,'/exportDefaultSchema', endpoint='exportDefaultSchema')
 api.add_resource(ExportAnalyticRulesResource,'/exportSchema/<int:id>', endpoint='exportSchema')
 
-
+#import analytic rules
 api.add_resource(ImportDefaultAnalyticRulesResource,'/importDefaultSchema', endpoint='importDefaultSchema')
 api.add_resource(ImportAnalyticRulesResource,'/importSchema', endpoint='importSchema')
-#api.add_resource(ImportAnalyticRulesResource,'/importSchema/<int:id>', endpoint='importSchema')
 api.add_resource(ExportProjectsResource,'/exportProject/<int:id>', endpoint='exportProject')
+
+
+#consolidation
+api.add_resource(ConsolidateDataResource,'/consolidateDataParams/<int:id>', endpoint='consolidateDataParam')
+api.add_resource(ConsolidateDataListResource,'/consolidateDataParams', endpoint='consolidateDataParams')
+api.add_resource(MakeConsolidateResource,'/makeConsolidateData', endpoint='makeConsolidateData')
+
+#transfer cells
+api.add_resource(TransferCellsResource,'/transferCells/<int:id>', endpoint='transferCell')
+api.add_resource(TransferCellsListResource,'/transferCells', endpoint='transferCells')
+api.add_resource(MakeTransferCellsResource,'/makeTransferCells', endpoint='makeTransferCells')
+
+#analytic rule elements
+api.add_resource(AnalyticRuleElementsResource,'/getAnalyticRuleElements', endpoint='analyticRuleElements')
+
 
 #start application
 if __name__ == '__main__':
