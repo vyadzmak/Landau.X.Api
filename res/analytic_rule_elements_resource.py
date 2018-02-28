@@ -4,10 +4,14 @@ from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import and_
 import json
+import modules.analytic_rules_parser as a_r_parser
 user_login_fields = {
     'id': fields.Integer,
     'data':fields.String
 }
+
+
+
 class AnalyticRuleElementsResource(Resource):
     #@marshal_with(user_login_fields)
     def post(self):
@@ -28,6 +32,6 @@ class AnalyticRuleElementsResource(Resource):
             if analytic_rule is None:
                 abort(403, message="Analytic Rule doesn't exist")
             #ЗДЕСЬ НЕ НАДО ОБРАЩАТЛ ВНИМАНИЯ НА ТО ЧТО ВОЗВРАЩАЕТСЯ
-            return analytic_rule
+            return a_r_parser.parse_analytic_rules(sheet_id,analytic_rule.data)
         except Exception as e:
             abort(400, message="Error Auth")
