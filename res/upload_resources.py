@@ -65,7 +65,7 @@ class UploadFile(Resource):
                         return {}
 
                 #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
-                tt = ENGINE_PATH+str(project.id)+" "+str(userId)
+                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"
                 #os.system(tt)
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}
