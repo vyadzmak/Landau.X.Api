@@ -56,7 +56,7 @@ class ConsolidateDataListResource(Resource):
 
             json_data = request.get_json(force=True)
             #json_data = json.loads(json_data)
-            report = ConsolidateDataParams(data=encode(json_data["data"]))
+            report = ConsolidateDataParams(data=encode(json_data))
             session.add(report)
             session.commit()
             return report, 201
