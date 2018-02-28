@@ -56,7 +56,7 @@ class TransferCellsListResource(Resource):
         try:
 
             json_data = request.get_json(force=True)
-            json_data = json.loads(json_data)
+            #json_data = json.loads(json_data)
             transfer_cell_params = TransferCellsParams(projectId=json_data["projectId"],data=encode(json_data["data"]))
             session.add(transfer_cell_params)
             session.commit()

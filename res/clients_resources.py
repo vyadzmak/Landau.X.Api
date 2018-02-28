@@ -34,7 +34,17 @@ class ClientResource(Resource):
         client = session.query(Clients).filter(Clients.id == id).first()
         if not client:
             abort(404, message="Client type {} doesn't exist".format(id))
+
+        client_id = client.client_type_id
+
+        #userlogins
+        #users
+
+
+
         session.delete(client)
+
+
         session.commit()
         return {}, 204
 
