@@ -35,6 +35,8 @@ from res.analytic_rules_resources import *
 from res.project_control_log_resources import *
 from res.export_resources import *
 from res.import_resources import *
+
+
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -126,6 +128,7 @@ api.add_resource(ExportAnalyticRulesResource,'/exportSchema/<int:id>', endpoint=
 api.add_resource(ImportDefaultAnalyticRulesResource,'/importDefaultSchema', endpoint='importDefaultSchema')
 api.add_resource(ImportAnalyticRulesResource,'/importSchema', endpoint='importSchema')
 #api.add_resource(ImportAnalyticRulesResource,'/importSchema/<int:id>', endpoint='importSchema')
+api.add_resource(ExportProjectsResource,'/exportProject/<int:id>', endpoint='exportProject')
 
 #start application
 if __name__ == '__main__':
