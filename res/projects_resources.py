@@ -129,6 +129,7 @@ class ProjectListResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
+            json_data= json.loads(json_data)
             project = Projects(userId=json_data["user_id"])
             session.add(project)
             session.commit()
