@@ -1,9 +1,11 @@
-from db_models.models import ConsolidateDataParams
+from db_models.models import ConsolidateDataParams,Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
-
+import subprocess
+from pathlib import Path
+from settings import ENGINE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
 import jsonpickle
 def encode(ob):
     try:
@@ -27,11 +29,17 @@ class MakeConsolidateResource(Resource):
         try:
 
             json_data = request.get_json(force=True)
-            json_data = json.loads(json_data)
+            #json_data = json.loads(json_data)
             transfer_cell_id = json_data["id"]
-
+            params = session.query(ConsolidateDataParams).filter(ConsolidateDataParams.id==transfer_cell_id).first()
+            data= json.loads(params.data)
+            p_id = data["project_ids"][0]
+            project = session.query(Projects).filter(Projects.id==p_id).first()
+            user_id =project.user_id
             #здесь запускаем движок и консолидацию
-
+            tt = ENGINE_PATH + str(-1) + " " + str(user_id) + " 2 "+str(transfer_cell_id)
+            # os.system(tt)
+            subprocess.Popen(tt, shell=True)
             return {"State": "OK"}
         except Exception as e:
             return {"State": "Error"}

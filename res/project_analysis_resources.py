@@ -1,4 +1,4 @@
-from db_models.models import ProjectAnalysis
+from db_models.models import ProjectAnalysis,ReportForms
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -23,6 +23,24 @@ def encode(ob):
         print(str(e))
         return ""
 
+class ProjectAnalysisRemover(Resource):
+    def delete(self, id):
+        analysis = session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id == id).all()
+        for analys in analysis:
+            session.delete(analys)
+            session.commit()
+
+        reports = session.query(ReportForms).filter(ReportForms.project_id==id).all()
+
+        for report in reports:
+            session.delete(report)
+            session.commit()
+
+        # if not analysis:
+        #     abort(404, message="Document {} doesn't exist".format(id))
+        # session.delete(analysis)
+        # session.commit()
+        return {}, 204
 
 class ProjectSelectAnalysisResource(Resource):
     @marshal_with(project_analysis_fields)

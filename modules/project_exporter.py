@@ -12,8 +12,11 @@ import datetime
 def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
     # replace spaces
     for r in replace:
+
         filename = filename.replace(r, '_')
 
+    filename = filename.replace('(','')
+    filename = filename.replace(')','')
     # keep only valid ascii chars
     cleaned_filename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore').decode()
 

@@ -106,12 +106,21 @@ class BatchDocumentListResource(Resource):
 
             for item in items:
                 _id = int(item["id"])
-                document = session.query(Documents).filter(Documents.id == _id).first()
-                document.document_state_id = item["document_state_id"]
-                document.document_type_id = item["document_type_id"]
-                document.data = encode(item["data"])
-                session.add(document)
-                session.commit()
+                if (_id!=-1):
+                    document = session.query(Documents).filter(Documents.id == _id).first()
+                    document.document_state_id = item["document_state_id"]
+                    document.document_type_id = item["document_type_id"]
+                    document.data = encode(item["data"])
+                    session.add(document)
+                    session.commit()
+                else:
+                    document = Documents(item["project_id"], item["user_id"], item["file_name"], item["file_path"], item["file_size"])
+                    document.document_state_id = item["document_state_id"]
+                    document.document_type_id = item["document_type_id"]
+                    document.data = encode(item["data"])
+                    session.add(document)
+                    session.commit()
+                    pass
             return {}, 201
         except Exception as e:
             abort(400, message="Error while adding record Document")

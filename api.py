@@ -99,6 +99,7 @@ api.add_resource(ProjectAnalysisLogListResource,'/projectAnalysisLogs', endpoint
 api.add_resource(ProjectSelectAnalysisResource,'/projectSelectAnalysis/<int:id>', endpoint='projectSelectAnalysis')
 api.add_resource(ProjectAnalysisResource,'/projectAnalysis/<int:id>', endpoint='projectAnalysis')
 api.add_resource(ProjectAnalysisListResource,'/projectAnalysis', endpoint='projectsAnalysis')
+api.add_resource(ProjectAnalysisRemover,'/projectCleanData/<int:id>', endpoint='projectCleanData')
 
 #default analytic rules
 api.add_resource(SimpleDefaultAnalyticRulesResource,'/simpleDefaultAnalyticsRules/<int:id>',endpoint ='simpleDefaultAnalyticRules' )

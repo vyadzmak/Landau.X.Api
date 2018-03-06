@@ -1,9 +1,11 @@
-from db_models.models import TransferCellsParams
+from db_models.models import TransferCellsParams,Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
-
+import subprocess
+from pathlib import Path
+from settings import ENGINE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
 import jsonpickle
 def encode(ob):
     try:
@@ -27,11 +29,21 @@ class MakeTransferCellsResource(Resource):
         try:
 
             json_data = request.get_json(force=True)
-            json_data = json.loads(json_data)
+            #json_data = json.loads(json_data)
             transfer_cell_id = json_data["id"]
-
+            user_id =-1
+            params = session.query(TransferCellsParams).filter(TransferCellsParams.id == transfer_cell_id).first()
+            project_id =params.project_id
+            project = session.query(Projects).filter(Projects.id == project_id).first()
+            project.state_id=2
+            session.add(project)
+            session.commit()
+            user_id = project.user_id
             #здесь запускаем движок и переброску
-
+            # здесь запускаем движок и консолидацию
+            tt = ENGINE_PATH + str(project_id) + " " + str(user_id) + " 1 " + str(transfer_cell_id)
+            # os.system(tt)
+            subprocess.Popen(tt, shell=True)
             return {"State": "OK"}
         except Exception as e:
             return {"State": "Error"}
