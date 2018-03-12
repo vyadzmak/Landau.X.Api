@@ -55,7 +55,7 @@ class CellDetailsListResource(Resource):
                     Documents.document_type_id==selection_document_id)
 
                 ).all()
-                model = details_converter.convert_details_by_period(docs,month,year,type_id,analysis_type)
+                model = details_converter.convert_details_by_period(docs,month,year,type_id,analysis_type,project_id)
 
 
                 # form = r_m.FormModel(headers,result,d_id)

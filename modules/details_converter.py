@@ -8,6 +8,15 @@ from re import sub
 import zlib
 import base64
 import copy
+
+from db_models.models import Users,Clients,AnalyticRules,Projects
+from db.db import session
+from flask import Flask, jsonify, request
+from flask_restful import Resource, fields, marshal_with, abort, reqparse
+import json
+import result_models.res_model as r_m
+from sqlalchemy import and_
+
 def to_bytes(bytes_or_str):
     if isinstance(bytes_or_str, str):
         value = bytes_or_str.encode() # uses 'utf-8' for encoding
@@ -22,11 +31,92 @@ def to_str(bytes_or_str):
     else:
         value = bytes_or_str
     return value # Instance of str
-def convert_details_by_period(documents,month,year,type_id,analysis_type):
+
+def check_if_formula(type_id):
+    try:
+        f_letter = str(type_id)[0]
+        if (f_letter=='2'):
+            n = int(type_id)
+            if (n>=250):
+                return True
+            t=0
+
+        if (f_letter == '3'):
+            n = int(type_id)
+            if (n >= 350):
+                return True
+            t = 0
+        return False
+        pass
+    except:
+        return False
+        pass
+
+def get_formula_elements(project_id,type_id,analysis_type):
+    try:
+        types = []
+        project = session.query(Projects).filter(Projects.id==int(project_id)).first()
+        if (project==None):
+            return []
+
+        user_id = project.user_id
+
+
+        user_client = session.query(Users).filter(Users.id == user_id).first()
+
+        if not user_client:
+                return []
+        client_id = user_client.client_id
+
+        analytic_rules = session.query(AnalyticRules).filter(and_(
+            AnalyticRules.client_id == client_id),
+            AnalyticRules.is_default == True
+        ).first()
+        model = json.loads(analytic_rules.data)
+
+        if (str(type_id).startswith('2') and str(analysis_type)=='1'):
+            #build to OSV
+            pass
+        else:
+            if (str(type_id).startswith('2')):
+                formulas = model["opiu_rules"]["card_rules"]["cards_formulas"]["opiu_cards_formulas"]
+                for f in formulas:
+                    if (f["code"]==type_id):
+                        for element in f["formula_elements"]:
+                           types.append(element['code'])
+                        et=0
+                y=0
+                pass
+
+            if (str(type_id).startswith('3')):
+                formulas = model["odds_rules"]["odds_formulas"]["odds_formulas"]
+                for f in formulas:
+                    if (f["code"]==type_id):
+                        for element in f["formula_elements"]:
+                           types.append(element['code'])
+                        et=0
+                y=0
+                pass
+
+        t =0
+        return types
+        pass
+    except Exception as e:
+        return []
+
+def convert_details_by_period(documents,month,year,type_id,analysis_type,project_id):
     try:
         result = ""
         headers = []
         result = []
+        is_formula = check_if_formula(type_id)
+        clear_table = []
+        types = []
+        if (is_formula==False):
+            types.append(type_id)
+        else:
+            types = get_formula_elements(project_id,type_id,analysis_type)
+
 
         for d in documents:
 
@@ -45,25 +135,28 @@ def convert_details_by_period(documents,month,year,type_id,analysis_type):
             rr = json.loads(f_cmpstr)
             try:
                 itms = rr["rows"][0]["cells"][0]["tableData"]["items"]
-
                 if (len(headers) == 0):
                     headers = rr["rows"][0]["cells"][0]["tableData"]["headers"]
-                tb = [t for t in itms if
-                      (str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(type_id))]
+                tb=[]
+                for tp in types:
+
+                    tb = [t for t in itms if
+                          (str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(tp))]
 
 
-                if (len(tb) > 0):
-                    result.append(tb)
+                    if (len(tb) > 0):
+                        result.append(tb)
 
             #genearate form
 
             except Exception as e:
                 t = 0
 
-        clear_table = []
+
         for r in result:
             for t in r:
                 clear_table.append(t)
+
         form = a_f_m.AForm()
         if (str(type_id).startswith('2') and str(analysis_type)=='1'):
             #################################################
@@ -107,6 +200,10 @@ def convert_details_by_period(documents,month,year,type_id,analysis_type):
         table.headers = headers
 
         table.init_model(clear_table)
+        # if (len(table.items)==0):
+        #     #check is formula
+        #     build_formula_details(table,rr)
+
         row = form.get_last_row()
         row.add_cell(table)
 
