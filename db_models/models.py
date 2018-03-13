@@ -253,6 +253,7 @@ class ProjectControlLog(Base):
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
+    control_log_data = relationship("Projects", backref="control_log_data")
     def __init__(self,projectId, data):
         self.project_id = projectId
         self.data = data

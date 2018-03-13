@@ -7,7 +7,7 @@ from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from db_models.models import Projects,Documents
 import uuid
-
+import re
 import subprocess
 from pathlib import Path
 from settings import ENGINE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
@@ -48,6 +48,10 @@ class UploadFile(Resource):
                         filename =file.filename #str(secure_filename(file.filename)).lower()
                         v = Path(filename)
                         short_name = Path(filename).stem
+
+
+                        short_name = re.sub(r'[\\/*?:"<>|]', "", short_name)
+
                         extension =  Path(filename).suffix
                         file_id =str(uuid.uuid4().hex)
                         result_file_name = short_name+"_"+file_id+extension
