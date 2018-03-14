@@ -46,7 +46,7 @@ project_fields = {
     'project_state': fields.Nested(project_state_fields),
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
-    'control_log_data': fields.Nested(project_control_log_fields)
+    'control_log_state_id': fields.Integer
 }
 
 class UserProjectList(Resource):

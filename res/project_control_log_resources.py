@@ -1,7 +1,8 @@
-from db_models.models import ProjectControlLog
+from db_models.models import ProjectControlLog, Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+
 import json
 
 project_control_log_fields = {
@@ -75,7 +76,15 @@ class ProjectControlLogListResource(Resource):
 
             reports = ProjectControlLog(projectId=json_data["projectId"],
                                   data=encode(json_data["data"]))
+
+
             session.add(reports)
+            project =session.query(Projects).filter(Projects.id==json_data["projectId"]).first()
+            if (project!=None):
+                project.control_log_state_id =json_data["state_id"]
+                session.add(project)
+                session.commit()
+
             session.commit()
             return reports, 201
             # return "OK"

@@ -124,12 +124,13 @@ class Projects(Base):
     creation_date = Column(DateTime)
     state_id = Column('state_id', ForeignKey('project_states.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
-
+    control_log_state_id = Column(Integer)
     def __init__(self, userId):
         self.creation_date = datetime.datetime.now()
         self.name = "Заявка "+str(self.creation_date)
         self.state_id=1
         self.user_id =userId
+        self.control_log_state_id =1
 
 #document states
 class DocumentStates(Base):
