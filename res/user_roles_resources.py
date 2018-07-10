@@ -2,6 +2,7 @@ from db_models.models import UserRoles
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort,reqparse
+import modules.log_helper_module as log_module
 
 user_role_fields = {
     'id': fields.Integer,
@@ -49,4 +50,6 @@ class UserRoleListResource(Resource):
             session.commit()
             return user_role, 201
         except Exception as e:
+            log_module.add_log("Add user error. " + str(e))
+            session.rollback()
             abort(400, message="Error in adding User Role")

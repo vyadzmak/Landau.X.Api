@@ -1,3 +1,9 @@
+import os,sys
+
+#MODULE WITH "CONSTANTS" DO NOT CHANGE ANYTHING
+ROOT_DIR =os.path.dirname(os.path.realpath(sys.argv[0]))
+
+print("ROOT ="+ROOT_DIR)
 #connection string
 DB_URI = 'postgresql://postgres:12345678@localhost/landau'
 #upload folder

@@ -3,6 +3,8 @@ from db_models.models import AnalyticRules, Clients, Users, UserLogins, Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
+import modules.log_helper_module as log_module
+
 import base64
 user_login_fields = {
     'id': fields.Integer,
@@ -164,4 +166,6 @@ class UserListResource(Resource):
             session.commit()
             return user, 201
         except Exception as e:
+            log_module.add_log("Add user error. "+str(e))
+            session.rollback()
             abort(400, message="Error while adding record User")

@@ -6,6 +6,7 @@ from sqlalchemy import and_
 import base64
 import  copy
 import datetime
+import modules.log_helper_module as log_module
 
 user_role_fields = {
     'name': fields.String,
@@ -59,8 +60,8 @@ class UserAuthResource(Resource):
             session.commit()
             return user_login
         except Exception as e:
-
-
+            log_module.add_log("User Auth error. " + str(e))
+            session.rollback()
             abort(400, message="Error Auth")
 
 
@@ -116,4 +117,6 @@ class UserLoginListResource(Resource):
             session.commit()
             return user_login, 201
         except Exception as e:
+            log_module.add_log("User Login error. " + str(e))
+            session.rollback()
             abort(400, message="Error while adding record User Login")

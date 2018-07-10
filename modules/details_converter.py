@@ -166,10 +166,10 @@ def convert_details_by_period(documents, month, year, type_id, analysis_type, pr
         for r in result:
             for t in r:
                 clear_table.append(t)
-
-        for p in clear_table:
-            p["period"] =  datetime.datetime.strptime(p["period"], '%d.%m.%Y').date()
-        clear_table.sort(key=lambda x: x["period"], reverse=False)
+        if (analysis_type!='1' and str(type_id).startswith('2')==False):
+            for p in clear_table:
+                p["period"] =  datetime.datetime.strptime(p["period"], '%d.%m.%Y').date()
+            clear_table.sort(key=lambda x: x["period"], reverse=False)
         form = a_f_m.AForm()
         if (str(type_id).startswith('2') and str(analysis_type) == '1'):
             #################################################

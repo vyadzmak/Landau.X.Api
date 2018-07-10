@@ -38,6 +38,7 @@ from res.import_resources import *
 from res.consolidate_data_resources import *
 from res.transfer_cells_resources import *
 from res.analytic_rule_elements_resource import *
+from res.ssl_confirmation_resource import *
 #add resources
 #user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -145,6 +146,7 @@ api.add_resource(MakeTransferCellsResource,'/makeTransferCells', endpoint='makeT
 api.add_resource(AnalyticRuleElementsResource,'/getAnalyticRuleElements', endpoint='analyticRuleElements')
 
 
+api.add_resource(SSLConfirmationResource,'/.well-known/acme-challenge/<path:file>', endpoint='SSL-confirmation')
 #start application
 if __name__ == '__main__':
     #u_s.get_user_roles()
