@@ -33,6 +33,7 @@ from res.project_analysis_resources import  *
 from res.default_analytic_rules_resources import *
 from res.analytic_rules_resources import *
 from res.project_control_log_resources import *
+from res.project_sharing_resources import *
 from res.export_resources import *
 from res.import_resources import *
 from res.consolidate_data_resources import *
@@ -121,6 +122,10 @@ api.add_resource(UserClientAnalyticRulesDefaultResource,'/analyticsRulesUserClie
 api.add_resource(ProjectSelectControlLogResource,'/projectSelectControlLog/<int:id>', endpoint='projectSelectControlLog')
 api.add_resource(ProjectControlLogResource,'/projectControlLog/<int:id>', endpoint='projectControlLog')
 api.add_resource(ProjectControlLogListResource,'/projectControlLog', endpoint='projectsControlLog')
+
+#project_sharing
+api.add_resource(ProjectSharingListResource, '/projectSharings', endpoint='projectSharings')
+api.add_resource(ProjectSharingResource, '/projectSharing/<int:id>', endpoint='projectSharing')
 
 #export analytic rules
 api.add_resource(ExportDefaultAnalyticRulesResource,'/exportDefaultSchema', endpoint='exportDefaultSchema')

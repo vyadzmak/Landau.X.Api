@@ -1,10 +1,12 @@
-from db_models.models import Projects, ReportForms,Reports,Documents, ProjectAnalysisLog, ProjectAnalysis, ProjectControlLog,TransferCellsParams
+from db_models.models import Projects, ReportForms, Reports, Documents, ProjectAnalysisLog, ProjectAnalysis, \
+    ProjectControlLog, TransferCellsParams, ProjectSharing
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
 # from socketIO_client import SocketIO, LoggingNamespace
 import json
+
 user_role_fields = {
     'name': fields.String,
     'id': fields.Integer
@@ -49,13 +51,19 @@ project_fields = {
     'control_log_state_id': fields.Integer
 }
 
+
 class UserProjectList(Resource):
     @marshal_with(project_fields)
     def get(self, id):
-        projects = session.query(Projects).filter(Projects.user_id == id).all()
+        user_projects = session.query(Projects).filter(Projects.user_id == id)
+        shared_projects = session.query(Projects) \
+            .join(ProjectSharing, Projects.id == ProjectSharing.project_id) \
+            .filter(ProjectSharing.users_ids.any(id))
+        projects = user_projects.union(shared_projects).distinct().all()
         if not projects:
             abort(404, message="Projects not found")
         return projects
+
 
 class ProjectResource(Resource):
     @marshal_with(project_fields)
@@ -66,13 +74,13 @@ class ProjectResource(Resource):
         return project
 
     def delete(self, id):
-        docs = session.query(Documents).filter(Documents.project_id==id).all()
-        reports = session.query(Reports).filter(Reports.project_id==id).all()
-        reportForms = session.query(ReportForms).filter(ReportForms.project_id==id).all()
-        logs = session.query(ProjectAnalysisLog).filter(ProjectAnalysisLog.project_id==id).all()
-        analysis = session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id==id).all()
-        control_logs = session.query(ProjectControlLog).filter(ProjectControlLog.project_id==id).all()
-        transfer_cells_params = session.query(TransferCellsParams).filter(TransferCellsParams.project_id==id).all()
+        docs = session.query(Documents).filter(Documents.project_id == id).all()
+        reports = session.query(Reports).filter(Reports.project_id == id).all()
+        reportForms = session.query(ReportForms).filter(ReportForms.project_id == id).all()
+        logs = session.query(ProjectAnalysisLog).filter(ProjectAnalysisLog.project_id == id).all()
+        analysis = session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id == id).all()
+        control_logs = session.query(ProjectControlLog).filter(ProjectControlLog.project_id == id).all()
+        transfer_cells_params = session.query(TransferCellsParams).filter(TransferCellsParams.project_id == id).all()
 
         for doc in docs:
             session.delete(doc)
@@ -116,9 +124,9 @@ class ProjectResource(Resource):
         json_data = request.get_json(force=True)
         json_data = json.loads(json_data)
         project = session.query(Projects).filter(Projects.id == id).first()
-        #project.user_id = json_data['user_id']
+        # project.user_id = json_data['user_id']
         project.state_id = json_data["state_id"]
-        if (json_data["name"]!=""):
+        if (json_data["name"] != ""):
             project.name = json_data["name"]
 
         session.add(project)
@@ -143,11 +151,10 @@ class ProjectListResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            json_data= json.loads(json_data)
+            json_data = json.loads(json_data)
             project = Projects(userId=json_data["user_id"])
             session.add(project)
             session.commit()
             return project, 201
         except Exception as e:
             abort(400, message="Error while adding record Project")
-

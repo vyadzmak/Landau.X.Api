@@ -6,12 +6,13 @@ from sqlalchemy import Date
 from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, ForeignKey, String, Column, JSON
+from sqlalchemy import Integer, ForeignKey, String, Column, JSON, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import datetime
 
 Base = declarative_base()
+
 
 # user table
 class Log(Base):
@@ -70,11 +71,12 @@ class UserLogins(Base):
     user_id = Column('user_id', ForeignKey('users.id'))
     user_login_data = relationship("Users", backref="login_data")
 
-    def __init__(self,login,password,user_id):
+    def __init__(self, login, password, user_id):
         self.login = login
         self.password = password
         self.user_id = user_id
         self.registration_date = datetime.datetime.now()
+
     pass
 
 
@@ -105,6 +107,7 @@ class Clients(Base):
         self.client_type_id = client_type_id
         self.registration_date = datetime.datetime.now()
 
+
 # user roles
 # user roles
 class ProjectStates(Base):
@@ -117,6 +120,17 @@ class ProjectStates(Base):
         self.name = name
 
 
+class ProjectSharing(Base):
+    __tablename__ = 'project_sharing'
+    id = Column(Integer, primary_key=True)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    users_ids = Column(ARRAY(Integer))
+
+    def __init__(self, project_id, users_ids):
+        self.project_id = project_id
+        self.users_ids = users_ids
+
+
 class Projects(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
@@ -125,14 +139,18 @@ class Projects(Base):
     state_id = Column('state_id', ForeignKey('project_states.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
     control_log_state_id = Column(Integer)
+
     def __init__(self, userId):
         self.creation_date = datetime.datetime.now()
-        self.name = "Заявка "+str(self.creation_date)
-        self.state_id=1
-        self.user_id =userId
-        self.control_log_state_id =1
+        self.name = "Заявка " + str(self.creation_date)
+        self.state_id = 1
+        self.user_id = userId
+        self.control_log_state_id = 1
 
-#document states
+    sharing = relationship("ProjectSharing", backref="project")
+
+
+# document states
 class DocumentStates(Base):
     __tablename__ = 'document_states'
     id = Column(Integer, primary_key=True)
@@ -142,7 +160,8 @@ class DocumentStates(Base):
     def __init__(self, name):
         self.name = name
 
-#documents
+
+# documents
 class Documents(Base):
     __tablename__ = 'documents'
     id = Column(Integer, primary_key=True)
@@ -152,21 +171,22 @@ class Documents(Base):
     created_date = Column(DateTime)
     data = Column(JSON)
     document_type_id = Column(Integer)
-    document_state_id = Column('document_state_id',ForeignKey('document_states.id'))
+    document_state_id = Column('document_state_id', ForeignKey('document_states.id'))
 
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
-    def __init__(self,projectId, userId,file_name,file_path,file_size):
+    def __init__(self, projectId, userId, file_name, file_path, file_size):
         self.created_date = datetime.datetime.now()
         self.user_id = userId
         self.project_id = projectId
         self.file_name = file_name
         self.file_path = file_path
         self.file_size = file_size
-        self.document_state_id=1
+        self.document_state_id = 1
 
-#reports
+
+# reports
 class Reports(Base):
     __tablename__ = 'reports'
     id = Column(Integer, primary_key=True)
@@ -175,77 +195,86 @@ class Reports(Base):
     project_id = Column('project_id', ForeignKey('projects.id'))
     analytic_rule_id = Column('analytic_rule_id', ForeignKey('analytic_rules.id'))
 
-    def __init__(self,projectId, name,data,analytic_rule_id):
+    def __init__(self, projectId, name, data, analytic_rule_id):
         self.project_id = projectId
-        self.name =name
-        self.data= data
+        self.name = name
+        self.data = data
         self.analytic_rule_id = analytic_rule_id
 
-#report forms
+
+# report forms
 class ReportForms(Base):
     __tablename__ = 'report_forms'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
-    element_number =Column(Integer)
+    element_number = Column(Integer)
     period = Column(DateTime)
-    def __init__(self,projectId,elementNumber,period, data):
+
+    def __init__(self, projectId, elementNumber, period, data):
         self.project_id = projectId
         self.element_number = elementNumber
-        t =datetime.datetime.strptime(period, "%Y-%m-%d %H:%M:%S")
+        t = datetime.datetime.strptime(period, "%Y-%m-%d %H:%M:%S")
         self.period = t
         self.data = data
+
 
 class ProjectAnalysisLog(Base):
     __tablename__ = 'project_analysis_log'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
-    def __init__(self,projectId, data):
+
+    def __init__(self, projectId, data):
         self.project_id = projectId
         self.data = data
+
 
 class ProjectAnalysis(Base):
     __tablename__ = 'project_analysis'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
-    def __init__(self,projectId, data):
+
+    def __init__(self, projectId, data):
         self.project_id = projectId
         self.data = data
+
 
 class DefaultAnalyticRules(Base):
     __tablename__ = 'default_analytic_rules'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
 
-    def __init__(self,data):
+    def __init__(self, data):
         self.data = data
+
 
 class AnalyticRules(Base):
     __tablename__ = 'analytic_rules'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    is_default =Column(Boolean)
+    is_default = Column(Boolean)
     user_id = Column('user_id', ForeignKey('users.id'))
     client_id = Column('client_id', ForeignKey('clients.id'))
     created_date = Column(DateTime)
     data = Column(JSON)
 
-
-    def __init__(self,name,is_default, user_id,client_id,data):
-        self.name =name
+    def __init__(self, name, is_default, user_id, client_id, data):
+        self.name = name
         self.is_default = is_default
         self.user_id = user_id
         self.client_id = client_id
         self.created_date = datetime.datetime.now()
         self.data = data
 
+
 class ConsolidateDataParams(Base):
     __tablename__ = 'consolidate_data_params'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
-    def __init__(self,data):
+
+    def __init__(self, data):
         self.data = data
 
 
@@ -255,16 +284,19 @@ class ProjectControlLog(Base):
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
     control_log_data = relationship("Projects", backref="control_log_data")
-    def __init__(self,projectId, data):
+
+    def __init__(self, projectId, data):
         self.project_id = projectId
         self.data = data
+
 
 class TransferCellsParams(Base):
     __tablename__ = 'transfer_cells_params'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
     project_id = Column('project_id', ForeignKey('projects.id'))
-    def __init__(self,projectId, data):
+
+    def __init__(self, projectId, data):
         self.project_id = projectId
         self.data = data
 
