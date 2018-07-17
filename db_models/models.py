@@ -39,6 +39,8 @@ class Users(Base):
     user_project_data = relationship("Projects", backref="user_data")
     user_documents_data = relationship("Documents", backref="user_data")
     analytic_rules_data = relationship("AnalyticRules", backref="user_data")
+    chat_data = relationship("Chats", backref="user_data")
+    chat_message_data = relationship("ChatMessages", backref="user_data")
 
     def __init__(self, first_name, last_name, lock_state, client_id, user_role_id):
         self.first_name = first_name
@@ -139,6 +141,8 @@ class Projects(Base):
     state_id = Column('state_id', ForeignKey('project_states.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
     control_log_state_id = Column(Integer)
+    chat_data = relationship("Chats", backref="project_data")
+    sharing = relationship("ProjectSharing", backref="project")
 
     def __init__(self, userId):
         self.creation_date = datetime.datetime.now()
@@ -146,8 +150,6 @@ class Projects(Base):
         self.state_id = 1
         self.user_id = userId
         self.control_log_state_id = 1
-
-    sharing = relationship("ProjectSharing", backref="project")
 
 
 # document states
@@ -299,6 +301,42 @@ class TransferCellsParams(Base):
     def __init__(self, projectId, data):
         self.project_id = projectId
         self.data = data
+
+
+class Chats(Base):
+    __tablename__ = 'chats'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(70))
+    user_ids = Column(ARRAY(Integer))
+    creator_id = Column('creator_id', ForeignKey('users.id'))
+    is_open = Column(Boolean)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    messages = relationship("ChatMessages", backref="chat_data")
+
+    def __init__(self, name, creator_id, project_id, user_ids=[]):
+        self.name = name
+        self.creator_id = creator_id
+        self.project_id = project_id
+        self.user_ids = user_ids
+
+
+class ChatMessages(Base):
+    __tablename__ = 'chat_messages'
+    id = Column(Integer, primary_key=True)
+    content = Column(String(5000))
+    users_read = Column(ARRAY(Integer))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    chat_id = Column('chat_id', ForeignKey('chats.id'))
+    type = Column(Integer)
+    creation_date = Column(DateTime)
+
+    def __init__(self, content, user_id, chat_id, type=1, users_read=[]):
+        self.content = content
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.type = type
+        self.users_read = users_read
+        self.creation_date = datetime.datetime.now()
 
 
 if __name__ == "__main__":
