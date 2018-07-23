@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
 # from socketIO_client import SocketIO, LoggingNamespace
+#  import settings as app_settings
 import json
 
 user_role_fields = {
@@ -132,7 +133,7 @@ class ProjectResource(Resource):
         session.add(project)
         session.commit()
         # try:
-        #     with SocketIO('localhost', 8000, LoggingNamespace) as socketIO:
+        #     with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
         #         socketIO.emit('project_updated', str(project.user_id))
         #         socketIO.wait(seconds=0)
         # except Exception as e:

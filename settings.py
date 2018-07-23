@@ -16,3 +16,5 @@ ALLOWED_EXTENSIONS = set(['xls','xlsx'])
 ENGINE_PATH ="python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
 
 EXPORT_FOLDER = "d:\\exports"
+
+SOCKET_URL = 'localhost'

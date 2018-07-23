@@ -13,34 +13,49 @@ parser = reqparse.RequestParser()
 class ClientTypeResource(Resource):
     @marshal_with(client_type_fields)
     def get(self, id):
-        client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
-        if not client_type:
-            abort(404, message="Client type {} doesn't exist".format(id))
-        return client_type
+        try:
+            client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
+            if not client_type:
+                abort(404, message="Client type {} doesn't exist".format(id))
+            return client_type
+        except Exception as e:
+            session.rollback()
+            abort(400, message="Error while getting record Client Type")
 
     def delete(self, id):
-        client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
-        if not client_type:
-            abort(404, message="Client type {} doesn't exist".format(id))
-        session.delete(client_type)
-        session.commit()
-        return {}, 204
+        try:
+            client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
+            if not client_type:
+                abort(404, message="Client type {} doesn't exist".format(id))
+            session.delete(client_type)
+            session.commit()
+            return {}, 204
+        except Exception as e:
+            session.rollback()
+            abort(400, message="Error while deleting record Client Type")
 
     @marshal_with(client_type_fields)
     def put(self, id):
-
-        json_data = request.get_json(force=True)
-        client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
-        client_type.name = json_data['name']
-        session.add(client_type)
-        session.commit()
-        return client_type, 201
+        try:
+            json_data = request.get_json(force=True)
+            client_type = session.query(ClientTypes).filter(ClientTypes.id == id).first()
+            client_type.name = json_data['name']
+            session.add(client_type)
+            session.commit()
+            return client_type, 201
+        except Exception as e:
+            session.rollback()
+            abort(400, message="Error while updating record Client Type")
 
 class ClientTypeListResource(Resource):
     @marshal_with(client_type_fields)
     def get(self):
-        client_types = session.query(ClientTypes).all()
-        return client_types
+        try:
+            client_types = session.query(ClientTypes).all()
+            return client_types
+        except Exception as e:
+            session.rollback()
+            abort(400, message="Error while getting records Client Type")
 
     @marshal_with(client_type_fields)
     def post(self):
@@ -51,4 +66,5 @@ class ClientTypeListResource(Resource):
             session.commit()
             return client_type, 201
         except Exception as e:
+            session.rollback()
             abort(400, message="Error while adding record Client Type")

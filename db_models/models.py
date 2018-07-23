@@ -339,6 +339,48 @@ class ChatMessages(Base):
         self.creation_date = datetime.datetime.now()
 
 
+# project_attachment_types
+class ProjectAttachmentTypes(Base):
+    __tablename__ = 'project_attachment_types'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256))
+    system_name = Column(String(256))
+    filename_extensions = Column(ARRAY(String))
+    icon = Column(String(256))
+    attachments = relationship("ProjectAttachments", backref="type_data")
+
+    def __init__(self, name, system_name, filename_extensions, icon):
+        self.created_date = datetime.datetime.now()
+        self.name = name
+        self.system_name = system_name
+        self.filename_extensions = filename_extensions
+        self.icon = icon
+
+
+# project_attachments
+class ProjectAttachments(Base):
+    __tablename__ = 'project_attachments'
+    id = Column(Integer, primary_key=True)
+    file_name = Column(String(256))
+    file_path = Column(String(256))
+    file_size = Column(Float)
+    creation_date = Column(DateTime)
+
+    type_id = Column('type_id', ForeignKey('project_attachment_types.id'))
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+
+    def __init__(self, project_id, user_id, file_name, file_path, file_size, type_id):
+        self.created_date = datetime.datetime.now()
+        self.user_id = user_id
+        self.project_id = project_id
+        self.file_name = file_name
+        self.file_path = file_path
+        self.file_size = file_size
+        self.type_id = type_id
+
+
+
 if __name__ == "__main__":
     from sqlalchemy import create_engine
     from settings import DB_URI

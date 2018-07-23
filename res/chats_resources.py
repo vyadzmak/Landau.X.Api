@@ -3,6 +3,7 @@ from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import or_, func
+from sqlalchemy.orm import Load
 import modules.log_helper_module as log_module
 
 user_fields = {
@@ -46,7 +47,8 @@ chat_fields = {
 class ChatResource(Resource):
     @marshal_with(chat_fields)
     def get(self, id):
-        chat = session.query(Chats).filter(Chats.id == id).first()
+        chat = session.query(Chats) \
+            .filter(Chats.id == id).first()
         chat.users = session.query(Users).filter(Users.id.in_(chat.user_ids)).all()
         if not chat:
             abort(404, message="Chat {} doesn't exist".format(id))

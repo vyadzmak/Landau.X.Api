@@ -4,7 +4,9 @@ from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from sqlalchemy import or_, func
 from socketIO_client import SocketIO, LoggingNamespace
+import settings as app_settings
 import modules.log_helper_module as log_module
+import concurrent
 
 message_fields = {
     'id': fields.Integer,
@@ -78,13 +80,23 @@ class ChatMessageListResource(Resource):
             session.add(message)
             session.commit()
             try:
-                with SocketIO('localhost', 8000, LoggingNamespace) as socketIO:
+                with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
                     socketIO.emit('new_message', marshal(message, message_fields))
                     socketIO.wait(seconds=0)
             except Exception as e:
                 log_module.add_log("Add chat message error. " + str(e))
             finally:
                 return message, 201
+            # with concurrent.futures.ThreadPoolExecutor(max_workers=2):
+            #     try:
+            #         with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
+            #             socketIO.emit('new_message', marshal(message, message_fields))
+            #             socketIO.wait(seconds=0)
+            #     except Exception as e:
+            #         log_module.add_log("Add chat message error. " + str(e))
+            #
+            # return message, 201
+
         except Exception as e:
             log_module.add_log("Add chat message error. " + str(e))
             session.rollback()
