@@ -42,6 +42,8 @@ from res.analytic_rule_elements_resource import *
 from res.ssl_confirmation_resource import *
 from res.chats_resources import *
 from res.chat_messages_resources import *
+from res.project_attachment_types_resources import *
+from res.project_attachments_resources import *
 
 # add resources
 # user roles
@@ -82,6 +84,8 @@ api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endp
 api.add_resource(DocumentListResource, '/documents', endpoint='documents')
 api.add_resource(BatchDocumentListResource, '/batchDocuments', endpoint='batchDocuments')
 api.add_resource(DocumentResource, '/document/<int:id>', endpoint='document')
+api.add_resource(ExcludeDocumentListResource, '/excludeDocuments', endpoint='excludeDocuments')
+api.add_resource(UploadAdditionalFile, '/uploadAdditional', endpoint='uploadAdditional')
 
 # reports
 api.add_resource(ProjectReportResource, '/projectReport/<int:id>', endpoint='projectReport')
@@ -165,6 +169,15 @@ api.add_resource(ChatMessageResource, '/chatMessages/<int:id>', endpoint='chatMe
 api.add_resource(ChatMessageUnreadResource, '/unreadMessages', endpoint='unreadMessages')
 
 api.add_resource(SSLConfirmationResource, '/.well-known/acme-challenge/<path:file>', endpoint='SSL-confirmation')
+
+# project_attachments
+api.add_resource(ProjectAttachmentListResource, '/projectAttachments', endpoint='projectAttachments')
+api.add_resource(ProjectAttachmentResource, '/projectAttachments/<int:id>', endpoint='projectAttachment')
+api.add_resource(ExportProjectAttachmentResource, '/exportProjectAttachment/<int:id>', endpoint='exportProjectAttachment')
+
+# project_attachment_types
+api.add_resource(ProjectAttachmentTypeListResource, '/projectAttachmentTypes', endpoint='projectAttachmentTypes')
+api.add_resource(ProjectAttachmentTypeResource, '/projectAttachmentTypes/<int:id>', endpoint='projectAttachmentType')
 
 # start application
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 from db_models.models import Projects, ReportForms, Reports, Documents, ProjectAnalysisLog, ProjectAnalysis, \
-    ProjectControlLog, TransferCellsParams, ProjectSharing
+    ProjectControlLog, TransferCellsParams, ProjectSharing, ProjectAttachments, Chats, ChatMessages
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -75,40 +75,32 @@ class ProjectResource(Resource):
         return project
 
     def delete(self, id):
-        docs = session.query(Documents).filter(Documents.project_id == id).all()
-        reports = session.query(Reports).filter(Reports.project_id == id).all()
-        reportForms = session.query(ReportForms).filter(ReportForms.project_id == id).all()
-        logs = session.query(ProjectAnalysisLog).filter(ProjectAnalysisLog.project_id == id).all()
-        analysis = session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id == id).all()
-        control_logs = session.query(ProjectControlLog).filter(ProjectControlLog.project_id == id).all()
-        transfer_cells_params = session.query(TransferCellsParams).filter(TransferCellsParams.project_id == id).all()
+        session.query(Documents).filter(Documents.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(Reports).filter(Reports.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(ReportForms).filter(ReportForms.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(ProjectAnalysisLog).filter(ProjectAnalysisLog.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(ProjectAnalysis).filter(ProjectAnalysis.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(ProjectControlLog).filter(ProjectControlLog.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(TransferCellsParams).filter(TransferCellsParams.project_id == id).delete(
+            synchronize_session=False)
+        session.commit()
+        session.query(ProjectSharing).filter(ProjectSharing.project_id == id).delete(synchronize_session=False)
+        session.commit()
+        session.query(ProjectAttachments).filter(ProjectAttachments.project_id == id).delete(synchronize_session=False)
+        session.commit()
 
-        for doc in docs:
-            session.delete(doc)
-            session.commit()
-
-        for report in reports:
-            session.delete(report)
-            session.commit()
-
-        for report_form in reportForms:
-            session.delete(report_form)
-            session.commit()
-
-        for log in logs:
-            session.delete(log)
-            session.commit()
-
-        for analys in analysis:
-            session.delete(analys)
-            session.commit()
-
-        for log in control_logs:
-            session.delete(log)
-            session.commit()
-
-        for transfer_cell in transfer_cells_params:
-            session.delete(transfer_cell)
+        chats = session.query(Chats).filter(Chats.project_id == id).all()
+        chat_ids = [x.id for x in chats]
+        session.query(ChatMessages).filter(ChatMessages.chat_id.in_(chat_ids)).delete(synchronize_session=False)
+        session.commit()
+        for chat in chats:
+            session.delete(chat)
             session.commit()
 
         project = session.query(Projects).filter(Projects.id == id).first()
