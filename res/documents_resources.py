@@ -58,7 +58,8 @@ document_fields = {
     'document_state': fields.Nested(document_state_fields),
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
-
+    'account_number': fields.String,
+    'is_excluded': fields.Boolean
 
 }
 

@@ -17,4 +17,6 @@ ENGINE_PATH ="python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
 
 EXPORT_FOLDER = "d:\\exports"
 
+TEMP_FOLDER ="d:\\temp_folder"
+
 SOCKET_URL = 'localhost'

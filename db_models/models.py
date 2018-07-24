@@ -174,9 +174,11 @@ class Documents(Base):
     data = Column(JSON)
     document_type_id = Column(Integer)
     document_state_id = Column('document_state_id', ForeignKey('document_states.id'))
-
+    account_number = Column(String(800))
+    is_excluded = Column(Boolean)
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
+
 
     def __init__(self, projectId, userId, file_name, file_path, file_size):
         self.created_date = datetime.datetime.now()
@@ -186,7 +188,7 @@ class Documents(Base):
         self.file_path = file_path
         self.file_size = file_size
         self.document_state_id = 1
-
+        self.is_excluded = False
 
 # reports
 class Reports(Base):
