@@ -9,7 +9,7 @@ import  urllib.parse as urllib
 import modules.project_exporter as project_exporter
 import modules.documents_exporter as documents_exporter
 from settings import ATTACHMENTS_FOLDER
-
+from sqlalchemy import and_
 
 class ExportDefaultAnalyticRulesResource(Resource):
 
@@ -63,7 +63,7 @@ class ExportDocumentsResource(Resource):
 
     def get(self,id):
         try:
-            documents = session.query(Documents).filter(Documents.project_id==id).all()
+            documents = session.query(Documents).filter(and_(Documents.project_id==id, Documents.document_state_id==3git ) ).all()
 
             if not documents:
                 abort(404, message="Documents {} doesn't exist".format(id))
