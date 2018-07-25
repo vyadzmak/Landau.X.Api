@@ -24,7 +24,8 @@ import zlib
 import base64
 import copy
 import json
-
+import zipfile
+import shutil
 
 def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
     # replace spaces
@@ -66,21 +67,37 @@ def convert_document(data):
 
         for header in headers:
             titles.append(header["text"])
-            names.append(header["value"])
+            if (header["value"]!='indicators'):
+                names.append(header["value"])
+
+        index =0
+        r_index =-1
+        for title in titles:
+            if (title=='*' and index==0):
+                titles[index] ='Наименование'
+
+            if (title == '*' and index > 0):
+                r_index=index
+                break
+
+            index+=1
+        if (r_index!=-1):
+            titles.remove(titles[r_index])
 
         export_rows = []
 
         for row in rows:
             _row = []
             for name in names:
-                value = row[name]
+                if (name in row):
+                    value = row[name]
 
-                if (name=='valueDebet' or name=='valueCredit'):
-                    # pass
-                    value = value.replace(',','')
-                    # value = value.replace('.',',')
+                    if (name=='valueDebet' or name=='valueCredit'):
+                        # pass
+                        value = value.replace(',','')
+                        # value = value.replace('.',',')
 
-                _row.append(value)
+                    _row.append(value)
 
             export_rows.append(_row)
         result_rows = []
@@ -140,6 +157,11 @@ def export_single_document(document):
         if (not document):
             return None
 
+        dir_id = str(uuid.uuid4().hex)
+        project_folder = os.path.join(EXPORT_FOLDER, dir_id)
+        if not os.path.exists(project_folder):
+            os.makedirs(project_folder)
+
         s_cmpstr = copy.deepcopy(document.data)
         bc = s_cmpstr.count("b'")
 
@@ -156,10 +178,7 @@ def export_single_document(document):
 
         names,converted_data_rows = convert_document(data)
 
-        dir_id = str(uuid.uuid4().hex)
-        project_folder = os.path.join(EXPORT_FOLDER, dir_id)
-        if not os.path.exists(project_folder):
-            os.makedirs(project_folder)
+
 
         project_name = str(document.file_name).replace('"', ' ')
         project_name = translit(project_name, 'ru', reversed=True)
@@ -194,6 +213,17 @@ def export_single_document(document):
     except Exception as e:
         pass
 
+def make_archive(source, destination):
+        base = os.path.basename(destination)
+        name = base.split('.')[0]
+        format = base.split('.')[1]
+        archive_from = os.path.dirname(source)
+        archive_to = os.path.basename(source.strip(os.sep))
+        shutil.make_archive(name, format, archive_from, archive_to)
+        shutil.move('%s.%s' % (name, format), destination)
+
+
+
 
 def export_documents(documents):
     try:
@@ -201,7 +231,59 @@ def export_documents(documents):
         if (not documents):
             return None
 
-        # return project_folder, file_name + ".xlsx"
+        dir_id = str(uuid.uuid4().hex)
+        project_folder = os.path.join(EXPORT_FOLDER, dir_id)
+        if not os.path.exists(project_folder):
+            os.makedirs(project_folder)
+
+        for document in documents:
+            s_cmpstr = copy.deepcopy(document.data)
+            bc = s_cmpstr.count("b'")
+
+            s_cmpstr = s_cmpstr.replace("b'", "", 1)
+            qc = s_cmpstr.count("'")
+
+            s_cmpstr = s_cmpstr.replace("'", "")
+            b_cmpstr = to_bytes(s_cmpstr)
+            b_cmpstr = base64.b64decode(b_cmpstr)
+            rr = to_str(zlib.decompress(b_cmpstr))
+            f_cmpstr = rr
+            # f_cmpstr = f_cmpstr.replace("'", "")
+            data = json.loads(f_cmpstr)
+
+            names, converted_data_rows = convert_document(data)
+
+            project_name = str(document.file_name).replace('"', ' ')
+            project_name = translit(project_name, 'ru', reversed=True)
+
+            dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            dt = str(dt).replace('-', '')
+            project_name = project_name + "_" + str(dt)
+
+            file_name = clean_filename(project_name)
+            file_name = file_name.replace('__', "_")
+            file_path = os.path.join(project_folder, file_name + ".xlsx")
+
+            if (len(file_path) > 255):
+                file_path = os.path.join(project_folder, dir_id + ".xlsx")
+
+            workbook = xlsxwriter.Workbook(file_path)
+            sheet_name = 'Landau Data'
+            worksheet = workbook.add_worksheet(sheet_name)
+            widths = formatter.get_column_widths(converted_data_rows)
+            formatter.generate_worksheet_styles(workbook, worksheet, names)
+            index = 0
+            for width in widths:
+                worksheet.set_column(index, index, width)
+                index += 1
+
+            export_cells(worksheet, converted_data_rows)
+            workbook.close()
+
+        zip_name = project_folder+'.zip'
+        make_archive(project_folder, zip_name)
+
+        return EXPORT_FOLDER, str(dir_id) + ".zip"
         pass
     except Exception as e:
         pass

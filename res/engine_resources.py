@@ -9,7 +9,7 @@ class ProjectRecalculationResource(Resource):
         try:
             json_data = request.get_json(force=True)
 
-            tt = ENGINE_PATH+str(json_data["project_id"])+" "+str(json_data["user_id"])+" 0 -3"
+            tt = ENGINE_PATH+str(json_data["project_id"])+" "+str(json_data["user_id"])+" 3 -1"
 
             subprocess.Popen(tt, shell=True)
             return {"State":"OK"}, 200

@@ -1,4 +1,4 @@
-from db_models.models import Documents
+from db_models.models import Documents,Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
