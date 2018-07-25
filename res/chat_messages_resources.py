@@ -79,14 +79,14 @@ class ChatMessageListResource(Resource):
                                    users_read)
             session.add(message)
             session.commit()
-            try:
-                with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
-                    socketIO.emit('new_message', marshal(message, message_fields))
-                    socketIO.wait(seconds=0)
-            except Exception as e:
-                log_module.add_log("Add chat message error. " + str(e))
-            finally:
-                return message, 201
+            # try:
+            #     with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
+            #         socketIO.emit('new_message', marshal(message, message_fields))
+            #         socketIO.wait(seconds=0)
+            # except Exception as e:
+            #     log_module.add_log("Add chat message error. " + str(e))
+            # finally:
+            #     return message, 201
             # with concurrent.futures.ThreadPoolExecutor(max_workers=2):
             #     try:
             #         with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace) as socketIO:
@@ -95,7 +95,7 @@ class ChatMessageListResource(Resource):
             #     except Exception as e:
             #         log_module.add_log("Add chat message error. " + str(e))
             #
-            # return message, 201
+            return message, 201
 
         except Exception as e:
             log_module.add_log("Add chat message error. " + str(e))
