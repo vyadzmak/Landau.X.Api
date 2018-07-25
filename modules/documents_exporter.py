@@ -214,13 +214,14 @@ def export_single_document(document):
         pass
 
 def make_archive(source, destination):
-        base = os.path.basename(destination)
-        name = base.split('.')[0]
-        format = base.split('.')[1]
-        archive_from = os.path.dirname(source)
-        archive_to = os.path.basename(source.strip(os.sep))
-        shutil.make_archive(name, format, archive_from, archive_to)
-        shutil.move('%s.%s' % (name, format), destination)
+        try:
+            zip_loc = source
+            zip_dest = destination
+            shutil.make_archive(base_dir=zip_loc, root_dir=zip_loc, format='zip', base_name=zip_dest)
+        except Exception as e:
+            pass
+
+
 
 
 
@@ -280,7 +281,7 @@ def export_documents(documents):
             export_cells(worksheet, converted_data_rows)
             workbook.close()
 
-        zip_name = project_folder+'.zip'
+        zip_name = project_folder
         make_archive(project_folder, zip_name)
 
         return EXPORT_FOLDER, str(dir_id) + ".zip"
