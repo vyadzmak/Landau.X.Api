@@ -44,6 +44,7 @@ from res.chats_resources import *
 from res.chat_messages_resources import *
 from res.project_attachment_types_resources import *
 from res.project_attachments_resources import *
+from res.engine_resources import *
 
 # add resources
 # user roles
@@ -178,6 +179,9 @@ api.add_resource(ExportProjectAttachmentResource, '/exportProjectAttachment/<int
 # project_attachment_types
 api.add_resource(ProjectAttachmentTypeListResource, '/projectAttachmentTypes', endpoint='projectAttachmentTypes')
 api.add_resource(ProjectAttachmentTypeResource, '/projectAttachmentTypes/<int:id>', endpoint='projectAttachmentType')
+
+# engine
+api.add_resource(ProjectRecalculationResource, '/projectRecalculation', endpoint='projectRecalculation')
 
 # start application
 if __name__ == '__main__':
