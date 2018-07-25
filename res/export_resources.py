@@ -63,7 +63,7 @@ class ExportDocumentsResource(Resource):
 
     def get(self,id):
         try:
-            documents = session.query(Documents).filter(and_(Documents.project_id==id, Documents.document_state_id==3git ) ).all()
+            documents = session.query(Documents).filter(and_(Documents.project_id==id, Documents.document_state_id==3) ).all()
 
             if not documents:
                 abort(404, message="Documents {} doesn't exist".format(id))
