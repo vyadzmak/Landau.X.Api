@@ -8,6 +8,8 @@ print("ROOT ="+ROOT_DIR)
 DB_URI = 'postgresql://postgres:12345678@localhost/landau'
 #upload folder
 UPLOAD_FOLDER = 'd:\\uploads'
+#attachments folder
+ATTACHMENTS_FOLDER = 'd:\\attachments'
 
 #allowed extensions
 ALLOWED_EXTENSIONS = set(['xls','xlsx'])

@@ -41,6 +41,7 @@ class Users(Base):
     analytic_rules_data = relationship("AnalyticRules", backref="user_data")
     chat_data = relationship("Chats", backref="user_data")
     chat_message_data = relationship("ChatMessages", backref="user_data")
+    project_attachments_data = relationship("ProjectAttachments", backref="user_data")
 
     def __init__(self, first_name, last_name, lock_state, client_id, user_role_id):
         self.first_name = first_name
@@ -173,6 +174,8 @@ class Documents(Base):
     created_date = Column(DateTime)
     data = Column(JSON)
     document_type_id = Column(Integer)
+    account_number = Column(String(800))
+    is_excluded = Column(Boolean)
     document_state_id = Column('document_state_id', ForeignKey('document_states.id'))
     account_number = Column(String(800))
     is_excluded = Column(Boolean)
@@ -187,6 +190,7 @@ class Documents(Base):
         self.file_name = file_name
         self.file_path = file_path
         self.file_size = file_size
+        self.is_excluded = False
         self.document_state_id = 1
         self.is_excluded = False
 
@@ -367,19 +371,25 @@ class ProjectAttachments(Base):
     file_path = Column(String(256))
     file_size = Column(Float)
     creation_date = Column(DateTime)
+    text = Column(String(5000))
+    user_ids = Column(ARRAY(Integer))
+    is_removed = Column(Boolean)
 
     type_id = Column('type_id', ForeignKey('project_attachment_types.id'))
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
-    def __init__(self, project_id, user_id, file_name, file_path, file_size, type_id):
-        self.created_date = datetime.datetime.now()
+    def __init__(self, project_id, user_id, file_name, file_path, file_size, type_id, text='', user_ids=[], is_removed=False):
+        self.creation_date = datetime.datetime.now()
         self.user_id = user_id
         self.project_id = project_id
         self.file_name = file_name
         self.file_path = file_path
         self.file_size = file_size
         self.type_id = type_id
+        self.text = text
+        self.user_ids = user_ids
+        self.is_removed = is_removed
 
 
 

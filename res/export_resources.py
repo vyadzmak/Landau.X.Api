@@ -1,4 +1,4 @@
-from db_models.models import DefaultAnalyticRules, AnalyticRules,Reports, Projects,Documents
+from db_models.models import DefaultAnalyticRules, AnalyticRules,Reports, Projects,Documents,ProjectAttachments
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -8,6 +8,9 @@ from flask import Response
 import  urllib.parse as urllib
 import modules.project_exporter as project_exporter
 import modules.documents_exporter as documents_exporter
+from settings import ATTACHMENTS_FOLDER
+
+
 class ExportDefaultAnalyticRulesResource(Resource):
 
     def get(self):
@@ -34,6 +37,7 @@ class ExportAnalyticRulesResource(Resource):
         response.headers['Content-Disposition'] = cd
         response.mimetype = 'application/json'
         return response
+
 
 class ExportProjectsResource(Resource):
 
@@ -84,3 +88,27 @@ class ExportSingleDocumentResource(Resource):
             return send_from_directory(export_folder, export_path, as_attachment=True)
         except Exception as e:
             return {}
+
+class ExportProjectAttachmentResource(Resource):
+    def get(self, id):
+        try:
+            attachment = session.query(ProjectAttachments).filter(ProjectAttachments.id == id).first()
+            actual_file_name = attachment.file_path.split('\\')[-1]
+            folder_path = "\\".join(attachment.file_path.split('\\')[:-1])
+            t = attachment.file_name.encode('utf-8')
+            original_file_name = t.decode("utf-8")
+            original_file_name = urllib.quote(original_file_name)
+            return send_from_directory(folder_path, actual_file_name, attachment_filename=original_file_name, as_attachment=True)
+        except Exception as e:
+            abort(404, message="File not found")
+
+        # content = schema.data
+        # response = make_response(content)
+        # name ="Схема ("+schema.name+")"+".json"
+        # t =name.encode('utf-8')
+        # name = t.decode("utf-8")
+        # name = urllib.quote(name)
+        # cd = 'attachment; filename='+name
+        # response.headers['Content-Disposition'] = cd
+        # response.mimetype = 'application/json'
+        # return response
