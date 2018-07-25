@@ -166,6 +166,9 @@ api.add_resource(ChatMessageUnreadResource, '/unreadMessages', endpoint='unreadM
 
 api.add_resource(SSLConfirmationResource, '/.well-known/acme-challenge/<path:file>', endpoint='SSL-confirmation')
 
+api.add_resource(ExportSingleDocumentResource, '/exportSingleDocument/<int:id>', endpoint='exportSingleDocument')
+api.add_resource(ExportDocumentsResource, '/exportDocuments/<int:id>', endpoint='exportDocuments')
+
 # start application
 if __name__ == '__main__':
     # u_s.get_user_roles()
