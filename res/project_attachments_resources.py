@@ -1,4 +1,4 @@
-from db_models.models import ProjectAttachments, ProjectAttachmentTypes
+from db_models.models import ProjectAttachments, ProjectAttachmentTypes, ProjectSharing, Users
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -76,8 +76,16 @@ class ProjectAttachmentResource(Resource):
         try:
             json_data = request.get_json(force=True)
             attachment = session.query(ProjectAttachments).filter(ProjectAttachments.id == id).first()
+            user_ids = set(json_data['user_ids'])
+            if attachment is not None:
+                project_sharing = session.query(ProjectSharing).filter(ProjectSharing.project_id == attachment.project_id).first()
+                if project_sharing is not None:
+                    risks = session.query(Users).filter(Users.id.in_(project_sharing.users_ids), Users.user_role_id == 7).all()
+                    user_ids |= set(x.id for x in risks or [])
+
+
             attachment.text = json_data['text']
-            attachment.user_ids = json_data['user_ids']
+            attachment.user_ids = list(user_ids)
             session.add(attachment)
             session.commit()
             return attachment, 201
@@ -115,6 +123,15 @@ class ProjectAttachmentListResource(Resource):
             f = request.form
             user_id = f.get('userId')
             project_id = f.get('projectId')
+            user_ids = []
+            project_sharing = session.query(ProjectSharing).filter(
+                ProjectSharing.project_id == project_id).first()
+            if project_sharing is not None:
+                risks = session.query(Users).filter(Users.id.in_(project_sharing.users_ids),
+                                                    Users.user_role_id == 7).all()
+                if risks is not None:
+                    user_ids = [x.id for x in risks]
+
 
             files = []
             for t in request.files:
@@ -150,7 +167,7 @@ class ProjectAttachmentListResource(Resource):
                 type_id = allowed_file(extension, file_types)
 
                 attachment = ProjectAttachments(project_id, user_id, file_name, file_path, file_size,
-                                                type_id)
+                                                type_id, '', user_ids)
                 session.add(attachment)
                 session.commit()
                 response.append(attachment)
