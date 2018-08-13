@@ -55,6 +55,13 @@ class UploadFile(Resource):
                         extension =  Path(filename).suffix
                         file_id =str(uuid.uuid4().hex)
                         result_file_name = short_name+"_"+file_id+extension
+
+                        l_res_file_name = len(result_file_name)
+                        l_project_folder =len(project_folder)
+
+                        if (l_res_file_name+l_project_folder >250):
+                            result_file_name = file_id+extension
+
                         print("Save to "+result_file_name)
                         file_path = os.path.join(project_folder,result_file_name)
                         file.save(file_path)
@@ -74,6 +81,7 @@ class UploadFile(Resource):
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}
         except Exception as e:
+            session.rollback()
             return {"State":"Error"}
 
 
