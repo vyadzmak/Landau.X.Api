@@ -142,14 +142,14 @@ def convert_details_by_period(documents, month, year, type_id, analysis_type, pr
                 for tp in types:
 
                     tb = []
-                    if (year != 999):
+                    if (year != 999 and not str(year).startswith('777')):
                         tb = [t for t in itms if
                               (
                               str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(
                                   tp))]
                         if (len(tb) > 0):
                             result.append(tb)
-                    else:
+                    elif (year==999):
                         tb = [t for t in itms if
                               (
                                   str(t["typeId"]) == str(
@@ -157,6 +157,17 @@ def convert_details_by_period(documents, month, year, type_id, analysis_type, pr
 
                         if (len(tb) > 0):
                             result.append(tb)
+
+                    elif (str(year).startswith('777')==True):
+                        _year = int(str(year).replace('777',''))
+                        tb = [t for t in itms if
+                              (str(t["year"]) == str(_year) and str(
+                                      t["typeId"]) == str(
+                                      tp))
+                              ]
+                        if (len(tb) > 0):
+                            result.append(tb)
+
 
             # genearate form
 
