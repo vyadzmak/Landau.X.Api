@@ -14,7 +14,8 @@ class LogItems(fields.Raw):
             'success': len([x for x in json_ob if x['state_id'] == 1]),
             'warning': len([x for x in json_ob if x['state_id'] == 2]),
             'error': len([x for x in json_ob if x['state_id'] == 3]),
-            'info': len([x for x in json_ob if x['state_id'] == 4])
+            'info': len([x for x in json_ob if x['state_id'] == 4]),
+            'engine_operations': len([x for x in json_ob if x['state_id'] == 5])
         }
         return result
 
