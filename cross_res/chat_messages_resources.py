@@ -1,10 +1,11 @@
-from db_models.models import ChatMessages
+from db_models.modelsv2 import ChatMessages
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from sqlalchemy import or_, func
 import threading
 import modules.log_helper_module as log_module
+import modules.db_helper as db_helper
 import modules.socket_emitter as socket_emitter
 
 message_fields = {
@@ -19,36 +20,53 @@ message_fields = {
 
 
 class ChatMessageResource(Resource):
+    def __init__(self):
+        self.route = "/v2/chatMessages/<int:id>"
+        self.end_point = "v2-chat-messages"
+
     @marshal_with(message_fields)
     def get(self, id):
-        messages = session.query(ChatMessages).filter(ChatMessages.id == id).first()
-        if not chat:
-            abort(404, message="Chat message {} doesn't exist".format(id))
-        return messages
+        try:
+            messages = db_helper.get_item(ChatMessages, id)
+            if not messages:
+                abort(404, message="Chat message {} doesn't exist".format(id))
+            return messages
+        except Exception as e:
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
+            abort(400, message="Error while getting Chat with id:{}".format(id))
 
     def delete(self, id):
-        message = session.query(ChatMessages).filter(ChatMessages.id == id).first()
-        if not message:
-            abort(404, message="Chat message {} doesn't exist".format(id))
-        session.delete(message)
-        session.commit()
-        return {}, 204
+        try:
+            message = db_helper.delete_item(ChatMessages, id)
+            if not message:
+                abort(404, message="Chat message {} doesn't exist".format(id))
+            return {}, 204
+        except Exception as e:
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
+            abort(400, message="Error deleting chat message with id:{} doesn't exist".format(id))
 
     @marshal_with(message_fields)
     def put(self, id):
         try:
             json_data = request.get_json(force=True)
-            message = session.query(ChatMessages).filter(ChatMessages.id == id).first()
+            message = db_helper.get_item(ChatMessages, id)
+            if not message:
+                abort(404, message="Chat message {} doesn't exist".format(id))
             message.users_read = message.users_read + list(set(json_data['users_read']) - set(message.users_read))
             session.add(message)
             session.commit()
             return message, 201
         except Exception as e:
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
             session.rollback()
             abort(400, message="Error while updating record Chat message")
 
 
 class ChatMessageListResource(Resource):
+    def __init__(self):
+        self.route = "/v2/chatMessages"
+        self.end_point = "v2-chat-messages-list"
+
     @marshal_with(message_fields)
     def get(self):
         try:
@@ -66,53 +84,36 @@ class ChatMessageListResource(Resource):
             return messages
 
         except Exception as e:
-            log_module.add_log("Fetch chat messages error. " + str(e))
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
             abort(400, message="Error in fetching chat messages")
 
     @marshal_with(message_fields)
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            users_read = [json_data['user_id']]
-            message = ChatMessages(json_data['content'], json_data['user_id'], json_data['chat_id'], json_data['type'],
-                                   users_read)
-            session.add(message)
-            session.commit()
+            json_data['users_read'] = [json_data['user_id']]
+            message = db_helper.add_item(ChatMessages, json_data)
 
-            # socket_thread = threading.Thread(target=socket_emitter.emit,
-            #                                  args=('new_message', marshal(message, message_fields)))
-            # socket_thread.start()
-            # try:
-            #     with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace, wait_for_connection=False) as socketIO:
-            #         socketIO.emit('new_message', marshal(message, message_fields))
-            #         socketIO.wait(seconds=0)
-            # except Exception as e:
-            #     log_module.add_log("Add chat message error. " + str(e))
-
-            # with concurrent.futures.ThreadPoolExecutor(max_workers=2):
-            #     try:
-            #         with SocketIO(app_settings.SOCKET_URL, 8000, LoggingNamespace, wait_for_connection=False) as socketIO:
-            #             socketIO.emit('new_message', marshal(message, message_fields))
-            #             socketIO.close()
-            #     except Exception as e:
-            #         log_module.add_log("Add chat message error. " + str(e))
+            socket_thread = threading.Thread(target=socket_emitter.emit,
+                                             args=('new_message', marshal(message, message_fields)))
+            socket_thread.start()
 
             return message, 201
 
         except Exception as e:
-            log_module.add_log("Add chat message error. " + str(e))
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
             session.rollback()
             abort(400, message="Error in adding chat message")
 
 
 class ChatMessageUnreadResource(Resource):
+    def __init__(self):
+        self.route = "/v2/unreadMessages"
+        self.end_point = "v2-unread-messages"
+
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            # session.query(ChatMessages) \
-            #     .filter(ChatMessages.id.in_(json_data['unread_messages']))\
-            #     .update({ChatMessages.users_read: array_cat(ChatMessages.users_read, json_data['user_id'])})
-
             messages = session.query(ChatMessages).filter(ChatMessages.id.in_(json_data['unread_messages'])).all()
             for message in messages:
                 merged_list = list(set(message.users_read + [int(json_data['user_id'])]))
@@ -121,6 +122,6 @@ class ChatMessageUnreadResource(Resource):
                 session.commit()
             return '', 201
         except Exception as e:
-            log_module.add_log("Add chat message error. " + str(e))
+            log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))
             session.rollback()
-            abort(400, message="Error in adding chat message")
+            abort(400, message="Error in unread chat message")

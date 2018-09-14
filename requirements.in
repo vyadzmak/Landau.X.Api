@@ -1,0 +1,9 @@
+Flask
+flask-restful
+sqlalchemy
+jsonpickle
+flask_cors
+transliterate
+xlsxwriter
+psycopg2
+socketIO_client

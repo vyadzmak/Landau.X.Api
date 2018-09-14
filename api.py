@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, Api
 from json_encoder import AlchemyEncoder
 from flask_cors import CORS
+import modules.resources_initializer as resources_initializer
 
 # init application
 app = Flask(__name__)
@@ -15,7 +16,7 @@ json_encoder = AlchemyEncoder
 app.json_encoder = json_encoder
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
 api = Api(app)
-# import resources
+# import resources v1
 from res.user_roles_resources import *
 from res.client_types_resources import *
 from res.clients_resources import *
@@ -46,7 +47,7 @@ from res.project_attachment_types_resources import *
 from res.project_attachments_resources import *
 from res.engine_resources import *
 
-# add resources
+# add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
 api.add_resource(UserRoleResource, '/userRole/<int:id>', endpoint='user-role')
@@ -185,6 +186,9 @@ api.add_resource(ProjectAttachmentTypeResource, '/projectAttachmentTypes/<int:id
 
 # engine
 api.add_resource(ProjectRecalculationResource, '/projectRecalculation', endpoint='projectRecalculation')
+
+# generate routes V2
+resources_initializer.init_api_resources(api)
 
 # start application
 if __name__ == '__main__':
