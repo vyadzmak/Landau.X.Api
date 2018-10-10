@@ -24,12 +24,12 @@ class UserCreationResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            entity = db_helper.add_item(MODEL, json_data)
-            json_data['login_data']['user_id'] = entity.id
             password = json_data['login_data']['password']
             password = str(base64.b64encode(password.encode(encoding='utf-8')))
             json_data['login_data']['password'] = password
-            db_helper.add_item(UserLogins, json_data['login_data'])
+            json_data['login_data'] = [UserLogins(json_data['login_data'])]
+
+            entity = db_helper.add_item(MODEL, json_data)
             return entity, 201
         except Exception as e:
             log_module.add_log("Exception on route: {0} - {1}".format(self.route, e))

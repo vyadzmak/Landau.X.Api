@@ -51,14 +51,8 @@ OUTPUT_FIELDS = {
     'login_data': fields.Nested(user_login_fields)
 }
 
-def after_post_action(entity, json_data):
-    try:
-        json_data['login_data']['user_id'] = entity.id
-        login = add_item(UserLogins, json_data['login_data'])
-        if login is None:
-           raise Exception('Unable to add login with user_id:{}'.format(entity.id))
-    except Exception as e:
-        raise e
+def post_data_converter(json_data):
+    return json_data
 
 def after_put_action(entity, json_data):
     try:
