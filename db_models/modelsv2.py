@@ -1,12 +1,7 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Date
-from sqlalchemy import DateTime
-from sqlalchemy import Float
 from sqlalchemy import Boolean, Date, DateTime, Float, Integer, ForeignKey, \
     String, Text, Column, JSON, ARRAY, select, func, and_
-from sqlalchemy.orm import column_property, object_session, remote, foreign, aliased
+from sqlalchemy.orm import column_property, object_session, remote, foreign, aliased, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -193,6 +188,57 @@ class Reports(Base):
     project_id = Column('project_id', ForeignKey('projects.id'))
     analytic_rule_id = Column('analytic_rule_id', ForeignKey('analytic_rules.id'))
     analytic_rules_data = relationship('AnalyticRules', backref=backref('reports_data', cascade='all,delete-orphan'))
+
+    def __init__(self, *args):
+        db_transformer.transform_constructor_params(self, args)
+
+# report history
+class ReportHistory(Base):
+    __tablename__ = 'report_history'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    date = Column(DateTime, default=datetime.datetime.utcnow())
+    project_data = relationship('Projects', backref=backref('report_history_data', cascade='all,delete-orphan'))
+    user_data = relationship('Users', backref=backref('report_history_data', cascade='all,delete-orphan'))
+
+    def __init__(self, *args):
+        db_transformer.transform_constructor_params(self, args)
+
+# report audit types
+class ReportAuditTypes(Base):
+    __tablename__ = 'report_audit_types'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200), default="")
+
+    def __init__(self, *args):
+        db_transformer.transform_constructor_params(self, args)
+
+# report operations
+class ReportOperations(Base):
+    __tablename__ = 'report_operations'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), default="")
+
+    def __init__(self, *args):
+        db_transformer.transform_constructor_params(self, args)
+
+# report audit types
+class ReportAudit(Base):
+    __tablename__ = 'report_audit'
+    id = Column(Integer, primary_key=True)
+    history_id = Column('history_id', ForeignKey('report_history.id'))
+    type_id = Column('type_id', ForeignKey('report_audit_types.id'))
+    operation_id = Column('operation_id', ForeignKey('report_operations.id'))
+    is_system = Column(Boolean, default=False)
+    text = Column(String, default="")
+    report_history_data = relationship('ReportHistory',
+                                       backref=backref('report_audit_data', cascade='all,delete-orphan'))
+    report_operation_data = relationship('ReportOperations',
+                                       backref=backref('report_audit_data', cascade='all,delete-orphan'))
+    report_audit_types_data = relationship('ReportAuditTypes',
+                                       backref=backref('report_audit_data', cascade='all,delete-orphan'))
 
     def __init__(self, *args):
         db_transformer.transform_constructor_params(self, args)

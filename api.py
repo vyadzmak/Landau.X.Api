@@ -46,6 +46,8 @@ from res.chat_messages_resources import *
 from res.project_attachment_types_resources import *
 from res.project_attachments_resources import *
 from res.engine_resources import *
+from res.report_history_resources import *
+from res.report_audit_resources import *
 
 # add resources v1
 # user roles
@@ -186,6 +188,15 @@ api.add_resource(ProjectAttachmentTypeResource, '/projectAttachmentTypes/<int:id
 
 # engine
 api.add_resource(ProjectRecalculationResource, '/projectRecalculation', endpoint='projectRecalculation')
+
+# report history
+api.add_resource(ProjectReportHistoryListResource, '/projectReportHistoryList', endpoint='projectReportHistoryList')
+api.add_resource(ProjectReportHistoryResource, '/projectReportHistory/<int:id>', endpoint='projectReportHistory')
+api.add_resource(ReportHistoryListResource, '/reportHistoryList', endpoint='reportHistoryList')
+api.add_resource(ReportHistoryResource, '/reportHistory/<int:id>', endpoint='reportHistory')
+
+# report audit
+api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')
 
 # generate routes V2
 resources_initializer.init_api_resources(api)

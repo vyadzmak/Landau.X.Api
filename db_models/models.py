@@ -8,7 +8,7 @@ from sqlalchemy import Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer, ForeignKey, String, Column, JSON, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 import datetime
 
 Base = declarative_base()
@@ -182,7 +182,6 @@ class Documents(Base):
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
-
     def __init__(self, projectId, userId, file_name, file_path, file_size):
         self.created_date = datetime.datetime.now()
         self.user_id = userId
@@ -193,6 +192,7 @@ class Documents(Base):
         self.is_excluded = False
         self.document_state_id = 1
         self.is_excluded = False
+
 
 # reports
 class Reports(Base):
@@ -208,6 +208,68 @@ class Reports(Base):
         self.name = name
         self.data = data
         self.analytic_rule_id = analytic_rule_id
+
+
+# report history
+class ReportHistory(Base):
+    __tablename__ = 'report_history'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    date = Column(DateTime)
+    user_data = relationship('Users', backref=backref('report_history_data', cascade='all,delete-orphan'))
+    project_data = relationship('Projects', backref=backref('report_history_data', cascade='all,delete-orphan'))
+
+    def __init__(self, project_id, data, user_id=None):
+        self.project_id = project_id
+        self.user_id = user_id
+        self.data = data
+        self.date = datetime.datetime.now()
+
+
+# report audit types
+class ReportAuditTypes(Base):
+    __tablename__ = 'report_audit_types'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200), default="")
+
+    def __init__(self, name):
+        self.name = name
+
+
+# report operations
+class ReportOperations(Base):
+    __tablename__ = 'report_operations'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), default="")
+
+    def __init__(self, name):
+        self.name = name
+
+
+# report audit types
+class ReportAudit(Base):
+    __tablename__ = 'report_audit'
+    id = Column(Integer, primary_key=True)
+    history_id = Column('history_id', ForeignKey('report_history.id'))
+    type_id = Column('type_id', ForeignKey('report_audit_types.id'))
+    operation_id = Column('operation_id', ForeignKey('report_operations.id'))
+    is_system = Column(Boolean, default=False)
+    text = Column(String, default="")
+    report_history_data = relationship('ReportHistory',
+                                       backref=backref('report_audit_data', cascade='all,delete-orphan'))
+    type_data = relationship('ReportAuditTypes',
+                                       backref=backref('report_audit_data', cascade='all,delete-orphan'))
+    operation_data = relationship('ReportOperations',
+                             backref=backref('report_audit_data', cascade='all,delete-orphan'))
+
+    def __init__(self, history_id, type_id, operation_id, is_system, text):
+        self.history_id = history_id
+        self.type_id = type_id
+        self.operation_id = operation_id
+        self.is_system = is_system
+        self.text = text
 
 
 # report forms
@@ -379,7 +441,8 @@ class ProjectAttachments(Base):
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
-    def __init__(self, project_id, user_id, file_name, file_path, file_size, type_id, text='', user_ids=[], is_removed=False):
+    def __init__(self, project_id, user_id, file_name, file_path, file_size, type_id, text='', user_ids=[],
+                 is_removed=False):
         self.creation_date = datetime.datetime.now()
         self.user_id = user_id
         self.project_id = project_id
@@ -390,7 +453,6 @@ class ProjectAttachments(Base):
         self.text = text
         self.user_ids = user_ids
         self.is_removed = is_removed
-
 
 
 if __name__ == "__main__":

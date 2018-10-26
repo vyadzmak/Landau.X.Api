@@ -8,7 +8,7 @@ import json
 class LogItems(fields.Raw):
     def format(self, value):
         if value is None or value == '':
-            return {'success': 0, 'warning': 0, 'error': 0, 'info': 0}
+            return {'success': 0, 'warning': 0, 'error': 0, 'info': 0, 'engine_operations': 0}
         json_ob = decode(value)
         result = {
             'success': len([x for x in json_ob if x['state_id'] == 1]),

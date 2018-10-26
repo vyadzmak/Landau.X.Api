@@ -29,9 +29,11 @@ def to_str(bytes_or_str):
         value = bytes_or_str
     return value
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 user_role_fields = {
     'name': fields.String,
@@ -267,9 +269,9 @@ class UploadAdditionalFile(Resource):
                     files.append(j_file)
 
             document = session.query(Documents).filter(
-                Documents.project_id == project_id).first()
+                Documents.project_id == project_id, Documents.file_path != '').first()
 
-            if document is None:
+            if document is None or len(document.file_path.split('\\')) < 2:
                 dir_id = str(uuid.uuid4().hex)
             else:
                 dir_id = document.file_path.split('\\')[-2]
@@ -290,8 +292,8 @@ class UploadAdditionalFile(Resource):
                     extension = Path(filename).suffix
                     file_id = str(uuid.uuid4().hex)
                     result_file_name = short_name + "_" + file_id + extension
-                    print("Save to " + result_file_name)
                     file_path = os.path.join(project_folder, result_file_name)
+                    print("Save to " + file_path)
                     file.save(file_path)
                     file_size = os.path.getsize(file_path)
                     document = Documents(project_id, user_id, file.filename, file_path, file_size)
