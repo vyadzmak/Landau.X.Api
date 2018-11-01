@@ -7,3 +7,4 @@ transliterate
 xlsxwriter
 psycopg2
 socketIO_client
+objectpath

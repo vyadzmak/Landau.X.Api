@@ -40,7 +40,8 @@ class ProjectSharingResource(Resource):
             project = session.query(Projects).filter(Projects.id == sharing.project_id).first()
             project_creator = session.query(Users).filter(Users.id == project.user_id).first()
             chats = session.query(Chats).filter(Chats.project_id == project.id,
-                                                Chats.creator_id == project_creator.id).all()
+                                                Chats.creator_id == project_creator.id,
+                                                Chats.is_open == False).all()
 
             users = session.query(Users).filter(Users.id.in_(json_data["users_ids"])).all()
             risks = filter(lambda x: x.user_role_id == 7, users)
@@ -90,7 +91,8 @@ class ProjectSharingListResource(Resource):
             project = session.query(Projects).filter(Projects.id == sharing.project_id).first()
             project_creator = session.query(Users).filter(Users.id == project.user_id).first()
             chats = session.query(Chats).filter(Chats.project_id == project.id,
-                                                Chats.creator_id == project_creator.id).all()
+                                                Chats.creator_id == project_creator.id,
+                                                Chats.is_open == False).all()
 
             users = session.query(Users).filter(Users.id.in_(json_data["users_ids"])).all()
             risks = filter(lambda x: x.user_role_id == 7, users)

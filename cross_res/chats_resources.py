@@ -102,7 +102,7 @@ class ChatListResource(Resource):
             project_id = args['project_id']
 
             chats = session.query(Chats) \
-                .filter(Chats.project_id == project_id,
+                .filter(Chats.project_id == project_id, or_(Chats.is_open == None, Chats.is_open == False),
                         or_(Chats.creator_id == user_id, Chats.user_ids.any(user_id))) \
                 .all()
             # !!! here is very bad code

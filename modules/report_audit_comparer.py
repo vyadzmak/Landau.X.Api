@@ -1,4 +1,5 @@
 from modules.json_serializator import decode, encode
+from datetime import datetime
 
 letters_dict = {
     0: 'Z', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J',
@@ -40,6 +41,27 @@ def get_sheet_name(sheets, sheet_id):
     except Exception as e:
         print(e)
         return ''
+
+
+def get_system_cell_text(json, document_type, analytical_type):
+    try:
+        if document_type == 1:
+            period = json.get('period', False)
+            if period:
+                d = datetime.strptime(period, '%Y-%m-%d %H:%M:%S')
+                period = " за период {}".format(datetime.strftime(d, '%d.%m.%Y'))
+
+            else:
+                period = ""
+            return "(Баланс, {} {})".format(analytical_type, period)
+        elif document_type == 2:
+            month, year = json.get('month', ''), json.get('year', '')
+            return "(ОПиУ, {} за период {}.{})".format(analytical_type, month, year)
+        elif document_type == 3:
+            month, year = json.get('month', ''), json.get('year', '')
+            return "(ОДДС, {} за период {}.{})".format(analytical_type, month, year)
+    except:
+        raise
 
 
 def get_cell_audit_type(key, data):
@@ -94,7 +116,7 @@ def compare_json(json1, json2):
         return result
 
 
-def get_diffs(prev_report, curr_report_data):
+def get_diffs(prev_report, curr_report_data, rules):
     try:
         result = []
         prev_report_data = decode(prev_report)
@@ -129,7 +151,8 @@ def get_diffs(prev_report, curr_report_data):
             text = "Лист {} ячейка {}".format(sheet_name, address)
             if is_system:
                 document_type = int(prev_cells[key].get('json', {}).get('document_type', "") or 0)
-                text = "{}\nТип документа: {}, тип ячейки: {}".format(text, document_type, analytical_type)
+                text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
+                                                               rules[str(analytical_type)]))
             result.append({
                 'operation_id': 3,
                 'type_id': 1,
@@ -147,7 +170,8 @@ def get_diffs(prev_report, curr_report_data):
                 text = "Лист {} ячейка {} - {}".format(sheet_name, address, cell_diff['text'])
                 if is_system:
                     document_type = int(curr_cells[key].get('json', {}).get('document_type', "") or 0)
-                    text = "{}\nТип документа: {}, тип ячейки: {}".format(text, document_type, analytical_type)
+                    text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
+                                                                   rules[str(analytical_type)]))
                 result.append({
                     'operation_id': cell_diff['operation_id'],
                     'type_id': cell_diff['type_id'],
@@ -156,9 +180,9 @@ def get_diffs(prev_report, curr_report_data):
                 })
 
         # comparing floatings
-        prev_charts = {x.get('name', None): x for x in prev_report_data['floatings']
+        prev_charts = {x.get('name', None): x for x in prev_report_data.get('floatings', [])
                        if x.get('ftype', '') == 'floor'}
-        curr_charts = {x.get('name', None): x for x in curr_report_data['floatings']
+        curr_charts = {x.get('name', None): x for x in curr_report_data.get('floatings', [])
                        if x.get('ftype', '') == 'floor'}
 
         prev_keys = set(prev_charts.keys())

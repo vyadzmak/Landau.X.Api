@@ -377,15 +377,16 @@ class Chats(Base):
     name = Column(String(70))
     user_ids = Column(ARRAY(Integer))
     creator_id = Column('creator_id', ForeignKey('users.id'))
-    is_open = Column(Boolean)
+    is_open = Column(Boolean, default=False)
     project_id = Column('project_id', ForeignKey('projects.id'))
     messages = relationship("ChatMessages", backref="chat_data")
 
-    def __init__(self, name, creator_id, project_id, user_ids=[]):
+    def __init__(self, name, creator_id, project_id, user_ids=[], is_open=False):
         self.name = name
         self.creator_id = creator_id
         self.project_id = project_id
         self.user_ids = user_ids
+        self.is_open = is_open
 
 
 class ChatMessages(Base):

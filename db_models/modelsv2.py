@@ -235,9 +235,9 @@ class ReportAudit(Base):
     text = Column(String, default="")
     report_history_data = relationship('ReportHistory',
                                        backref=backref('report_audit_data', cascade='all,delete-orphan'))
-    report_operation_data = relationship('ReportOperations',
+    operation_data = relationship('ReportOperations',
                                        backref=backref('report_audit_data', cascade='all,delete-orphan'))
-    report_audit_types_data = relationship('ReportAuditTypes',
+    type_data = relationship('ReportAuditTypes',
                                        backref=backref('report_audit_data', cascade='all,delete-orphan'))
 
     def __init__(self, *args):
@@ -359,17 +359,12 @@ class Chats(Base):
     name = Column(String(70))
     user_ids = Column(ARRAY(Integer), default=[])
     creator_id = Column('creator_id', ForeignKey('users.id'))
-    is_open = Column(Boolean)
+    is_open = Column(Boolean, default=False)
     project_id = Column('project_id', ForeignKey('projects.id'))
     messages = relationship("ChatMessages", backref="chat_data", cascade="all,delete-orphan")
 
     def __init__(self, *args):
         db_transformer.transform_constructor_params(self, args)
-    # def __init__(self, name, creator_id, project_id, user_ids=[]):
-    #     self.name = name
-    #     self.creator_id = creator_id
-    #     self.project_id = project_id
-    #     self.user_ids = user_ids
 
 
 class ChatMessages(Base):

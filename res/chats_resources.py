@@ -1,8 +1,8 @@
-from db_models.models import Chats, Users, ChatMessages
+from db_models.models import Chats, Users, ChatMessages, ProjectSharing
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
-from sqlalchemy import or_, func
+from sqlalchemy import or_, and_, func
 from sqlalchemy.orm import Load
 import modules.log_helper_module as log_module
 
@@ -49,7 +49,15 @@ class ChatResource(Resource):
     def get(self, id):
         chat = session.query(Chats) \
             .filter(Chats.id == id).first()
-        chat.users = session.query(Users).filter(Users.id.in_(chat.user_ids)).all()
+        if chat.is_open:
+            sharing = session.query(ProjectSharing).filter(ProjectSharing.project_id == chat.project_id).first()
+            user_ids = sharing.users_ids if sharing else []
+        else:
+            user_ids = chat.user_ids or []
+        if len(user_ids)>0:
+            chat.users = session.query(Users).filter(Users.id.in_(user_ids)).all()
+        else:
+            chat.users = []
         if not chat:
             abort(404, message="Chat {} doesn't exist".format(id))
         return chat
@@ -83,18 +91,28 @@ class ChatListResource(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id')
         parser.add_argument('project_id')
+        parser.add_argument('is_system')
         args = parser.parse_args()
         if len(args) == 0:
             abort(400, message='Arguments not found')
         user_id = args['user_id']
         project_id = args['project_id']
+        is_system = args['is_system'] == 'true'
 
-        chats = session.query(Chats) \
-            .filter(Chats.project_id == project_id,
+
+        if is_system:
+            chats = session.query(Chats) \
+                .filter(Chats.project_id == project_id, Chats.is_open == is_system) \
+                .all()
+        else:
+            chats = session.query(Chats) \
+            .filter(Chats.project_id == project_id, or_(Chats.is_open == None, Chats.is_open == False),
                     or_(Chats.creator_id == user_id, Chats.user_ids.any(user_id))) \
             .all()
         # !!! here is very bad code
         for chat in chats:
+            # if chat.is_system:
+            #     chat.user_ids
             if len(chat.messages)>0:
                 chat.unread_count = len([x.id for x in chat.messages if int(user_id) not in x.users_read])
                 chat.last_message = chat.messages[-1]

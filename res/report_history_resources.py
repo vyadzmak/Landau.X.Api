@@ -1,10 +1,13 @@
-from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes, ReportOperations, ReportAudit
+from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes, ReportOperations, ReportAudit, \
+    AnalyticRules
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from modules.report_audit_comparer import get_diffs
 import modules.report_data_refiner as data_refiner
+from modules.json_serializator import decode
 import json
+import objectpath
 
 dicts_fields = {
     'id': fields.Integer,
@@ -24,7 +27,8 @@ output_project_report_history_fields = {
     'date': fields.DateTime,
     'project_id': fields.Integer,
     'user_id': fields.Integer,
-    'user_name': fields.String(attribute=lambda x: x.user_data.first_name+" "+x.user_data.last_name if x.user_data else "Cистема")
+    'user_name': fields.String(
+        attribute=lambda x: x.user_data.first_name + " " + x.user_data.last_name if x.user_data else "Cистема")
 }
 
 import jsonpickle
@@ -124,13 +128,22 @@ class ReportHistoryListResource(Resource):
                 raise Exception('Previous report has not been found! Unable to check versions.')
             previous_report_data = data_refiner.decompress_data(previous_report.data)
 
+            rules_data = session.query(AnalyticRules).filter(AnalyticRules.is_default).first()
+            tree_obj = objectpath.Tree(decode(rules_data.data))
+            rules_data = list(tree_obj.execute('$..conditions.(code, name)'))
+            rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(code, name)'))
+            rules_data += list(tree_obj.execute('$..odds_formulas.(code, name)'))
+            rules_data += list(tree_obj.execute('$..balance_formulas.(code, name)'))
+            rules_data = {x['code']: x['name'] for x in rules_data}
+
             # add hex keys to json_data new cells
             report_data = data_refiner.add_uids(json_data['data'])
 
-            diffs = get_diffs(previous_report_data, report_data)
+            diffs = get_diffs(previous_report_data, report_data, rules_data)
             diffs = [ReportAudit(None, diff['type_id'], diff['operation_id'], diff['is_system'], diff['text'])
                      for diff in diffs]
-
+            if len(diffs) == 0:
+                abort(404, message="There are no differences between documents")
             # delete timestamp props and other from json json_data["data"]
             report_data = data_refiner.delete_unused_props(report_data)
             report_data = data_refiner.compress_data(report_data)
@@ -145,4 +158,4 @@ class ReportHistoryListResource(Resource):
             return report, 201
 
         except Exception as e:
-            abort(400, message="Error while adding record Report History. "+str(e))
+            abort(400, message="Error while adding record Report History. " + str(e))

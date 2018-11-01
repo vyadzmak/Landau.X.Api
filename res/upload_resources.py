@@ -5,7 +5,7 @@ import os
 import werkzeug
 from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from db_models.models import Projects,Documents
+from db_models.models import Projects,Documents,Chats
 import uuid
 import re
 import subprocess
@@ -27,6 +27,9 @@ class UploadFile(Resource):
             userId = f.get('userId')
             project = Projects(userId)
             session.add(project)
+            session.commit()
+            system_chat = Chats('Системный чат', userId, project.id, [], True)
+            session.add(system_chat)
             session.commit()
             if (project.id>-1):
                 f_list =[]
