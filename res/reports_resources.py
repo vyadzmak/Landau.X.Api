@@ -1,8 +1,10 @@
-from db_models.models import Reports, Projects
+from db_models.models import Reports, Projects, ReportHistory
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
+import modules.report_data_refiner as data_refiner
+
 report_fields = {
     'id': fields.Integer,
     'name': fields.String,
@@ -83,7 +85,15 @@ class ReportListResource(Resource):
                                   analytic_rule_id=json_data["schemaId"], data=encode(json_data["data"]))
             else:
                 report.data = encode(json_data["data"])
+
             session.add(report)
+            compressed_data = data_refiner.compress_data(encode(json_data["data"]))
+            report_history = ReportHistory(project_id=json_data["projectId"],
+                                       data=compressed_data,
+                                       user_id=None)
+
+            session.add(report_history)
+
             session.commit()
             return report, 201
             #return "OK"

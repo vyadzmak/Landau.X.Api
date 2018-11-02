@@ -28,7 +28,7 @@ class UploadFile(Resource):
             project = Projects(userId)
             session.add(project)
             session.commit()
-            system_chat = Chats('Системный чат', userId, project.id, [], True)
+            system_chat = Chats('Обсуждение проекта', userId, project.id, [], True)
             session.add(system_chat)
             session.commit()
             if (project.id>-1):

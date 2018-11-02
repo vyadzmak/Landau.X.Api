@@ -51,15 +51,6 @@ class ProjectReportHistoryResource(Resource):
     def get(self, id):
         report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
             .order_by(ReportHistory.id.desc()).first()
-        if not report:
-            report_v0 = session.query(Reports).filter(Reports.project_id == id).first()
-            compressed_data = data_refiner.compress_data(report_v0.data)
-            report = ReportHistory(project_id=id,
-                                   data=compressed_data,
-                                   user_id=None)
-
-            session.add(report)
-            session.commit()
         return report
 
 
@@ -127,8 +118,12 @@ class ReportHistoryListResource(Resource):
             if not previous_report:
                 raise Exception('Previous report has not been found! Unable to check versions.')
             previous_report_data = data_refiner.decompress_data(previous_report.data)
+            report_t = session.query(Reports).filter(Reports.project_id == json_data["project_id"]).first()
+            if not report_t:
+                raise Exception('Previous report from Reports table has not been found! Unable to check versions.')
+            analytic_rule_id = report_t.analytic_rule_id
 
-            rules_data = session.query(AnalyticRules).filter(AnalyticRules.is_default).first()
+            rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
             tree_obj = objectpath.Tree(decode(rules_data.data))
             rules_data = list(tree_obj.execute('$..conditions.(code, name)'))
             rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(code, name)'))
