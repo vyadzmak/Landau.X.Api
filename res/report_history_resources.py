@@ -125,10 +125,10 @@ class ReportHistoryListResource(Resource):
 
             rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
             tree_obj = objectpath.Tree(decode(rules_data.data))
-            rules_data = list(tree_obj.execute('$..conditions.(code, name)'))
-            rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(code, name)'))
-            rules_data += list(tree_obj.execute('$..odds_formulas.(code, name)'))
-            rules_data += list(tree_obj.execute('$..balance_formulas.(code, name)'))
+            rules_data = list(tree_obj.execute('$..conditions.(str(code), name)'))
+            rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(str(code), name)'))
+            rules_data += list(tree_obj.execute('$..odds_formulas.(str(code), name)'))
+            rules_data += list(tree_obj.execute('$..balance_formulas.(str(code), name)'))
             rules_data = {x['code']: x['name'] for x in rules_data}
 
             # add hex keys to json_data new cells
