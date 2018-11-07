@@ -1,6 +1,7 @@
 from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes, ReportOperations, ReportAudit, \
     AnalyticRules
 from db.db import session
+from sqlalchemy.orm import contains_eager
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from modules.report_audit_comparer import get_diffs
@@ -8,6 +9,8 @@ import modules.report_data_refiner as data_refiner
 from modules.json_serializator import decode
 import json
 import objectpath
+
+from res.report_audit_resources import output_fields as report_audit_fields
 
 dicts_fields = {
     'id': fields.Integer,
@@ -28,7 +31,8 @@ output_project_report_history_fields = {
     'project_id': fields.Integer,
     'user_id': fields.Integer,
     'user_name': fields.String(
-        attribute=lambda x: x.user_data.first_name + " " + x.user_data.last_name if x.user_data else "Cистема")
+        attribute=lambda x: x.user_data.first_name + " " + x.user_data.last_name if x.user_data else "Cистема"),
+    'report_audit': fields.Nested(report_audit_fields, attribute='report_audit_data')
 }
 
 import jsonpickle
@@ -65,7 +69,18 @@ class ProjectReportHistoryListResource(Resource):
             abort(400, message='Arguments not found')
         project_id = args['project_id']
         user_id = args['user_id']
-        reports = session.query(ReportHistory).filter(ReportHistory.project_id == project_id).all()
+
+        subq = session.query(ReportAudit). \
+            filter(ReportAudit.history_id == ReportHistory.id). \
+            order_by(ReportAudit.is_system.desc(), ReportAudit.type_id). \
+            limit(10).subquery().lateral()
+
+        reports = session.query(ReportHistory).outerjoin(subq)\
+            .filter(ReportHistory.project_id == project_id)\
+            .options(contains_eager(ReportHistory.report_audit_data, alias=subq))\
+            .all()
+
+        # reports = session.query(ReportHistory).filter(ReportHistory.project_id == project_id).all()
         if not reports:
             abort(404, message="Report History not found")
         return reports

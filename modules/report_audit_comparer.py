@@ -1,5 +1,6 @@
 from modules.json_serializator import decode, encode
 from datetime import datetime
+import traceback
 
 letters_dict = {
     0: 'Z', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J',
@@ -60,8 +61,8 @@ def get_system_cell_text(json, document_type, analytical_type):
         elif document_type == 3:
             month, year = json.get('month', ''), json.get('year', '')
             return "(ОДДС, {} за период {}.{})".format(analytical_type, month, year)
-    except:
-        raise
+    except Exception as e:
+        raise e
 
 
 def get_cell_audit_type(key, data):
@@ -161,6 +162,8 @@ def get_diffs(prev_report, curr_report_data, rules):
             })
 
         for key in altered_keys:
+            if curr_cells[key].get('col', 0) == 0 and curr_cells[key].get('row', 0) == 0:
+                continue
             cell_diffs = compare_json(prev_cells[key].get('json', {}), curr_cells[key].get('json', {}))
             for cell_diff in cell_diffs:
                 sheet_name = get_sheet_name(curr_report_data['sheets'], curr_cells[key]['sheet'])
@@ -235,4 +238,4 @@ def get_diffs(prev_report, curr_report_data, rules):
         return result
 
     except Exception as e:
-        print(e)
+        print(traceback.format_exc())

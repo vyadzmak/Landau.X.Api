@@ -12,6 +12,15 @@ ROUTE = "/v2/user"
 END_POINT = "v2-users"
 ROUTE_LIST = ROUTE + "s"
 END_POINT_LIST = END_POINT + "-list"
+# SCHEMA FIELDS
+data_fields = {
+    'id': fields.Integer,
+    'first_name': fields.String,
+    'last_name': fields.String,
+    'lock_state': fields.Boolean,
+    'client_id': fields.Integer,
+    'user_role_id': fields.Integer,
+}
 # NESTED SCHEMA FIELDS
 
 user_login_fields = {
@@ -51,8 +60,10 @@ OUTPUT_FIELDS = {
     'login_data': fields.Nested(user_login_fields)
 }
 
+
 def post_data_converter(json_data):
     return json_data
+
 
 def after_put_action(entity, json_data):
     try:
@@ -64,6 +75,6 @@ def after_put_action(entity, json_data):
             json_data['login_data'].pop('password', None)
         update_item(UserLogins, json_data['login_data'], json_data['login_data']['id'])
         if login is None:
-           raise Exception('Unable to update login with user_id:{}'.format(entity.id))
+            raise Exception('Unable to update login with user_id:{}'.format(entity.id))
     except Exception as e:
         raise e
