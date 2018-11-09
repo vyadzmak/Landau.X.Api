@@ -12,11 +12,6 @@ import objectpath
 
 from res.report_audit_resources import output_fields as report_audit_fields
 
-dicts_fields = {
-    'id': fields.Integer,
-    'name': fields.String
-}
-
 output_fields = {
     'id': fields.Integer,
     'date': fields.DateTime,
@@ -55,6 +50,14 @@ class ProjectReportHistoryResource(Resource):
     def get(self, id):
         report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
             .order_by(ReportHistory.id.desc()).first()
+        if not report:
+            report_t = session.query(Reports).filter(Reports.project_id == id).first()
+            compressed_data = data_refiner.compress_data(report_t.data)
+            report = ReportHistory(project_id=id,
+                                           data=compressed_data,
+                                           user_id=None)
+            session.add(report)
+            session.commit()
         return report
 
 
@@ -150,7 +153,7 @@ class ReportHistoryListResource(Resource):
             report_data = data_refiner.add_uids(json_data['data'])
 
             diffs = get_diffs(previous_report_data, report_data, rules_data)
-            diffs = [ReportAudit(None, diff['type_id'], diff['operation_id'], diff['is_system'], diff['text'])
+            diffs = [ReportAudit(None, diff['type_id'], diff['operation_id'], diff['is_system'], diff['text'], diff.get('uid', ''))
                      for diff in diffs]
             if len(diffs) == 0:
                 abort(404, message="There are no differences between documents")

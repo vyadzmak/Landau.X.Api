@@ -197,6 +197,7 @@ api.add_resource(ReportHistoryResource, '/reportHistory/<int:id>', endpoint='rep
 
 # report audit
 api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')
+api.add_resource(CellReportAuditListResource, '/cellReportAuditList', endpoint='cellReportAuditList')
 
 # generate routes V2
 resources_initializer.init_api_resources(api)

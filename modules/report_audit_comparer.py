@@ -141,7 +141,8 @@ def get_diffs(prev_report, curr_report_data, rules):
                 'operation_id': 1,
                 'type_id': 1,
                 'text': text,
-                'is_system': False
+                'is_system': False,
+                'uid': curr_cells[key]['json'].get('uid', '')
             })
 
         for key in deleted_keys:
@@ -153,12 +154,13 @@ def get_diffs(prev_report, curr_report_data, rules):
             if is_system:
                 document_type = int(prev_cells[key].get('json', {}).get('document_type', "") or 0)
                 text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
-                                                               rules[str(analytical_type)]))
+                                                                 rules[str(analytical_type)]))
             result.append({
                 'operation_id': 3,
                 'type_id': 1,
                 'text': text,
-                'is_system': is_system
+                'is_system': is_system,
+                'uid': prev_cells[key]['json'].get('uid', '')
             })
 
         for key in altered_keys:
@@ -174,12 +176,13 @@ def get_diffs(prev_report, curr_report_data, rules):
                 if is_system:
                     document_type = int(curr_cells[key].get('json', {}).get('document_type', "") or 0)
                     text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
-                                                                   rules[str(analytical_type)]))
+                                                                     rules[str(analytical_type)]))
                 result.append({
                     'operation_id': cell_diff['operation_id'],
                     'type_id': cell_diff['type_id'],
                     'text': text,
-                    'is_system': is_system
+                    'is_system': is_system,
+                    'uid': curr_cells[key]['json'].get('uid', '')
                 })
 
         # comparing floatings

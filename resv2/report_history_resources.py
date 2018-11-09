@@ -1,10 +1,13 @@
-from db_models.modelsv2 import ReportHistory
-from flask_restful import Resource, fields
+from db_models.modelsv2 import ReportHistory, Reports, AnalyticRules, ReportAudit
+from flask_restful import fields, abort
 
 from db.db import session
 from modules.report_audit_comparer import get_diffs
 import modules.report_data_refiner as data_refiner
 from modules.json_serializator import decode
+
+from resv2.report_audit_resources import OUTPUT_FIELDS as report_audit
+
 import json
 import objectpath
 
@@ -27,9 +30,12 @@ data_fields = {
 }
 
 # NESTED SCHEMA FIELDS
-user_name = {
+user_name_fields = {
     'user_name': fields.String(
         attribute=lambda x: x.user_data.first_name + " " + x.user_data.last_name if x.user_data else "Cистема")
+}
+report_audit_fields = {
+    'report_audit': fields.Nested(report_audit, attribute='report_audit_data')
 }
 # OUTPUT SCHEMA
 OUTPUT_FIELDS = {**data_fields}
@@ -58,7 +64,7 @@ def post_data_converter(json_data):
     report_data = data_refiner.add_uids(json_data['data'])
 
     diffs = get_diffs(previous_report_data, report_data, rules_data)
-    diffs = [ReportAudit(None, diff['type_id'], diff['operation_id'], diff['is_system'], diff['text'])
+    diffs = [ReportAudit(diff)
              for diff in diffs]
     if len(diffs) == 0:
         abort(404, message="There are no differences between documents")

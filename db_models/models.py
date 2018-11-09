@@ -256,6 +256,7 @@ class ReportAudit(Base):
     type_id = Column('type_id', ForeignKey('report_audit_types.id'))
     operation_id = Column('operation_id', ForeignKey('report_operations.id'))
     is_system = Column(Boolean, default=False)
+    uid = Column(String(8), default='')
     text = Column(String, default="")
     report_history_data = relationship('ReportHistory',
                                        backref=backref('report_audit_data', cascade='all,delete-orphan'))
@@ -264,12 +265,13 @@ class ReportAudit(Base):
     operation_data = relationship('ReportOperations',
                              backref=backref('report_audit_data', cascade='all,delete-orphan'))
 
-    def __init__(self, history_id, type_id, operation_id, is_system, text):
+    def __init__(self, history_id, type_id, operation_id, is_system, text, uid):
         self.history_id = history_id
         self.type_id = type_id
         self.operation_id = operation_id
         self.is_system = is_system
         self.text = text
+        self.uid = uid
 
 
 # report forms

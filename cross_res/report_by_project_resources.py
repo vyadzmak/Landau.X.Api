@@ -1,4 +1,4 @@
-from db_models.models import Reports
+from db_models.modelsv2 import Reports
 from db.db import session
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import modules.log_helper_module as log_module

@@ -232,6 +232,7 @@ class ReportAudit(Base):
     type_id = Column('type_id', ForeignKey('report_audit_types.id'))
     operation_id = Column('operation_id', ForeignKey('report_operations.id'))
     is_system = Column(Boolean, default=False)
+    uid = Column(String(8), default='')
     text = Column(String, default="")
     report_history_data = relationship('ReportHistory',
                                        backref=backref('report_audit_data', cascade='all,delete-orphan'))
