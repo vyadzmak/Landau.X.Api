@@ -1,8 +1,8 @@
 Flask
 flask-restful
+flask_cors
 sqlalchemy
 jsonpickle
-flask_cors
 transliterate
 xlsxwriter
 psycopg2

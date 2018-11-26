@@ -1,3 +1,4 @@
 .idea/**
 **/__pycache__
 uploads/
+env_landau_api/
