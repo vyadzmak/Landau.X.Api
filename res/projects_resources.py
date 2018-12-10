@@ -115,7 +115,8 @@ class ProjectResource(Resource):
     def put(self, id):
 
         json_data = request.get_json(force=True)
-        json_data = json.loads(json_data)
+        if isinstance(json_data, str):
+            json_data = json.loads(json_data)
         project = session.query(Projects).filter(Projects.id == id).first()
         # project.user_id = json_data['user_id']
         project.state_id = json_data["state_id"]
@@ -144,7 +145,8 @@ class ProjectListResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
-            json_data = json.loads(json_data)
+            if isinstance(json_data, str):
+                json_data = json.loads(json_data)
             project = Projects(userId=json_data["user_id"])
             session.add(project)
             session.commit()

@@ -1,6 +1,7 @@
 from modules.json_serializator import decode, encode
 from datetime import datetime
 import traceback
+from modules.threadpool import threadpool
 
 letters_dict = {
     0: 'Z', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J',
@@ -117,128 +118,142 @@ def compare_json(json1, json2):
         return result
 
 
-def get_diffs(prev_report, curr_report_data, rules):
-    try:
-        result = []
-        prev_report_data = decode(prev_report)
-        # comparing cells
-        prev_cells = {x.get('json', {}).get('uid'): x for x in prev_report_data['cells']}
-        curr_cells = {x.get('json', {}).get('uid'): x for x in curr_report_data['cells']}
+@threadpool
+def compare_cells(prev_report_data,curr_report_data, rules):
+    result = []
+    # comparing cells
+    prev_cells = {x.get('json', {}).get('uid'): x for x in prev_report_data['cells']}
+    curr_cells = {x.get('json', {}).get('uid'): x for x in curr_report_data['cells']}
 
-        prev_keys = set(prev_cells.keys())
-        curr_keys = set(curr_cells.keys())
+    prev_keys = set(prev_cells.keys())
+    curr_keys = set(curr_cells.keys())
 
-        added_keys = curr_keys - prev_keys
-        deleted_keys = prev_keys - curr_keys
-        altered_keys = prev_keys.intersection(curr_keys)
+    added_keys = curr_keys - prev_keys
+    deleted_keys = prev_keys - curr_keys
+    altered_keys = prev_keys.intersection(curr_keys)
 
-        for key in added_keys:
+    for key in added_keys:
+        sheet_name = get_sheet_name(curr_report_data['sheets'], curr_cells[key]['sheet'])
+        address = get_letter_address(curr_cells[key]['col']) + str(curr_cells[key]['row'])
+        cell_data = curr_cells[key]['json'].get('data', '')
+        text = "Данные на листе {} в ячейке {} - '{}'".format(sheet_name, address, cell_data)
+        result.append({
+            'operation_id': 1,
+            'type_id': 1,
+            'text': text,
+            'is_system': False,
+            'uid': curr_cells[key]['json'].get('uid', '')
+        })
+
+    for key in deleted_keys:
+        sheet_name = get_sheet_name(prev_report_data['sheets'], prev_cells[key]['sheet'])
+        address = get_letter_address(prev_cells[key]['col']) + str(prev_cells[key]['row'])
+        analytical_type = int(prev_cells[key].get('json', {}).get('analytical_type', "") or 0)
+        is_system = analytical_type > 0
+        text = "Лист {} ячейка {}".format(sheet_name, address)
+        if is_system:
+            document_type = int(prev_cells[key].get('json', {}).get('document_type', "") or 0)
+            text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
+                                                             rules[str(analytical_type)]))
+        result.append({
+            'operation_id': 3,
+            'type_id': 1,
+            'text': text,
+            'is_system': is_system,
+            'uid': prev_cells[key]['json'].get('uid', '')
+        })
+
+    for key in altered_keys:
+        if curr_cells[key].get('col', 0) == 0 and curr_cells[key].get('row', 0) == 0:
+            continue
+        cell_diffs = compare_json(prev_cells[key].get('json', {}), curr_cells[key].get('json', {}))
+        for cell_diff in cell_diffs:
             sheet_name = get_sheet_name(curr_report_data['sheets'], curr_cells[key]['sheet'])
             address = get_letter_address(curr_cells[key]['col']) + str(curr_cells[key]['row'])
-            cell_data = curr_cells[key]['json'].get('data', '')
-            text = "Данные на листе {} в ячейке {} - '{}'".format(sheet_name, address, cell_data)
-            result.append({
-                'operation_id': 1,
-                'type_id': 1,
-                'text': text,
-                'is_system': False,
-                'uid': curr_cells[key]['json'].get('uid', '')
-            })
-
-        for key in deleted_keys:
-            sheet_name = get_sheet_name(prev_report_data['sheets'], prev_cells[key]['sheet'])
-            address = get_letter_address(prev_cells[key]['col']) + str(prev_cells[key]['row'])
-            analytical_type = int(prev_cells[key].get('json', {}).get('analytical_type', "") or 0)
+            analytical_type = int(curr_cells[key].get('json', {}).get('analytical_type', "") or 0)
             is_system = analytical_type > 0
-            text = "Лист {} ячейка {}".format(sheet_name, address)
+            text = "Лист {} ячейка {} - {}".format(sheet_name, address, cell_diff['text'])
             if is_system:
-                document_type = int(prev_cells[key].get('json', {}).get('document_type', "") or 0)
+                document_type = int(curr_cells[key].get('json', {}).get('document_type', "") or 0)
                 text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
                                                                  rules[str(analytical_type)]))
             result.append({
-                'operation_id': 3,
-                'type_id': 1,
+                'operation_id': cell_diff['operation_id'],
+                'type_id': cell_diff['type_id'],
                 'text': text,
                 'is_system': is_system,
-                'uid': prev_cells[key]['json'].get('uid', '')
+                'uid': curr_cells[key]['json'].get('uid', '')
             })
+    return result
 
-        for key in altered_keys:
-            if curr_cells[key].get('col', 0) == 0 and curr_cells[key].get('row', 0) == 0:
-                continue
-            cell_diffs = compare_json(prev_cells[key].get('json', {}), curr_cells[key].get('json', {}))
-            for cell_diff in cell_diffs:
-                sheet_name = get_sheet_name(curr_report_data['sheets'], curr_cells[key]['sheet'])
-                address = get_letter_address(curr_cells[key]['col']) + str(curr_cells[key]['row'])
-                analytical_type = int(curr_cells[key].get('json', {}).get('analytical_type', "") or 0)
-                is_system = analytical_type > 0
-                text = "Лист {} ячейка {} - {}".format(sheet_name, address, cell_diff['text'])
-                if is_system:
-                    document_type = int(curr_cells[key].get('json', {}).get('document_type', "") or 0)
-                    text = "{} {}".format(text, get_system_cell_text(prev_cells[key].get('json', {}), document_type,
-                                                                     rules[str(analytical_type)]))
-                result.append({
-                    'operation_id': cell_diff['operation_id'],
-                    'type_id': cell_diff['type_id'],
-                    'text': text,
-                    'is_system': is_system,
-                    'uid': curr_cells[key]['json'].get('uid', '')
-                })
 
-        # comparing floatings
-        prev_charts = {x.get('name', None): x for x in prev_report_data.get('floatings', [])
-                       if x.get('ftype', '') == 'floor'}
-        curr_charts = {x.get('name', None): x for x in curr_report_data.get('floatings', [])
-                       if x.get('ftype', '') == 'floor'}
+@threadpool
+def compare_floatings(prev_report_data,curr_report_data):
+    result = []
+    # comparing floatings
+    prev_charts = {x.get('name', None): x for x in prev_report_data.get('floatings', [])
+                   if x.get('ftype', '') == 'floor'}
+    curr_charts = {x.get('name', None): x for x in curr_report_data.get('floatings', [])
+                   if x.get('ftype', '') == 'floor'}
 
-        prev_keys = set(prev_charts.keys())
-        curr_keys = set(curr_charts.keys())
+    prev_keys = set(prev_charts.keys())
+    curr_keys = set(curr_charts.keys())
 
-        added_keys = curr_keys - prev_keys
-        deleted_keys = prev_keys - curr_keys
-        altered_keys = prev_keys.intersection(curr_keys)
+    added_keys = curr_keys - prev_keys
+    deleted_keys = prev_keys - curr_keys
+    altered_keys = prev_keys.intersection(curr_keys)
 
-        for key in added_keys:
+    for key in added_keys:
+        sheet_name = get_sheet_name(curr_report_data['sheets'], curr_charts[key]['sheet'])
+        chart_data = decode(curr_charts[key].get('json', "{}")).get('chartType')
+        text = "На листе {} добавлен график".format(sheet_name)
+        if chart_data is not None:
+            text += ". Тип графика - {}".format(chart_data)
+        result.append({
+            'operation_id': 1,
+            'type_id': 6,
+            'text': text,
+            'is_system': False
+        })
+
+    for key in deleted_keys:
+        sheet_name = get_sheet_name(curr_report_data['sheets'], curr_charts[key]['sheet'])
+        chart_data = decode(prev_charts[key].get('json', "{}")).get('chartType')
+        text = "На листе {} удален график".format(sheet_name)
+        if chart_data is not None:
+            text += ". Тип графика - {}".format(chart_data)
+        result.append({
+            'operation_id': 3,
+            'type_id': 6,
+            'text': text,
+            'is_system': False
+        })
+
+    for key in altered_keys:
+        if curr_charts[key].get('json', '') != prev_charts[key].get('json', ''):
             sheet_name = get_sheet_name(curr_report_data['sheets'], curr_charts[key]['sheet'])
             chart_data = decode(curr_charts[key].get('json', "{}")).get('chartType')
-            text = "На листе {} добавлен график".format(sheet_name)
+            text = "На листе {} изменен график".format(sheet_name)
             if chart_data is not None:
                 text += ". Тип графика - {}".format(chart_data)
             result.append({
-                'operation_id': 1,
+                'operation_id': 2,
                 'type_id': 6,
                 'text': text,
                 'is_system': False
             })
+    return result
 
-        for key in deleted_keys:
-            sheet_name = get_sheet_name(curr_report_data['sheets'], curr_charts[key]['sheet'])
-            chart_data = decode(prev_charts[key].get('json', "{}")).get('chartType')
-            text = "На листе {} удален график".format(sheet_name)
-            if chart_data is not None:
-                text += ". Тип графика - {}".format(chart_data)
-            result.append({
-                'operation_id': 3,
-                'type_id': 6,
-                'text': text,
-                'is_system': False
-            })
 
-        for key in altered_keys:
-            if curr_charts[key].get('json', '') != prev_charts[key].get('json', ''):
-                sheet_name = get_sheet_name(curr_report_data['sheets'], curr_charts[key]['sheet'])
-                chart_data = decode(curr_charts[key].get('json', "{}")).get('chartType')
-                text = "На листе {} изменен график".format(sheet_name)
-                if chart_data is not None:
-                    text += ". Тип графика - {}".format(chart_data)
-                result.append({
-                    'operation_id': 2,
-                    'type_id': 6,
-                    'text': text,
-                    'is_system': False
-                })
+def get_diffs(prev_report, curr_report_data, rules):
+    try:
+        prev_report_data = decode(prev_report)
+        cell_diffs = compare_cells(prev_report_data, curr_report_data, rules)
+        floating_diffs = compare_floatings(prev_report_data, curr_report_data)
+        cell_diffs = cell_diffs.result()
+        floating_diffs = floating_diffs.result()
 
-        return result
+        return cell_diffs + floating_diffs
 
     except Exception as e:
         print(traceback.format_exc())

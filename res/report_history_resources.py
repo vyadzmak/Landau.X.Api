@@ -2,13 +2,14 @@ from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes,
     AnalyticRules
 from db.db import session
 from sqlalchemy.orm import contains_eager
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from modules.report_audit_comparer import get_diffs
 import modules.report_data_refiner as data_refiner
 from modules.json_serializator import decode
 import json
 import objectpath
+from modules.threadpool import threadpool
 
 from res.report_audit_resources import output_fields as report_audit_fields
 
@@ -119,38 +120,57 @@ class ReportHistoryResource(Resource):
         return report, 201
 
 
+@threadpool
+def post_task1(project_id):
+    previous_report = session.query(ReportHistory).filter(ReportHistory.project_id == project_id) \
+        .order_by(ReportHistory.id.desc()).first()
+    if not previous_report:
+        raise Exception('Previous report has not been found! Unable to check versions.')
+    return data_refiner.decompress_data(previous_report.data)
+
+
+@threadpool
+def post_task3(data):
+    # add hex keys to json_data new cells
+    return data_refiner.add_uids(data)
+
+
+@threadpool
+def post_task2(project_id):
+    report_t = session.query(Reports).filter(Reports.project_id == project_id).first()
+    if not report_t:
+        raise Exception('Previous report from Reports table has not been found! Unable to check versions.')
+    analytic_rule_id = report_t.analytic_rule_id
+
+    rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
+    tree_obj = objectpath.Tree(decode(rules_data.data))
+    rules_data = list(tree_obj.execute('$..conditions.(str(code), name)'))
+    rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(str(code), name)'))
+    rules_data += list(tree_obj.execute('$..odds_formulas.(str(code), name)'))
+    rules_data += list(tree_obj.execute('$..balance_formulas.(str(code), name)'))
+    rules_data = {x['code']: x['name'] for x in rules_data}
+    return rules_data
+
+
 class ReportHistoryListResource(Resource):
     @marshal_with(output_fields)
     def get(self):
         reports = session.query(ReportHistory).all()
         return reports
 
-    @marshal_with(output_fields)
+
+    # @marshal_with(output_fields)
     def post(self):
         try:
 
             json_data = request.get_json(force=True)
+            previous_report_data = post_task1(json_data["project_id"])
+            rules_data = post_task2(json_data["project_id"])
+            report_data = post_task3(json_data["data"])
 
-            previous_report = session.query(ReportHistory).filter(ReportHistory.project_id == json_data["project_id"]) \
-                .order_by(ReportHistory.id.desc()).first()
-            if not previous_report:
-                raise Exception('Previous report has not been found! Unable to check versions.')
-            previous_report_data = data_refiner.decompress_data(previous_report.data)
-            report_t = session.query(Reports).filter(Reports.project_id == json_data["project_id"]).first()
-            if not report_t:
-                raise Exception('Previous report from Reports table has not been found! Unable to check versions.')
-            analytic_rule_id = report_t.analytic_rule_id
-
-            rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
-            tree_obj = objectpath.Tree(decode(rules_data.data))
-            rules_data = list(tree_obj.execute('$..conditions.(str(code), name)'))
-            rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(str(code), name)'))
-            rules_data += list(tree_obj.execute('$..odds_formulas.(str(code), name)'))
-            rules_data += list(tree_obj.execute('$..balance_formulas.(str(code), name)'))
-            rules_data = {x['code']: x['name'] for x in rules_data}
-
-            # add hex keys to json_data new cells
-            report_data = data_refiner.add_uids(json_data['data'])
+            previous_report_data = previous_report_data.result()
+            rules_data = rules_data.result()
+            report_data = report_data.result()
 
             diffs = get_diffs(previous_report_data, report_data, rules_data)
             diffs = [ReportAudit(None, diff['type_id'], diff['operation_id'], diff['is_system'], diff['text'], diff.get('uid', ''))
@@ -168,7 +188,7 @@ class ReportHistoryListResource(Resource):
 
             session.add(report)
             session.commit()
-            return report, 201
+            return make_response('Report History added.', 201)
 
         except Exception as e:
             abort(400, message="Error while adding record Report History. " + str(e))
