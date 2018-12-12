@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 
-_DEFAULT_POOL = ThreadPoolExecutor()
+_DEFAULT_POOL = ThreadPoolExecutor(max_workers=8)
 
 def threadpool(f, executor=None):
     def wrap(*args, **kwargs):
