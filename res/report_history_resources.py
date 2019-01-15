@@ -49,75 +49,88 @@ def encode(ob):
 class ProjectReportHistoryResource(Resource):
     @marshal_with(output_fields)
     def get(self, id):
-        report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
-            .order_by(ReportHistory.id.desc()).first()
-        if not report:
-            report_t = session.query(Reports).filter(Reports.project_id == id).first()
-            compressed_data = data_refiner.compress_data(report_t.data)
-            report = ReportHistory(project_id=id,
-                                           data=compressed_data,
-                                           user_id=None)
-            session.add(report)
-            session.commit()
-        return report
+        try:
+            report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
+                .order_by(ReportHistory.id.desc()).first()
+            if not report:
+                report_t = session.query(Reports).filter(Reports.project_id == id).first()
+                compressed_data = data_refiner.compress_data(report_t.data)
+                report = ReportHistory(project_id=id,
+                                               data=compressed_data,
+                                               user_id=None)
+                session.add(report)
+                session.commit()
+            return report
+        except Exception as e:
+            abort(400, message=repr(e))
 
 
 class ProjectReportHistoryListResource(Resource):
     @marshal_with(output_project_report_history_fields)
     def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('project_id')
-        parser.add_argument('user_id')
-        args = parser.parse_args()
-        if len(args) == 0:
-            abort(400, message='Arguments not found')
-        project_id = args['project_id']
-        user_id = args['user_id']
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('project_id')
+            parser.add_argument('user_id')
+            args = parser.parse_args()
+            if len(args) == 0:
+                abort(400, message='Arguments not found')
+            project_id = args['project_id']
+            user_id = args['user_id']
 
-        subq = session.query(ReportAudit). \
-            filter(ReportAudit.history_id == ReportHistory.id). \
-            order_by(ReportAudit.is_system.desc(), ReportAudit.type_id). \
-            limit(10).subquery().lateral()
+            subq = session.query(ReportAudit). \
+                filter(ReportAudit.history_id == ReportHistory.id). \
+                order_by(ReportAudit.is_system.desc(), ReportAudit.type_id). \
+                limit(10).subquery().lateral()
 
-        reports = session.query(ReportHistory).outerjoin(subq)\
-            .filter(ReportHistory.project_id == project_id)\
-            .options(contains_eager(ReportHistory.report_audit_data, alias=subq))\
-            .all()
+            reports = session.query(ReportHistory).outerjoin(subq)\
+                .filter(ReportHistory.project_id == project_id)\
+                .options(contains_eager(ReportHistory.report_audit_data, alias=subq))\
+                .all()
 
-        # reports = session.query(ReportHistory).filter(ReportHistory.project_id == project_id).all()
-        if not reports:
-            abort(404, message="Report History not found")
-        return reports
-
+            # reports = session.query(ReportHistory).filter(ReportHistory.project_id == project_id).all()
+            if not reports:
+                abort(404, message="Report History not found")
+            return reports
+        except Exception as e:
+            abort(400, message=repr(e))
 
 class ReportHistoryResource(Resource):
     @marshal_with(output_fields)
     def get(self, id):
-        report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
-        if not report:
-            abort(404, message="Report History {} doesn't exist".format(id))
-        return report
+        try:
+            report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
+            if not report:
+                abort(404, message="Report History {} doesn't exist".format(id))
+            return report
+        except Exception as e:
+            abort(400, message=repr(e))
 
     def delete(self, id):
-        report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
-        if not report:
-            abort(404, message="Report History {} doesn't exist".format(id))
-        session.delete(report)
-        session.commit()
-        return {}, 204
+        try:
+            report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
+            if not report:
+                abort(404, message="Report History {} doesn't exist".format(id))
+            session.delete(report)
+            session.commit()
+            return {}, 204
+        except Exception as e:
+            abort(400, message=repr(e))
 
     @marshal_with(output_fields)
     def put(self, id):
-
-        json_data = request.get_json(force=True)
-        report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
-        report.data = json_data["data"]
-        report.user_id = json_data["user_id"]
-        report.project_id = json_data["project_id"]
-        report.date = json_data["date"]
-        session.add(report)
-        session.commit()
-        return report, 201
+        try:
+            json_data = request.get_json(force=True)
+            report = session.query(ReportHistory).filter(ReportHistory.id == id).first()
+            report.data = json_data["data"]
+            report.user_id = json_data["user_id"]
+            report.project_id = json_data["project_id"]
+            report.date = json_data["date"]
+            session.add(report)
+            session.commit()
+            return report, 201
+        except Exception as e:
+            abort(400, message=repr(e))
 
 
 @threadpool
@@ -155,9 +168,11 @@ def post_task2(project_id):
 class ReportHistoryListResource(Resource):
     @marshal_with(output_fields)
     def get(self):
-        reports = session.query(ReportHistory).all()
-        return reports
-
+        try:
+            reports = session.query(ReportHistory).all()
+            return reports
+        except Exception as e:
+            abort(400, message=str(e))
 
     # @marshal_with(output_fields)
     def post(self):

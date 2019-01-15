@@ -49,7 +49,8 @@ project_fields = {
     'project_state': fields.Nested(project_state_fields),
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
-    'control_log_state_id': fields.Integer
+    'control_log_state_id': fields.Integer,
+    'registration_number': fields.String
 }
 
 
@@ -120,9 +121,10 @@ class ProjectResource(Resource):
         project = session.query(Projects).filter(Projects.id == id).first()
         # project.user_id = json_data['user_id']
         project.state_id = json_data["state_id"]
-        if (json_data["name"] != ""):
+        if "name" in json_data and json_data["name"] != "":
             project.name = json_data["name"]
-
+        if "registration_number" in json_data:
+            project.registration_number = json_data["registration_number"]
         session.add(project)
         session.commit()
         # try:

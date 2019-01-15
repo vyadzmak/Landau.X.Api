@@ -124,6 +124,7 @@ class Projects(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
     name = Column(String(70))
+    registration_number = Column(String(16))
     creation_date = Column(DateTime, default=datetime.datetime.utcnow())
     state_id = Column('state_id', ForeignKey('project_states.id'), default=1)
     user_id = Column('user_id', ForeignKey('users.id'))

@@ -59,7 +59,8 @@ OUTPUT_FIELDS = {
     'project_state': fields.Nested(project_state_fields),
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
-    'control_log_state_id': fields.Integer
+    'control_log_state_id': fields.Integer,
+    'registration_number': fields.String
 }
 
 
@@ -69,6 +70,8 @@ def put_data_converter(json_data):
     result = {'state_id': json_data['state_id']}
     if json_data.get('name', '') != '':
         result['name'] = json_data.get('name')
+    if 'registration_number' in json_data:
+        result['registration_number'] = json_data.get('registration_number')
     return result
 
 
