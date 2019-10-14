@@ -77,6 +77,7 @@ class ReportListResource(Resource):
 
             project_name = json_data["name"]
 
+
             if (len(project_name)>30):
                 project_name = project_name[:30]
                 project_name+="..."

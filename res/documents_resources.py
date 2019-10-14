@@ -11,12 +11,13 @@ import os
 import uuid
 import re
 import subprocess
+import modules.document_optimize_module as document_optimize_module
 from pathlib import Path
-
+import gc
 
 def to_bytes(bytes_or_str):
     if isinstance(bytes_or_str, str):
-        value = bytes_or_str.encode()  # uses 'utf-8' for encoding
+        value = bytes_or_str.encode(encoding='utf-8')  # uses 'utf-8' for encoding
     else:
         value = bytes_or_str
     return value  # Instance of bytes
@@ -24,7 +25,7 @@ def to_bytes(bytes_or_str):
 
 def to_str(bytes_or_str):
     if isinstance(bytes_or_str, bytes):
-        value = bytes_or_str.decode()  # uses 'utf-8' for encoding
+        value = bytes_or_str.decode(encoding='utf-8')  # uses 'utf-8' for encoding
     else:
         value = bytes_or_str
     return value
@@ -86,7 +87,8 @@ f_document_fields = {
     # 'document_state': fields.Nested(document_state_fields),
     'user_id': fields.Integer,
     # 'user_data': fields.Nested(user_fields),
-    'data': fields.String
+    'data': fields.String,
+    'is_excluded': fields.Boolean
 }
 
 project_state_fields = {
@@ -133,10 +135,10 @@ def encode(ob):
 class BatchDocumentListResource(Resource):
     @marshal_with(document_fields)
     def post(self):
-        try:
-            json_data = request.get_json(force=True)
-            items = json.loads(json_data)
+        json_data = request.get_json(force=True)
 
+        items = json.loads(json_data)
+        try:
             for item in items:
                 _id = int(item["id"])
                 if (_id != -1):
@@ -158,28 +160,96 @@ class BatchDocumentListResource(Resource):
             return {}, 201
         except Exception as e:
             abort(400, message="Error while adding record Document")
+        finally:
+            del items
+            del json_data
+            gc.collect()
 
+class FullDocumentResource(Resource):
+    @marshal_with(f_document_fields)
+    def get(self, id):
+        document = {}
+        try:
+            document = session.query(Documents).filter(Documents.id == id).first()
+            if not document:
+                abort(404, message="Document {} doesn't exist".format(id))
+            result_document = copy.deepcopy(document)
 
+            s_cmpstr = result_document.data
+            s_cmpstr = s_cmpstr.replace("b'", "", 1)
+            s_cmpstr = s_cmpstr.replace("'", "")
+            b_cmpstr = to_bytes(s_cmpstr)
+            b_cmpstr = base64.b64decode(b_cmpstr)
+            dec = zlib.decompress(b_cmpstr)
+            rr = to_str(dec)
+            document_type_id =document.document_type_id
+
+            del dec
+            del b_cmpstr
+            del s_cmpstr
+            del document
+            gc.collect()
+
+            result_document.data = rr
+            return result_document
+        except Exception as e:
+            return None
+        finally:
+            pass
+            # del document
+class ZipDocumentResource(Resource):
+    @marshal_with(f_document_fields)
+    def get(self, id):
+        document = {}
+        try:
+            document = session.query(Documents).filter(Documents.id == id).first()
+            if not document:
+                abort(404, message="Document {} doesn't exist".format(id))
+            result_document = copy.deepcopy(document)
+
+            return result_document
+        except Exception as e:
+            return None
+        finally:
+            pass
 class DocumentResource(Resource):
     @marshal_with(f_document_fields)
     def get(self, id):
         document = {}
+        try:
+            document = session.query(Documents).filter(Documents.id == id).first()
+            if not document:
+                abort(404, message="Document {} doesn't exist".format(id))
+            result_document = copy.deepcopy(document)
 
-        document = session.query(Documents).filter(Documents.id == id).first()
-        if not document:
-            abort(404, message="Document {} doesn't exist".format(id))
-        result_document = copy.deepcopy(document)
+            s_cmpstr = result_document.data
+            s_cmpstr = s_cmpstr.replace("b'", "", 1)
+            s_cmpstr = s_cmpstr.replace("'", "")
+            b_cmpstr = to_bytes(s_cmpstr)
+            b_cmpstr = base64.b64decode(b_cmpstr)
+            dec = zlib.decompress(b_cmpstr)
+            rr = to_str(dec)
+            # document_type_id =document.document_type_id
+            #
+            # del dec
+            # del b_cmpstr
+            # del s_cmpstr
+            # del document
+            # gc.collect()
 
-        s_cmpstr = result_document.data
-        s_cmpstr = s_cmpstr.replace("b'", "", 1)
-        s_cmpstr = s_cmpstr.replace("'", "")
-        b_cmpstr = to_bytes(s_cmpstr)
-        b_cmpstr = base64.b64decode(b_cmpstr)
-        dec = zlib.decompress(b_cmpstr)
-        rr = to_str(dec)
-        # result_document.document_state = document.document_state
-        result_document.data = rr
-        return result_document
+
+            # result_document.document_state = document.document_state
+            # if (document_type_id==1):
+            #     rr = document_optimize_module.optimize_document_content(rr)
+
+
+            result_document.data = rr
+            return result_document
+        except Exception as e:
+            return None
+        finally:
+            pass
+            # del document
 
     def delete(self, id):
         document = session.query(Documents).filter(Documents.id == id).first()

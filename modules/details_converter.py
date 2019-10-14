@@ -25,12 +25,40 @@ def to_bytes(bytes_or_str):
     return value  # Instance of bytes
 
 
+def check_utf8(bytes_or_str):
+    try:
+        value = bytes_or_str.decode(encoding='utf-8')
+        print("Convert to UTF-8 - OK")
+        return True
+    except Exception as e:
+        return False
+
+def check_utf16(bytes_or_str):
+    try:
+        value = bytes_or_str.decode(encoding='utf-16')
+        print("Convert to UTF-16 - OK")
+        return True
+    except Exception as e:
+        return False
+
+
 def to_str(bytes_or_str):
-    if isinstance(bytes_or_str, bytes):
-        value = bytes_or_str.decode()  # uses 'utf-8' for encoding
-    else:
-        value = bytes_or_str
-    return value  # Instance of str
+    try:
+        if isinstance(bytes_or_str, bytes):
+            if (check_utf8(bytes_or_str)):
+                print("Encode to utf-8")
+                value = bytes_or_str.decode(encoding='utf-8')  # uses 'utf-8' for encoding
+            else:
+                print("Encode to utf-16")
+                value = bytes_or_str.decode(encoding='utf-16')
+
+            print('bytes or string OK')
+            # value = bytes_or_str.decode()  # uses 'utf-8' for encoding
+        else:
+            value = bytes_or_str
+        return value
+    except Exception as e:
+        print('TO STR ERROR '+str(e))
 
 
 def check_if_formula(type_id):
@@ -120,20 +148,32 @@ def convert_details_by_period(documents, month, year, type_id, analysis_type, pr
             types = get_formula_elements(project_id, type_id, analysis_type)
 
         for d in documents:
+            pat = '90.02'
+            file_name = d.file_name
+            exists = pat in file_name
+            if (exists==True):
+                t=0
+
 
             s_cmpstr = copy.deepcopy(d.data)
-            bc = s_cmpstr.count("b'")
 
             s_cmpstr = s_cmpstr.replace("b'", "", 1)
-            qc = s_cmpstr.count("'")
 
             s_cmpstr = s_cmpstr.replace("'", "")
             b_cmpstr = to_bytes(s_cmpstr)
             b_cmpstr = base64.b64decode(b_cmpstr)
-            rr = to_str(zlib.decompress(b_cmpstr))
+
+
+            tmp = zlib.decompress(b_cmpstr)
+            del s_cmpstr
+            del b_cmpstr
+
+            rr = to_str(tmp)
+            del tmp
             f_cmpstr = rr
             # f_cmpstr = f_cmpstr.replace("'", "")
             rr = json.loads(f_cmpstr)
+            del f_cmpstr
             try:
                 itms = rr["rows"][0]["cells"][0]["tableData"]["items"]
                 if (len(headers) == 0):
@@ -143,10 +183,17 @@ def convert_details_by_period(documents, month, year, type_id, analysis_type, pr
 
                     tb = []
                     if (year != 999 and not str(year).startswith('777')):
-                        tb = [t for t in itms if
-                              (
-                              str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(
-                                  tp))]
+                        if (analysis_type==0):
+                            tb = [t for t in itms if
+                                  (
+                                  str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(t["typeId"]) == str(
+                                      tp))]
+                        elif (analysis_type==1):
+                            tb = [t for t in itms if
+                                  (
+                                          str(t["month"]) == str(month) and str(t["year"]) == str(year) and str(
+                                      t["typeId"]) == str(
+                                      tp))]
                         if (len(tb) > 0):
                             result.append(tb)
                     elif (year==999):

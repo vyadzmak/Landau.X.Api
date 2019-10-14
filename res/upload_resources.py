@@ -11,6 +11,7 @@ import re
 import subprocess
 from pathlib import Path
 from settings import ENGINE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
+import unicodedata
 
 #UPLOAD_FOLDER = 'd:\\uploads'
 #ALLOWED_EXTENSIONS = set(['xls','xlsx'])
@@ -49,6 +50,7 @@ class UploadFile(Resource):
                     if file and allowed_file(file.filename):
                         # From flask uploading tutorial
                         filename =file.filename #str(secure_filename(file.filename)).lower()
+                        filename = unicodedata.normalize('NFC', filename).encode('utf-8').decode('utf-8')
                         v = Path(filename)
                         short_name = Path(filename).stem
 
@@ -79,7 +81,9 @@ class UploadFile(Resource):
                         return {}
 
                 #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
-                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"
+
+                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' none'
+                # print("EXEC PATH "+tt)
                 #os.system(tt)
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}

@@ -61,5 +61,7 @@ class CellDetailsListResource(Resource):
                 return report_form.data
         except Exception as e:
             session.rollback()
-            add_log("Exception on route: {0} - {1}".format(self.route, e))
+            # add_log("Exception on route: {0} - {1}".format(self.route, e))
             abort(400, message="Error while adding record Document")
+
+

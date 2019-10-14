@@ -1,6 +1,6 @@
 from db_models.models import Documents,ReportForms
 from db.db import session
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,send_from_directory
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
 import json
 import result_models.res_model as r_m
@@ -8,7 +8,7 @@ from sqlalchemy import and_
 import modules.details_converter as details_converter
 import jsonpickle
 import datetime
-
+from modules.cell_details_exporter import export_cell_details
 from modules.new_cell_details_data_module import extract_data
 def encode(ob):
     try:
@@ -20,7 +20,7 @@ def encode(ob):
     except Exception as e:
         print(str(e))
         return ""
-class CellDetailsListResource(Resource):
+class ExportCellDetailsListResource(Resource):
     #@marshal_with(document_fields)
     def post(self):
 
@@ -61,8 +61,13 @@ class CellDetailsListResource(Resource):
 
 
                 # form = r_m.FormModel(headers,result,d_id)
-                yy = encode(model)
-                return yy
+                export_folder, export_path = export_cell_details(model, False)
+                return send_from_directory(export_folder, export_path, as_attachment=True)
+
+
+
+                # yy = encode(model)
+                # return yy
             else:
                 analytical_type = json_data["analytical_type"]
                 period = json_data["period"]
@@ -74,7 +79,11 @@ class CellDetailsListResource(Resource):
                 )
 
                 ).first()
-                return report_form.data
+
+                export_folder, export_path = export_cell_details(report_form.data, True)
+                return send_from_directory(export_folder, export_path, as_attachment=True)
+
+                # return report_form.data
             # file_name,file_path,file_size
             t=0
         except Exception as e:
@@ -82,24 +91,3 @@ class CellDetailsListResource(Resource):
 
 
 
-class NewCellDetailsListResource(Resource):
-    #@marshal_with(document_fields)
-    def post(self):
-
-        try:
-            json_data = request.get_json(force=True)
-
-            sheet_name = json_data['name']
-            row_index = json_data['row']
-            column_index = json_data['col']
-            project_id = json_data['id']
-
-            result, need_encode= extract_data(project_id, sheet_name, row_index, column_index)
-
-            if (need_encode==True):
-                return encode(result)
-            else:
-                return result
-
-        except Exception as e:
-            abort(400, message="Error while adding record Document")

@@ -3,7 +3,7 @@ from flask_restful import Resource, Api
 from json_encoder import AlchemyEncoder
 from flask_cors import CORS
 import modules.resources_initializer as resources_initializer
-
+from db.db import session
 # init application
 app = Flask(__name__)
 
@@ -14,8 +14,15 @@ CORS(app, expose_headers=["Access-Token", "Uid", "Content-Disposition"])
 app.config['BUNDLE_ERRORS'] = True
 json_encoder = AlchemyEncoder
 app.json_encoder = json_encoder
-app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024*16
 api = Api(app)
+
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    print('Session was closed')
+    session.remove()
 # import resources v1
 from res.user_roles_resources import *
 from res.client_types_resources import *
@@ -49,7 +56,7 @@ from res.engine_resources import *
 from res.report_history_resources import *
 from res.report_audit_resources import *
 from res.engine_pkb_resources import *
-
+from res.export_cell_details_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -89,6 +96,9 @@ api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endp
 api.add_resource(DocumentListResource, '/documents', endpoint='documents')
 api.add_resource(BatchDocumentListResource, '/batchDocuments', endpoint='batchDocuments')
 api.add_resource(DocumentResource, '/document/<int:id>', endpoint='document')
+api.add_resource(FullDocumentResource, '/fullDocument/<int:id>', endpoint='fullDocument')
+api.add_resource(ZipDocumentResource, '/zipDocument/<int:id>', endpoint='zipDocument')
+
 api.add_resource(ExcludeDocumentListResource, '/excludeDocuments', endpoint='excludeDocuments')
 api.add_resource(UploadAdditionalFile, '/uploadAdditional', endpoint='uploadAdditional')
 
@@ -99,6 +109,8 @@ api.add_resource(ReportResource, '/report/<int:id>', endpoint='report')
 
 # cell details
 api.add_resource(CellDetailsListResource, '/cellDetails', endpoint='cellDetails')
+api.add_resource(ExportCellDetailsListResource, '/exportCellDetails', endpoint='exportCellDetails')
+api.add_resource(NewCellDetailsListResource, '/newCellDetails', endpoint='newCellDetails')
 
 # report forms
 api.add_resource(ReportFormsListResource, '/reportForms', endpoint='reportForms')
@@ -193,6 +205,7 @@ api.add_resource(ProjectRecalculationResource, '/projectRecalculation', endpoint
 # report history
 api.add_resource(ProjectReportHistoryListResource, '/projectReportHistoryList', endpoint='projectReportHistoryList')
 api.add_resource(ProjectReportHistoryResource, '/projectReportHistory/<int:id>', endpoint='projectReportHistory')
+api.add_resource(NewProjectReportHistoryResource, '/newProjectReportHistory/<int:id>', endpoint='newProjectReportHistory')
 api.add_resource(ReportHistoryListResource, '/reportHistoryList', endpoint='reportHistoryList')
 api.add_resource(ReportHistoryResource, '/reportHistory/<int:id>', endpoint='reportHistory')
 

@@ -21,6 +21,11 @@ def get_column_widths(data):
         for row in rows:
             cell_index = 0
             for cell in row:
+                is_float = type(cell) is float
+
+                if (is_float==True):
+                    cell = str(cell)
+
                 if (row_index == 0):
                     # value =cell
 
@@ -99,7 +104,7 @@ def get_column_widths(data):
         return widths
         pass
     except Exception as e:
-
+        t=0
         pass
 
 

@@ -8,7 +8,9 @@ import string
 from transliterate import translit, get_available_language_codes
 valid_filename_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 import datetime
-
+import zlib
+import base64
+import copy
 def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
     # replace spaces
     for r in replace:
@@ -94,9 +96,76 @@ def get_widths(index,cells):
     return widths
     pass
 
+def to_bytes(bytes_or_str):
+    if isinstance(bytes_or_str, str):
+        value = bytes_or_str.encode()  # uses 'utf-8' for encoding
+    else:
+        value = bytes_or_str
+    return value  # Instance of bytes
+
+def check_utf8(bytes_or_str):
+    try:
+        value = bytes_or_str.decode(encoding='utf-8')
+        print("Convert to UTF-8 - OK")
+        return True
+    except Exception as e:
+        return False
+
+def to_str(bytes_or_str):
+    try:
+        if isinstance(bytes_or_str, bytes):
+            if (check_utf8(bytes_or_str)):
+                print("Encode to utf-8")
+                value = bytes_or_str.decode(encoding='utf-8')  # uses 'utf-8' for encoding
+            else:
+                print("Encode to utf-16")
+                value = bytes_or_str.decode(encoding='utf-16')
+
+            print('bytes or string OK')
+            # value = bytes_or_str.decode()  # uses 'utf-8' for encoding
+        else:
+            value = bytes_or_str
+        return value
+    except Exception as e:
+        print('TO STR ERROR '+str(e))
+
+
+def t_load(report):
+    try:
+        s_cmpstr = copy.deepcopy(report)
+
+        s_cmpstr = s_cmpstr.replace("b'", "", 1)
+
+        s_cmpstr = s_cmpstr.replace("'", "")
+        b_cmpstr = to_bytes(s_cmpstr)
+        b_cmpstr = base64.b64decode(b_cmpstr)
+
+        tmp = zlib.decompress(b_cmpstr)
+        del s_cmpstr
+        del b_cmpstr
+
+        rr = to_str(tmp)
+        del tmp
+        f_cmpstr = rr
+        # f_cmpstr = f_cmpstr.replace("'", "")
+        rr = json.loads(f_cmpstr)
+        return rr
+    except Exception as e:
+        return None
+
+
 def export_project(project_name,report):
     try:
-        data = json.loads(report)
+
+        rr= t_load(report)
+
+        if (rr==None):
+            s_cmpstr = copy.deepcopy(report)
+            rr =json.loads(s_cmpstr)
+
+        data =rr
+
+
         dir_id = str(uuid.uuid4().hex)
         project_folder = os.path.join(EXPORT_FOLDER, dir_id)
         if not os.path.exists(project_folder):

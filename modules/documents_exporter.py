@@ -127,12 +127,23 @@ def get_widths(index, cells):
     pass
 
 
-def export_cells(worksheet, data):
+def export_cells(worksheet, data, workbook):
     try:
         # row, col, value
         row_index = 0
         cell_index = 0
+        header = None
+        none_headers = []
+        if (len(data)>0):
+            _header =data[0]
+            if (len(_header)>0):
+                header = _header[0]
+            index=0
+            for header_item in header:
+                if (header_item=='' or str(header_item).startswith('Обороты за ') or str(header_item).startswith('Сальдо на ') ):
+                    none_headers.append(index)
 
+                index+=1
         for row in data:
 
             for cell_line in row:
@@ -143,8 +154,29 @@ def export_cells(worksheet, data):
 
                         value = cell
                         _format = None
+                        _cell_index =cell_index-1
+                        exists = _cell_index in none_headers
+                        if (exists==True and value!=''):
+
+                            try:
+                                ex = ',' in  str(value)
+                                if (ex==True):
+                                    value = str(value).replace(',', '')
+                                # s_value = str(value).replace(',','')
+                                # s_value = str(s_value).replace('.',',')
+                                value = float(value)
+                                pass
+                            except Exception as e:
+                                t=0
+                                pass
+
+                            _format = workbook.add_format()
+                            _format.set_align('center')
+                            _format.set_align('vcenter')
+                            _format.set_num_format('#,##0.00')
+
                         if (_format != None):
-                            worksheet.write(row - 1, cell_index - 1, value, _format)
+                            worksheet.write(row_index - 1, cell_index - 1, value, _format)
                         else:
                             worksheet.write(row_index - 1, cell_index - 1, value)
     except Exception as e:
@@ -204,7 +236,7 @@ def export_single_document(document):
             worksheet.set_column(index, index, width)
             index += 1
 
-        export_cells(worksheet, converted_data_rows)
+        export_cells(worksheet, converted_data_rows,workbook)
         workbook.close()
         return project_folder, file_name + ".xlsx"
 
@@ -278,7 +310,7 @@ def export_documents(documents):
                 worksheet.set_column(index, index, width)
                 index += 1
 
-            export_cells(worksheet, converted_data_rows)
+            export_cells(worksheet, converted_data_rows,workbook)
             workbook.close()
 
         zip_name = project_folder

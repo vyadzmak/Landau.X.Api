@@ -2,7 +2,7 @@ from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes,
     AnalyticRules
 from db.db import session
 from sqlalchemy.orm import contains_eager
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response,send_from_directory,send_file
 from flask_restful import Resource, fields, marshal_with, abort, reqparse, marshal
 from modules.report_audit_comparer import get_diffs
 import modules.report_data_refiner as data_refiner
@@ -10,7 +10,7 @@ from modules.json_serializator import decode
 import json
 import objectpath
 from modules.threadpool import threadpool
-
+from pathlib import Path
 from res.report_audit_resources import output_fields as report_audit_fields
 
 output_fields = {
@@ -52,6 +52,8 @@ class ProjectReportHistoryResource(Resource):
         try:
             report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
                 .order_by(ReportHistory.id.desc()).first()
+
+
             if not report:
                 report_t = session.query(Reports).filter(Reports.project_id == id).first()
                 compressed_data = data_refiner.compress_data(report_t.data)
@@ -65,6 +67,31 @@ class ProjectReportHistoryResource(Resource):
             abort(400, message=repr(e))
 
 
+class NewProjectReportHistoryResource(Resource):
+
+    def get(self, id):
+        try:
+            report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
+                .order_by(ReportHistory.id.desc()).first()
+
+            data = decode(report.data)
+
+            if (data==''):
+                report = session.query(Reports).filter(Reports.project_id==id).first()
+                data = decode(report.data)
+                file_path = decode(data)
+                p = Path(file_path['file_path'])
+                file_name = str(p.name)
+                dir_name = str(p.parent)
+
+
+                return send_from_directory(dir_name, file_name, as_attachment=True)
+            t = 0
+
+
+            return None
+        except Exception as e:
+            abort(400, message=repr(e))
 class ProjectReportHistoryListResource(Resource):
     @marshal_with(output_project_report_history_fields)
     def get(self):

@@ -1,4 +1,4 @@
-from db_models.models import DefaultAnalyticRules, AnalyticRules,Reports, Projects,Documents,ProjectAttachments
+from db_models.models import DefaultAnalyticRules, AnalyticRules,Reports, Projects,Documents,ProjectAttachments,ReportHistory
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -43,7 +43,10 @@ class ExportProjectsResource(Resource):
 
     def get(self,id):
         try:
-            report = session.query(Reports).filter(Reports.project_id==id).first()
+            report = session.query(ReportHistory).filter(ReportHistory.project_id == id) \
+                .order_by(ReportHistory.id.desc()).first()
+            if not report:
+                report = session.query(Reports).filter(Reports.project_id==id).first()
             project =session.query(Projects).filter(Projects.id==id).first()
             if not report:
                 abort(404, message="Report {} doesn't exist".format(id))

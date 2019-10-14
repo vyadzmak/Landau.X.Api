@@ -178,8 +178,7 @@ class Documents(Base):
     account_number = Column(String(800))
     is_excluded = Column(Boolean)
     document_state_id = Column('document_state_id', ForeignKey('document_states.id'))
-    account_number = Column(String(800))
-    is_excluded = Column(Boolean)
+
     project_id = Column('project_id', ForeignKey('projects.id'))
     user_id = Column('user_id', ForeignKey('users.id'))
 
