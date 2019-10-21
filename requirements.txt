@@ -26,5 +26,5 @@ sqlalchemy==1.2.10
 transliterate==1.10.1
 urllib3==1.23             # via requests
 websocket-client==0.49.0  # via socketio-client
-werkzeug==0.14.1          # via flask
+werkzeug==0.15.3          # via flask
 xlsxwriter==1.0.5
