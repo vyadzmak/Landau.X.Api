@@ -162,34 +162,46 @@ class ReportHistoryResource(Resource):
 
 @threadpool
 def post_task1(project_id):
-    previous_report = session.query(ReportHistory).filter(ReportHistory.project_id == project_id) \
-        .order_by(ReportHistory.id.desc()).first()
-    if not previous_report:
-        raise Exception('Previous report has not been found! Unable to check versions.')
-    return data_refiner.decompress_data(previous_report.data)
+    try:
+        previous_report = session.query(ReportHistory).filter(ReportHistory.project_id == project_id) \
+            .order_by(ReportHistory.id.desc()).first()
+        if not previous_report:
+            raise Exception('Previous report has not been found! Unable to check versions.')
+        return data_refiner.decompress_data(previous_report.data)
+    except Exception as e:
+        t=0
 
 
 @threadpool
 def post_task3(data):
-    # add hex keys to json_data new cells
-    return data_refiner.add_uids(data)
+    try:
+
+        # add hex keys to json_data new cells
+        return data_refiner.add_uids(data)
+
+    except Exception as e:
+        t=0
 
 
 @threadpool
 def post_task2(project_id):
-    report_t = session.query(Reports).filter(Reports.project_id == project_id).first()
-    if not report_t:
-        raise Exception('Previous report from Reports table has not been found! Unable to check versions.')
-    analytic_rule_id = report_t.analytic_rule_id
+    try:
+        report_t = session.query(Reports).filter(Reports.project_id == project_id).first()
+        if not report_t:
+            raise Exception('Previous report from Reports table has not been found! Unable to check versions.')
+        analytic_rule_id = report_t.analytic_rule_id
 
-    rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
-    tree_obj = objectpath.Tree(decode(rules_data.data))
-    rules_data = list(tree_obj.execute('$..conditions.(str(code), name)'))
-    rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(str(code), name)'))
-    rules_data += list(tree_obj.execute('$..odds_formulas.(str(code), name)'))
-    rules_data += list(tree_obj.execute('$..balance_formulas.(str(code), name)'))
-    rules_data = {x['code']: x['name'] for x in rules_data}
-    return rules_data
+        rules_data = session.query(AnalyticRules).filter(AnalyticRules.id == analytic_rule_id).first()
+        tree_obj = objectpath.Tree(decode(rules_data.data))
+        rules_data = list(tree_obj.execute('$..conditions.(str(code), name)'))
+        rules_data += list(tree_obj.execute('$..opiu_cards_formulas.(str(code), name)'))
+        rules_data += list(tree_obj.execute('$..odds_formulas.(str(code), name)'))
+        rules_data += list(tree_obj.execute('$..balance_formulas.(str(code), name)'))
+        rules_data = {x['code']: x['name'] for x in rules_data}
+        return rules_data
+    except Exception as e:
+        t= 0
+
 
 
 class ReportHistoryListResource(Resource):

@@ -11,6 +11,7 @@ import datetime
 import zlib
 import base64
 import copy
+from pathlib import Path
 def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
     # replace spaces
     for r in replace:
@@ -158,6 +159,25 @@ def export_project(project_name,report):
     try:
 
         rr= t_load(report)
+
+        s_rr = str(rr)
+        exists ='file_path' in s_rr
+        if (exists==True):
+            try:
+                tmp_path = json.loads(rr)
+                _file_path = tmp_path['file_path']
+                p = Path(_file_path)
+
+                folder_name = p.parent
+                file_name = p.name
+                return folder_name,  file_name
+                t=0
+
+
+
+            except Exception as e:
+                pass
+
 
         if (rr==None):
             s_cmpstr = copy.deepcopy(report)
