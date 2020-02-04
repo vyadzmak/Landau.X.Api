@@ -19,7 +19,7 @@ markupsafe==1.0           # via jinja2
 objectpath==0.5
 psycopg2==2.7.5
 pytz==2018.5              # via flask-restful
-requests==2.19.1          # via socketio-client
+requests==2.20.0          # via socketio-client
 six==1.11.0               # via flask-cors, flask-restful, socketio-client, transliterate, websocket-client
 socketio-client==0.7.2
 sqlalchemy==1.2.10
