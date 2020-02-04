@@ -1,6 +1,6 @@
 import json
 import jsonpickle
-
+import yaml
 
 def encode(ob, unpickable=False):
     try:
@@ -45,3 +45,19 @@ def engine_decode(json_s):
     except Exception as e:
         print(str(e))
         return {}
+
+
+#encode object
+def encode_json(data):
+    try:
+        jsonpickle.set_preferred_backend('json')
+        jsonpickle.set_encoder_options('json', ensure_ascii=False)
+        jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
+
+        json = jsonpickle.encode(data, False)
+
+        return yaml.safe_load(json)
+
+    except Exception as e:
+
+        return None

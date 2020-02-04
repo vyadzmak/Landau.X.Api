@@ -1,5 +1,5 @@
 from db_models.models import Projects, ReportHistory, Reports, ReportAuditTypes, ReportOperations, ReportAudit, \
-    AnalyticRules
+    AnalyticRules,FormularVersionStorage
 from db.db import session
 from sqlalchemy.orm import contains_eager
 from flask import Flask, jsonify, request, make_response,send_from_directory,send_file
@@ -83,6 +83,15 @@ class NewProjectReportHistoryResource(Resource):
                 p = Path(file_path['file_path'])
                 file_name = str(p.name)
                 dir_name = str(p.parent)
+
+                formulars = session.query(FormularVersionStorage).filter(FormularVersionStorage.project_id==id).order_by(FormularVersionStorage.id.desc()).all()
+                if (formulars!=None and len(formulars)>0):
+                    last_formular = formulars[0]
+                    p = Path(last_formular.file_path)
+                    dir_name= str(p.parent)
+                    file_name = str(p.name)
+                    return send_from_directory(dir_name, file_name, as_attachment=True)
+
 
 
                 return send_from_directory(dir_name, file_name, as_attachment=True)

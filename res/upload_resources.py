@@ -83,8 +83,6 @@ class UploadFile(Resource):
                 #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
 
                 tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' none'
-                # print("EXEC PATH "+tt)
-                #os.system(tt)
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}
         except Exception as e:

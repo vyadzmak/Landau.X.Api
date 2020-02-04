@@ -20,6 +20,9 @@ ENGINE_PATH =ENV_PATH+" d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
 
 EXPORT_FOLDER = "d:\\Projects\\Backups\\Landau.X\\data\\exports"
 
+#EXPORT EXCELS
+EXPORT_XLSX = "d:\\Projects\\Backups\\Landau.X\\data\\export_xlsx"
+
 TEMP_FOLDER ="d:\\Projects\\Backups\\Landau.X\\data\\temp_folder"
 
 SOCKET_URL = 'localhost'

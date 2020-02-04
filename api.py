@@ -57,6 +57,9 @@ from res.report_history_resources import *
 from res.report_audit_resources import *
 from res.engine_pkb_resources import *
 from res.export_cell_details_resources import *
+from res.client_settings_resources import *
+from res.export_original_documents_resources import *
+from res.formular_versions_storage_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -69,6 +72,7 @@ api.add_resource(ClientTypeResource, '/clientType/<int:id>', endpoint='client-ty
 # clients
 api.add_resource(ClientListResource, '/clients', endpoint='clients')
 api.add_resource(ClientResource, '/client/<int:id>', endpoint='client')
+api.add_resource(ClientSettingsResource, '/clientSettings/<int:id>', endpoint='client-settings')
 
 # users
 api.add_resource(ClientUsersListResource, '/clientUsers/<int:id>', endpoint='client-users')
@@ -209,12 +213,22 @@ api.add_resource(NewProjectReportHistoryResource, '/newProjectReportHistory/<int
 api.add_resource(ReportHistoryListResource, '/reportHistoryList', endpoint='reportHistoryList')
 api.add_resource(ReportHistoryResource, '/reportHistory/<int:id>', endpoint='reportHistory')
 
+
+# export original documents
+api.add_resource(ExportOriginalDocumentsResource, '/exportOriginalDocuments/<int:id>', endpoint='exportOriginalDocuments')
+
+# formular versions storage
+api.add_resource(FormularVersionsStorageResources, '/formularVersionsStorage', endpoint='formularVersionsStorage')
+
 # report audit
 api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')
 api.add_resource(CellReportAuditListResource, '/cellReportAuditList', endpoint='cellReportAuditList')
 
 # pkb report
 api.add_resource(EnginePkbResource, '/pkbReport', endpoint='pkbReport')
+
+
+
 
 # generate routes V2
 resources_initializer.init_api_resources(api)

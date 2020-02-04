@@ -14,6 +14,98 @@ import datetime
 Base = declarative_base()
 
 
+class ClientSettings(Base):
+    __tablename__ = 'client_settings'
+    id = Column(Integer, primary_key=True)
+    client_id = Column('client_id', ForeignKey('clients.id'))
+    engine_number = Column(Integer)
+    show_project_error_states = Column(Boolean)
+    show_project_registration_number_column = Column(Boolean)
+    show_products_form = Column(Boolean)
+
+    def __init__(self, client_id, engine_number, show_project_error_states=True, show_project_registration_column=True, show_products_form=False):
+        self.client_id = client_id
+        self.engine_number = engine_number
+        self.show_project_error_states = show_project_error_states
+        self.show_project_registration_number_column = show_project_registration_column
+        self.show_products_form = show_products_form
+
+
+class FormularVersionStorage(Base):
+    __tablename__ = 'formular_versions_storage'
+    id = Column(Integer, primary_key=True)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    file_path = Column(String)
+    creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+
+
+    def __init__(self, project_id, user_id, file_path):
+        self.project_id = project_id
+        self.user_id = user_id
+        self.file_path = file_path
+
+
+class ConsolidateExcludeTransactionsDocuments(Base):
+    __tablename__ = 'consolidate_exclude_transactions_documents'
+    id = Column(Integer, primary_key=True)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    data = Column(JSON)
+    creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+
+
+    def __init__(self, project_id, user_id, data):
+        self.project_id = project_id
+        self.user_id = user_id
+        self.data = data
+
+class ConsolidateMarkData(Base):
+    __tablename__ = 'consolidate_mark_data'
+    id = Column(Integer, primary_key=True)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    data = Column(JSON)
+    creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+
+
+    def __init__(self, project_id, user_id, data):
+        self.project_id = project_id
+        self.user_id = user_id
+        self.data = data
+
+class ConsolidateStaticDocuments(Base):
+    __tablename__ = 'consolidate_static_documents'
+    id = Column(Integer, primary_key=True)
+    project_id = Column('project_id', ForeignKey('projects.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    data = Column(JSON)
+    creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+    file_path = Column(String)
+
+    def __init__(self, project_id, user_id, data,file_path):
+        self.project_id = project_id
+        self.user_id = user_id
+        self.data = data
+        self.file_path = file_path
+
+class ClientProducts(Base):
+    __tablename__ = 'client_products'
+    id = Column(Integer, primary_key=True)
+    client_id = Column('client_id', ForeignKey('clients.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+    data = Column(JSON)
+    creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+    file_path = Column(String)
+    name = Column(String)
+
+    def __init__(self, client_id, user_id,name, data,file_path):
+        self.client_id = client_id
+        self.user_id = user_id
+        self.name = name
+        self.data = data
+        self.file_path = file_path
+
 # user table
 class Log(Base):
     __tablename__ = 'log'

@@ -5,6 +5,8 @@ from flask_restful import Resource, fields, marshal_with, abort, reqparse
 from sqlalchemy import desc
 from sqlalchemy import and_
 import json
+import datetime
+import re
 import modules.json_serializator as serializator
 user_role_fields = {
     'name': fields.String,
@@ -118,8 +120,14 @@ class SimpleAnalyticRulesListResource(Resource):
         try:
             json_data = request.get_json(force=True)
             json_data = json.loads(json_data)
+            _rule_name = json_data['name']
             json_data = json.dumps(json_data, ensure_ascii=False)
-            analytic_rule = AnalyticRules("Правила для Казахстана",
+
+            rule_name =_rule_name+  " (Merged rules "
+            rule_name+= re.sub(r'\W+', '', str(datetime.datetime.now()))+")"
+
+
+            analytic_rule = AnalyticRules(rule_name,
                 is_default=True,
                 client_id=2,
                 user_id=1,
