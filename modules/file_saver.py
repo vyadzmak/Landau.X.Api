@@ -2,14 +2,36 @@ import os
 import re
 import uuid
 from pathlib import Path
-
-from settings import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, ATTACHMENTS_FOLDER, EXPORT_XLSX
+from transliterate import translit, get_available_language_codes
+from settings import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, ATTACHMENTS_FOLDER, EXPORT_XLSX,CONSOLE_STATIC_DOCUMENTS
 import datetime
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def clean_file_name(name):
+    try:
+        name = str(name).replace('"', '')
+        name = str(name).replace('\'', '')
+        name = str(name).replace('.', '')
+        name = str(name).replace(',', '')
+        name = str(name).replace('&', '')
+        name = str(name).replace('?', '')
+        name = str(name).replace('*', '')
+        name = str(name).replace('^', '')
+        name = str(name).replace(':', '')
+        name = str(name).replace(';', '')
+        name = str(name).replace('$', '')
+        name = str(name).replace('#', '')
+        name = str(name).replace('№', '')
+        name = str(name).replace('@', '')
+        name = str(name).replace('!', '')
+        name = translit(name, 'ru', reversed=True)
+        name = str(name).replace(' ', '_')
+        return name
+    except Exception as e:
+        pass
 
 def save_documents(request_files, dir_id=str(uuid.uuid4().hex)):
     documents = []
@@ -90,6 +112,40 @@ def save_formular_documents(request_files, dir_id):
 
     return documents
 
+def save_console_static_documents(request_files, name):
+    documents = []
+    # project_folder = os.path.join(CONSOLE_STATIC_DOCUMENTS, str(dir_id))
+    # if not os.path.exists(project_folder):
+    #     os.makedirs(project_folder)
+
+    name = clean_file_name(name)
+    project_folder =  os.path.join(CONSOLE_STATIC_DOCUMENTS, str(name))
+
+    # safe_path = os.path.normpath(project_folder)
+
+    if not os.path.exists(project_folder):
+        os.makedirs(project_folder)
+
+    for file in request_files.values():
+        # From flask uploading tutorial
+        uid = str(uuid.uuid4())[:8]
+        filename = file.filename  # str(secure_filename(file.filename)).lower()
+        short_name = Path(filename).stem
+        ext =clean_file_name(str(Path(filename).suffix))
+        result_file_name = short_name+'_'+uid+'.'+ext
+
+        print("Save to " + result_file_name)
+        file_path = os.path.join(project_folder, result_file_name)
+        file.save(file_path)
+        file_size = os.path.getsize(file_path)
+        documents.append({
+            'file_name': filename,
+            'file_path': file_path,
+            'file_size': file_size
+        })
+
+
+    return documents
 
 def save_attachments(request_files, dir_id=str(uuid.uuid4().hex)):
     result = []

@@ -60,6 +60,7 @@ from res.export_cell_details_resources import *
 from res.client_settings_resources import *
 from res.export_original_documents_resources import *
 from res.formular_versions_storage_resources import *
+from res.console_static_documents_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -219,6 +220,9 @@ api.add_resource(ExportOriginalDocumentsResource, '/exportOriginalDocuments/<int
 
 # formular versions storage
 api.add_resource(FormularVersionsStorageResources, '/formularVersionsStorage', endpoint='formularVersionsStorage')
+
+# formular versions storage
+api.add_resource(ConsoleStaticDocumentsResources, '/consoleStaticDocuments', endpoint='consoleStaticDocuments')
 
 # report audit
 api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')

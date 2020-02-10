@@ -23,6 +23,10 @@ EXPORT_FOLDER = "d:\\Projects\\Backups\\Landau.X\\data\\exports"
 #EXPORT EXCELS
 EXPORT_XLSX = "d:\\Projects\\Backups\\Landau.X\\data\\export_xlsx"
 
+#console static documents
+CONSOLE_STATIC_DOCUMENTS = "d:\\Projects\\Backups\\Landau.X\\data\\console_static_documents"
+
+
 TEMP_FOLDER ="d:\\Projects\\Backups\\Landau.X\\data\\temp_folder"
 
 SOCKET_URL = 'localhost'
