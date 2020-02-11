@@ -39,7 +39,8 @@ class MakeConsolidateResource(Resource):
             #здесь запускаем движок и консолидацию
             tt = ENGINE_PATH + str(-1) + " " + str(user_id) + " 2 "+str(transfer_cell_id)
             # os.system(tt)
-            subprocess.Popen(tt, shell=True)
+            #РАСКОММЕНТИТЬ
+            #subprocess.Popen(tt, shell=True)
             return {"State": "OK"}
         except Exception as e:
             return {"State": "Error"}

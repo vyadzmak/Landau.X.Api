@@ -77,14 +77,14 @@ class ConsolidateMarkData(Base):
 class ConsolidateStaticDocuments(Base):
     __tablename__ = 'consolidate_static_documents'
     id = Column(Integer, primary_key=True)
-    project_id = Column('project_id', ForeignKey('projects.id'))
+    project_id = Column('project_id', ForeignKey('projects.id'),nullable=True)
     user_id = Column('user_id', ForeignKey('users.id'))
     data = Column(JSON)
     creation_date = Column(DateTime,default=datetime.datetime.utcnow())
     file_path = Column(String)
 
-    def __init__(self, project_id, user_id, data,file_path):
-        self.project_id = project_id
+    def __init__(self,  user_id, data,file_path):
+
         self.user_id = user_id
         self.data = data
         self.file_path = file_path

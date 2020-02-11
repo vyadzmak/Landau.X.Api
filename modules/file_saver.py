@@ -125,8 +125,14 @@ def save_console_static_documents(request_files, name):
 
     if not os.path.exists(project_folder):
         os.makedirs(project_folder)
+    files = []
+    for t in request_files:
+        f_list = request_files.getlist(str(t))
+        for j_file in f_list:
+            files.append(j_file)
 
-    for file in request_files.values():
+    for file in files:
+
         # From flask uploading tutorial
         uid = str(uuid.uuid4())[:8]
         filename = file.filename  # str(secure_filename(file.filename)).lower()

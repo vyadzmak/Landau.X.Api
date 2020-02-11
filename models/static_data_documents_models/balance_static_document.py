@@ -1,8 +1,10 @@
 from models.static_data_documents_models.general_models import StaticDateCell
 from dateutil.parser import parse
 class BalanceStaticDocument():
-    def __init__(self, sheet):
+    def __init__(self,file_path,file_name,  sheet):
         try:
+            self.file_path = file_path
+            self.file_name = file_name
             #шит документа
             self.sheet = sheet
             self.active_date_cell_index = 'F4'
@@ -134,6 +136,8 @@ class BalanceStaticDocument():
 
             # всего пассивы
             self.total_passives = StaticDateCell('K30', -1, self.active_date, self.sheet)
+
+            self.sheet = None
             pass
         except Exception as e:
             pass
@@ -141,8 +145,8 @@ class BalanceStaticDocument():
     #parse active and passive dates
     def parse_dates(self):
         try:
-            self.active_date = str(self.sheet[self.active_date_cell_index].value.date())
-            self.passive_date = str(self.sheet[self.passive_date_cell_index].value.date())
+            self.active_date = self.sheet[self.active_date_cell_index].value
+            self.passive_date = self.sheet[self.passive_date_cell_index].value
 
         except Exception as e:
             t=0

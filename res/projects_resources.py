@@ -1,5 +1,5 @@
 from db_models.models import Projects, ReportForms, Reports, Documents, ProjectAnalysisLog, ProjectAnalysis, \
-    ProjectControlLog, TransferCellsParams, ProjectSharing, ProjectAttachments, Chats, ChatMessages
+    ProjectControlLog, TransferCellsParams, ProjectSharing, ProjectAttachments, Chats, ChatMessages,FormularVersionStorage, ConsolidateStaticDocuments, ConsolidateExcludeTransactionsDocuments,ConsolidateMarkData
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -103,6 +103,21 @@ class ProjectResource(Resource):
         for chat in chats:
             session.delete(chat)
             session.commit()
+
+        session.query(FormularVersionStorage).filter(FormularVersionStorage.project_id==id).delete(synchronize_session=False)
+        session.commit()
+
+        session.query(ConsolidateMarkData).filter(ConsolidateMarkData.project_id == id).delete(
+            synchronize_session=False)
+        session.commit()
+
+        session.query(ConsolidateExcludeTransactionsDocuments).filter(ConsolidateExcludeTransactionsDocuments.project_id == id).delete(
+            synchronize_session=False)
+        session.commit()
+
+        session.query(ConsolidateStaticDocuments).filter(ConsolidateStaticDocuments.project_id == id).delete(
+            synchronize_session=False)
+        session.commit()
 
         project = session.query(Projects).filter(Projects.id == id).first()
 

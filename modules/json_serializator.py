@@ -59,5 +59,5 @@ def encode_json(data):
         return yaml.safe_load(json)
 
     except Exception as e:
-
+        t=0
         return None
