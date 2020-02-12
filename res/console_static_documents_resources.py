@@ -50,3 +50,16 @@ class ConsoleStaticDocumentsResources(Resource):
         except Exception as e:
             add_log("Exception on route: {0} - {1}".format(self.route, e))
             return {"State": "Error"}
+
+
+    def put(self, id):
+
+        json_data = request.get_json(force=True)
+        project_id = json_data['project_id']
+        console_static_document = session.query(ConsolidateStaticDocuments).filter(ConsolidateStaticDocuments.id==id).first()
+        if (not console_static_document):
+            abort(404, error='Consolidate static not found')
+        console_static_document.project_id = project_id
+        session.add(console_static_document)
+        session.commit()
+        return  201

@@ -126,7 +126,7 @@ class SimpleAnalyticRulesListResource(Resource):
             rule_name =_rule_name+  " (Merged rules "
             rule_name+= re.sub(r'\W+', '', str(datetime.datetime.now()))+")"
 
-
+            rule_name = 'ATF Test'
             analytic_rule = AnalyticRules(rule_name,
                 is_default=True,
                 client_id=2,

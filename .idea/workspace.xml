@@ -2,19 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b9255eb-beb4-47a5-b237-fc53173ae547" name="Default" comment="added project sharing">
-      <change afterPath="$PROJECT_DIR$/models/static_data_documents_models/debt_credit_certificate_document.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/static_data_documents_models/opiu_static_document.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/res/consolidate_mark_resources.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/db_models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/static_data_documents_models/balance_static_document.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/static_data_documents_models/balance_static_document.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/static_data_documents_models/console_static_form_documents.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/static_data_documents_models/console_static_form_documents.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/static_data_documents_models/general_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/static_data_documents_models/general_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/console_static_documents_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/console_static_documents_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/file_saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/file_saver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/json_serializator.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/json_serializator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/original_file_saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/original_file_saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/analytic_rules_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/analytic_rules_resources.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/console_static_documents_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/console_static_documents_resources.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/consolidate_data_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/consolidate_data_resources.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/projects_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/projects_resources.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,62 +25,6 @@
         <option value="Python Script" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>base</find>
-      <find>base64</find>
-      <find>ReportAudit</find>
-      <find>Projects</find>
-      <find>ReportAu</find>
-      <find>operation_d</find>
-      <find>delete</find>
-      <find>chats</find>
-      <find>chats'</find>
-      <find>encode</find>
-      <find>decode</find>
-      <find>text = &quot;{}</find>
-      <find>analytical_type</find>
-      <find>compare_json</find>
-      <find>get_system_cell_text</find>
-      <find>decompress_data</find>
-      <find>'floatings</find>
-      <find>ProjectSharing</find>
-      <find>ProjectSharing(</find>
-      <find>ProjectShar</find>
-      <find>Dell</find>
-      <find>s_cmp</find>
-      <find>cell</find>
-      <find>report</find>
-      <find>celldet</find>
-      <find>Ошибка преобразования документы к модели</find>
-      <find>projectSelectAnalysis</find>
-      <find>client_id</find>
-      <find>utc</find>
-      <find>newPro</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>Chat</replace>
-      <replace>message_fields</replace>
-      <replace>ChatMessages</replace>
-      <replace>messages</replace>
-      <replace>chat</replace>
-      <replace>ChatMessage</replace>
-      <replace>message</replace>
-      <replace>x['state_id']</replace>
-      <replace>ProjectAttachmentTypes</replace>
-      <replace>attachment_type_fields</replace>
-      <replace>ProjectAttachmentType</replace>
-      <replace>attachment_typ</replace>
-      <replace>Attachment</replace>
-      <replace>api</replace>
-      <replace>ReportHistory</replace>
-      <replace>.append</replace>
-      <replace>altered_keys</replace>
-      <replace>int(curr_cells.get('json', {}).get</replace>
-      <replace>.get('json'</replace>
-      <replace>analytical_type</replace>
-    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -110,20 +48,20 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="selectCon&#9;null&#9;null&#10;ProjectSelectAnalysisResource&#9;null&#9;null" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/models/static_data_documents_models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/res" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Projects\Github\Landau.X.Api" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Projects\Github\Landau.X.Api\models\static_data_documents_models" />
       <recent name="D:\Projects\Github\Landau.X.Api\res" />
+      <recent name="D:\Projects\Github\Landau.X.Api\models\static_data_documents_models" />
       <recent name="D:\Projects\Github\Landau.X.Api\modules" />
       <recent name="D:\Projects\Github\Landau.X.Api\cross_res" />
       <recent name="D:\Projects\Landau.X.Api\res" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Projects\Github\Landau.X.Api" />
     </key>
   </component>
   <component name="RunManager" selected="Python.api">
@@ -417,42 +355,42 @@
     <option name="LAST_COMMIT_MESSAGE" value="added report history audit" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1418" height="466" key="DebuggerActiveHint" timestamp="1581425424041">
+    <state width="1425" height="466" key="DebuggerActiveHint" timestamp="1581509882400">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1418" height="466" key="DebuggerActiveHint/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581425424041" />
-    <state width="1899" height="268" key="GridCell.Tab.0.bottom" timestamp="1581437101550">
+    <state width="1425" height="466" key="DebuggerActiveHint/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581509882400" />
+    <state width="1899" height="268" key="GridCell.Tab.0.bottom" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.0.bottom/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.0.center" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.0.bottom/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.0.center" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.0.center/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.0.left" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.0.center/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.0.left" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.0.left/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.0.right" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.0.left/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.0.right" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.0.right/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.1.bottom" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.0.right/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.1.bottom" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.1.bottom/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.1.center" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.1.bottom/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.1.center" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.1.center/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.1.left" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.1.center/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.1.left" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.1.left/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
-    <state width="1899" height="268" key="GridCell.Tab.1.right" timestamp="1581437101550">
+    <state width="1899" height="268" key="GridCell.Tab.1.left/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
+    <state width="1899" height="268" key="GridCell.Tab.1.right" timestamp="1581531433302">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="268" key="GridCell.Tab.1.right/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581437101550" />
+    <state width="1899" height="268" key="GridCell.Tab.1.right/0.0.1366.728/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1581531433302" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -529,7 +467,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/res/consolidate_data_resources.py</url>
-          <line>73</line>
+          <line>76</line>
           <option name="timeStamp" value="584" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -711,16 +649,6 @@
           <url>file://$PROJECT_DIR$/modules/document_optimize_module.py</url>
           <line>83</line>
           <option name="timeStamp" value="1078" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/res/consolidate_data_resources.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="1101" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/res/consolidate_data_resources.py</url>
-          <line>39</line>
-          <option name="timeStamp" value="1102" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/modules/document_optimize_module.py</url>
@@ -1033,11 +961,6 @@
           <option name="timeStamp" value="1330" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/res/user_logins_resources.py</url>
-          <line>54</line>
-          <option name="timeStamp" value="1333" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/res/client_settings_resources.py</url>
           <line>35</line>
           <option name="timeStamp" value="1336" />
@@ -1093,11 +1016,6 @@
           <option name="timeStamp" value="1399" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/res/console_static_documents_resources.py</url>
-          <line>25</line>
-          <option name="timeStamp" value="1407" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/modules/json_serializator.py</url>
           <line>62</line>
           <option name="timeStamp" value="1409" />
@@ -1111,6 +1029,51 @@
           <url>file://$PROJECT_DIR$/models/static_data_documents_models/debt_credit_certificate_document.py</url>
           <line>93</line>
           <option name="timeStamp" value="1421" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/consolidate_mark_resources.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="1424" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/consolidate_data_resources.py</url>
+          <line>30</line>
+          <option name="timeStamp" value="1441" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/consolidate_mark_resources.py</url>
+          <line>29</line>
+          <option name="timeStamp" value="1450" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/default_analytic_rules_resources.py</url>
+          <line>69</line>
+          <option name="timeStamp" value="1451" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/analytic_rules_resources.py</url>
+          <line>123</line>
+          <option name="timeStamp" value="1454" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/analytic_rules_resources.py</url>
+          <line>134</line>
+          <option name="timeStamp" value="1455" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/analytic_rules_resources.py</url>
+          <line>138</line>
+          <option name="timeStamp" value="1456" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/export_original_documents_resources.py</url>
+          <line>11</line>
+          <option name="timeStamp" value="1457" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/res/export_original_documents_resources.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="1459" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

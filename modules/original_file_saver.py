@@ -41,7 +41,7 @@ def save_original_documents_documents(project_id):
 
             if (project_name == ''):
                 project_name = 'export_project_' + str(project_id)
-
+        project_name = str(project_name).replace(' ','_')
         arch_name = os.path.join(EXPORT_FOLDER, project_name)
         try:
             shutil.make_archive(arch_name, 'zip', source_dir)

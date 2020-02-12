@@ -61,6 +61,7 @@ from res.client_settings_resources import *
 from res.export_original_documents_resources import *
 from res.formular_versions_storage_resources import *
 from res.console_static_documents_resources import *
+from res.consolidate_mark_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -95,6 +96,11 @@ api.add_resource(UploadFile, '/upload', endpoint='upload')
 api.add_resource(UserProjectList, '/userProjects/<int:id>', endpoint='userProjects')
 api.add_resource(ProjectListResource, '/projects', endpoint='projects')
 api.add_resource(ProjectResource, '/project/<int:id>', endpoint='project')
+
+#consolidate marks
+api.add_resource(ConsolidateMarkListResource, '/consolidateMarks', endpoint='consolidateMarks')
+api.add_resource(ConsolidateMarkResource, '/consolidateMark/<int:id>', endpoint='consolidateMark')
+
 
 # documents
 api.add_resource(ProjectDocumentListResource, '/projectDocuments/<int:id>', endpoint='projectDocuments')
@@ -223,6 +229,7 @@ api.add_resource(FormularVersionsStorageResources, '/formularVersionsStorage', e
 
 # formular versions storage
 api.add_resource(ConsoleStaticDocumentsResources, '/consoleStaticDocuments', endpoint='consoleStaticDocuments')
+api.add_resource(ConsoleStaticDocumentsResources, '/consoleStaticDocuments/<int:id>', endpoint='consoleStaticDocument')
 
 # report audit
 api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')
