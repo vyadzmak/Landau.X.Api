@@ -22,14 +22,24 @@ class ClientSettings(Base):
     show_project_error_states = Column(Boolean)
     show_project_registration_number_column = Column(Boolean)
     show_products_form = Column(Boolean)
-
-    def __init__(self, client_id, engine_number, show_project_error_states=True, show_project_registration_column=True, show_products_form=False):
+    show_project_log = Column(Boolean)
+    show_project_discussion = Column(Boolean)
+    show_project_files = Column(Boolean)
+    show_project_history = Column(Boolean)
+    export_original_documents = Column(Boolean)
+    show_consolidation_static_files= Column(Boolean)
+    def __init__(self, client_id, engine_number, show_project_error_states=True, show_project_registration_column=True, show_products_form=False,show_project_log=True,show_project_discussion=True,show_project_files=True,show_project_history=True,export_original_documents=True,show_consolidation_static_files=True):
         self.client_id = client_id
         self.engine_number = engine_number
         self.show_project_error_states = show_project_error_states
         self.show_project_registration_number_column = show_project_registration_column
         self.show_products_form = show_products_form
-
+        self.show_project_log =show_project_log
+        self.show_project_discussion= show_project_discussion
+        self.show_project_files=show_project_files
+        self.show_project_history = show_project_history
+        self.export_original_documents = export_original_documents
+        self.show_consolidation_static_files = show_consolidation_static_files
 
 class FormularVersionStorage(Base):
     __tablename__ = 'formular_versions_storage'
@@ -53,11 +63,13 @@ class ConsolidateExcludeTransactionsDocuments(Base):
     user_id = Column('user_id', ForeignKey('users.id'))
     data = Column(JSON)
     creation_date = Column(DateTime,default=datetime.datetime.utcnow())
+    name = Column(String)
 
 
-    def __init__(self, project_id, user_id, data):
+    def __init__(self, project_id, user_id,name, data):
         self.project_id = project_id
         self.user_id = user_id
+        self.name = name
         self.data = data
 
 class ConsolidateMarkData(Base):
@@ -82,13 +94,14 @@ class ConsolidateStaticDocuments(Base):
     data = Column(JSON)
     creation_date = Column(DateTime,default=datetime.datetime.utcnow())
     file_path = Column(String)
+    name = Column(String)
 
-    def __init__(self,  user_id, data,file_path):
+    def __init__(self,  user_id,name, data,file_path):
 
         self.user_id = user_id
         self.data = data
         self.file_path = file_path
-
+        self.name = name
 class ClientProducts(Base):
     __tablename__ = 'client_products'
     id = Column(Integer, primary_key=True)

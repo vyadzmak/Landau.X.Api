@@ -24,7 +24,8 @@ class ConsoleStaticDocumentsResources(Resource):
 
             else:
                 data = encode_json(result)
-                model = ConsolidateStaticDocuments(user_id,data,'')
+                model = ConsolidateStaticDocuments(user_id,name,data,'')
+
                 session.add(model)
                 session.commit()
 

@@ -5,6 +5,7 @@ from models.static_data_documents_models.debt_credit_certificate_document import
 class ConsoleStaticFormDocuments():
     def __init__(self,files):
         try:
+            self.name = ''
             self.balance_static_document = None
             self.opiu_static_document = None
             self.deb_credit_certificate  = None

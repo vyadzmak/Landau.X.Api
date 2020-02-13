@@ -26,7 +26,12 @@ class ClientSettingsResource(Resource):
             result.show_products_form = client_settings.show_products_form
             result.show_project_error_states = client_settings.show_project_error_states
             result.show_project_registration_number_column = client_settings.show_project_registration_number_column
-
+            result.show_project_log = client_settings.show_project_log
+            result.show_project_discussion = client_settings.show_project_discussion
+            result.show_project_files = client_settings.show_project_files
+            result.show_project_history = client_settings.show_project_history
+            result.export_original_documents = client_settings.export_original_documents
+            result.show_consolidation_static_files = client_settings.show_consolidation_static_files
 
 
             if not result:
@@ -45,6 +50,12 @@ class ClientSettingsResource(Resource):
             client_settings.show_products_form = json_data["show_products_form"]
             client_settings.show_project_error_states = json_data["show_project_error_states"]
             client_settings.show_project_registration_number_column = json_data["show_project_registration_number_column"]
+            client_settings.show_project_log = json_data["show_project_log"]
+            client_settings.show_project_discussion = json_data["show_project_discussion"]
+            client_settings.show_project_files = json_data["show_project_files"]
+            client_settings.show_project_history = json_data["show_project_history"]
+            client_settings.export_original_documents = json_data["export_original_documents"]
+            client_settings.show_consolidation_static_files = json_data["show_consolidation_static_files"]
             session.add(client_settings)
             session.commit()
 
@@ -55,7 +66,12 @@ class ClientSettingsResource(Resource):
             result.show_products_form = client_settings.show_products_form
             result.show_project_error_states = client_settings.show_project_error_states
             result.show_project_registration_number_column = client_settings.show_project_registration_number_column
-
+            result.show_project_log = client_settings.show_project_log
+            result.show_project_discussion = client_settings.show_project_discussion
+            result.show_project_files = client_settings.show_project_files
+            result.show_project_history = client_settings.show_project_history
+            result.export_original_documents = client_settings.export_original_documents
+            result.show_consolidation_static_files = client_settings.show_consolidation_static_files
 
             return encode_json(result),201
 

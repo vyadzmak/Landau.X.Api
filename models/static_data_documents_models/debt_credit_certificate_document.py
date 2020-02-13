@@ -1,10 +1,11 @@
 from models.static_data_documents_models.general_models import StaticNameValueDateCell
 from dateutil.parser import parse
 from datetime import date
-
+from random import randint
 class DebtCreditCertificateStaticDocument():
     def __init__(self,file_path,file_name,  sheet):
         try:
+            self.id = randint(1,10000)
             self.file_path = file_path
             self.file_name = file_name
             self.sheet = sheet

@@ -19,6 +19,14 @@ class ClientSettingsModel():
             self.show_project_error_states = True
             self.show_project_registration_number_column = True
             self.show_products_form = False
+            self.show_project_log = True
+            self.show_project_discussion = True
+            self.show_project_files = True
+            self.show_project_history = True
+            self.export_original_documents =True
+            self.show_consolidation_static_files = True
+
+
             self.engine_versions = []
             self.init_engine_versions()
         except Exception as e:

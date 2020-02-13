@@ -29,6 +29,16 @@ def save_original_documents_documents(project_id):
 
         file_path = documents[0].file_path
 
+        files_exists = False
+        for document in documents:
+            e = os.path.isfile(document.file_path)
+            if (e==True):
+                files_exists =True
+                break
+
+        if (files_exists==False):
+            return None,None,None
+
         p = Path(file_path)
 
         source_dir = p.parent

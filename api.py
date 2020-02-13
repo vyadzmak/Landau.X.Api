@@ -62,6 +62,9 @@ from res.export_original_documents_resources import *
 from res.formular_versions_storage_resources import *
 from res.console_static_documents_resources import *
 from res.consolidate_mark_resources import *
+from res.build_consolidate_excluded_rows_resources import *
+from res.project_additional_documents_resources import *
+from res.export_additional_documents_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -227,9 +230,16 @@ api.add_resource(ExportOriginalDocumentsResource, '/exportOriginalDocuments/<int
 # formular versions storage
 api.add_resource(FormularVersionsStorageResources, '/formularVersionsStorage', endpoint='formularVersionsStorage')
 
-# formular versions storage
+# console static documents
 api.add_resource(ConsoleStaticDocumentsResources, '/consoleStaticDocuments', endpoint='consoleStaticDocuments')
 api.add_resource(ConsoleStaticDocumentsResources, '/consoleStaticDocuments/<int:id>', endpoint='consoleStaticDocument')
+
+
+api.add_resource(ProjectAdditionalDocumentsResource, '/projectAdditionalDocuments/<int:id>', endpoint='projectAdditionalDocuments')
+
+
+api.add_resource(BuildConsolidateExcludedRowsDocumentsListResource, '/buildConsolidateExcludedRowsDocuments', endpoint='buildConsolidateExcludedRowsDocuments')
+
 
 # report audit
 api.add_resource(HistoryReportAuditListResource, '/historyReportAuditList', endpoint='historyReportAuditList')
@@ -238,7 +248,9 @@ api.add_resource(CellReportAuditListResource, '/cellReportAuditList', endpoint='
 # pkb report
 api.add_resource(EnginePkbResource, '/pkbReport', endpoint='pkbReport')
 
-
+# export additional documents
+api.add_resource(ExportStaticDocumentsResource, '/exportStaticDocuments', endpoint='exportStaticDocuments')
+api.add_resource(ExportExcludeTransactionsDocumentsResource, '/exportExcludeTransactionsDocuments/<int:id>', endpoint='exportExcludeTransactionsDocuments')
 
 
 # generate routes V2
