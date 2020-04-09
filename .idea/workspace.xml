@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b9255eb-beb4-47a5-b237-fc53173ae547" name="Default" comment="added project sharing">
-      <change afterPath="$PROJECT_DIR$/models/static_data_documents_models/asset_certificate_document.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/static_data_documents_models/console_static_form_documents.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/static_data_documents_models/console_static_form_documents.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/cell_details_exporter.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/cell_details_exporter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/consolidate_mark_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/consolidate_mark_resources.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/export_additional_documents_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/export_additional_documents_resources.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +36,6 @@
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -325,9 +320,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -346,6 +339,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added chat" />
@@ -1071,7 +1065,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/res/export_additional_documents_resources.py</url>
-          <line>98</line>
+          <line>116</line>
           <option name="timeStamp" value="1492" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

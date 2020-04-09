@@ -14,9 +14,9 @@ ATTACHMENTS_FOLDER = 'd:\\attachments'
 #allowed extensions
 ALLOWED_EXTENSIONS = set(['xls','xlsx'])
 
-ENV_PATH = "d:\\Projects\\Github\\Landau.Pyzzle.Engine\\venv\\Scripts\\python.exe"
+ENV_PATH = "d:\\Projects\\Landau.Pyzzle.Engine\\venv\\Scripts\\python.exe"
 #engine path
-ENGINE_PATH =ENV_PATH+" d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
+ENGINE_PATH =ENV_PATH+" d:\Projects\Landau.Pyzzle.Engine\__init__.py "
 
 EXPORT_FOLDER = "d:\\Projects\\Backups\\Landau.X\\data\\exports"
 
