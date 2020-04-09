@@ -165,7 +165,14 @@ def convert_report(data,is_report):
                         # pass
                         value = value.replace(',','')
                         # value = value.replace('.',',')
+                    elif(name=='period'):
+                        is_date_time = type(value)==datetime.datetime
+                        is_date = type(value)==datetime.date
+                        is_string = type(value)==str
+                        if (is_date_time==True or is_date==True):
+                           value = value.strftime("%d.%m.%Y")
 
+                        t=0
                     _row.append(value)
 
             export_rows.append(_row)

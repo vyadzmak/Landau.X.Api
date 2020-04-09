@@ -11,6 +11,8 @@ from modules.documents_exporter import translit,clean_filename
 from settings import EXPORT_FOLDER
 import os
 import uuid
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 class ExportExcludeTransactionsDocumentsResource(Resource):
     def get(self, id):
         try:
@@ -55,7 +57,7 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
             project_folder = os.path.join(EXPORT_FOLDER, dir_id)
             if not os.path.exists(project_folder):
                 os.makedirs(project_folder)
-            name = 'export_exclude_data_'+document.name+'.xls'
+            name = 'export_exclude_data_'+document.name+'.xlsx'
 
             name = str(name).replace('"', ' ')
             name = translit(name, 'ru', reversed=True)
@@ -66,13 +68,29 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
 
 
 
-            export_path = os.path.join(project_folder,name)
+            export_path = os.path.join(project_folder,file_name)
+            wb = Workbook()
 
-            with pd.ExcelWriter(export_path) as writer:
-                balance_frame.to_excel(writer, sheet_name='Баланс')
-                opiu_frame.to_excel(writer, sheet_name='ОПиУ')
+            balance_sheet = wb.create_sheet("Баланс")
+            for r in dataframe_to_rows(balance_frame, index=True, header=True):
+                balance_sheet.append(r)
 
-                odds_frame.to_excel(writer, sheet_name='ОДДС')
+            opiu_sheet = wb.create_sheet("ОПиУ")
+            for r in dataframe_to_rows(opiu_frame, index=True, header=True):
+                opiu_sheet.append(r)
+
+            odds_sheet = wb.create_sheet("ОДДС")
+            for r in dataframe_to_rows(odds_frame, index=True, header=True):
+                odds_sheet.append(r)
+            r_sheet = wb.get_sheet_by_name('Sheet')
+            wb.remove(r_sheet)
+            wb.save(export_path)
+
+            # with pd.ExcelWriter(export_path) as writer:
+            #     balance_frame.to_excel(writer, sheet_name='Баланс')
+            #     opiu_frame.to_excel(writer, sheet_name='ОПиУ')
+            #
+            #     odds_frame.to_excel(writer, sheet_name='ОДДС')
 
             return send_from_directory(project_folder, file_name,
                                        as_attachment=True)

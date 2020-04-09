@@ -9,6 +9,16 @@ class ConsoleStaticFormDocuments():
             self.balance_static_document = None
             self.opiu_static_document = None
             self.deb_credit_certificate  = None
+            #справка об активах
+            self.asset_certificate = None
+
+            #обеспечение
+            self.provision = None
+
+            #справка об обязательствах
+            self.statement_of_obligations = None
+
+
             self.has_error =False
             self.errors = []
 
