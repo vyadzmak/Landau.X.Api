@@ -50,6 +50,7 @@ def extract_data(project_id, sheet_name, row_index, column_index):
                 data = json.loads(copy.deepcopy(report_form.data))
 
                 if (data['additional_info']['cell_index']==cell_index and data['additional_info']['sheet_name']==sheet_name):
+
                     return report_form.data,False
                 t=0
 

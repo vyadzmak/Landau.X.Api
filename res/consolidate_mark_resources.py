@@ -22,7 +22,7 @@ class ConsolidateMarkResource(Resource):
 
     @marshal_with(console_mark_fields)
     def put(self, id):
-        is_debug =True
+        is_debug =False
         json_data = request.get_json(force=True)
 
         #id = json_data['id']

@@ -69,6 +69,12 @@ class ProjectAnalysisRemover(Resource):
             session.delete(report)
             session.commit()
 
+        logs = session.query(ProjectControlLog).filter(ProjectControlLog.project_id == id).all()
+
+        for log in logs:
+            session.delete(log)
+            session.commit()
+
         # if not analysis:
         #     abort(404, message="Document {} doesn't exist".format(id))
         # session.delete(analysis)
