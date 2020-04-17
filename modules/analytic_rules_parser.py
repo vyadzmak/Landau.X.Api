@@ -19,6 +19,8 @@ def encode(ob):
 def parse_transaction_rules(conditions, analytic_rules):
     try:
         for condition in conditions:
+            if (len(condition['document_account_masks'])==0 or len(condition['transaction_account_masks'])==0):
+                continue
             code = condition['code']
             title = condition['name']
             type = condition['default_transaction_type']['type']['_value_']
