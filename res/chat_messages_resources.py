@@ -22,7 +22,7 @@ class ChatMessageResource(Resource):
     @marshal_with(message_fields)
     def get(self, id):
         messages = session.query(ChatMessages).filter(ChatMessages.id == id).first()
-        if not chat:
+        if not messages:
             abort(404, message="Chat message {} doesn't exist".format(id))
         return messages
 

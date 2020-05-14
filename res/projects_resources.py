@@ -40,6 +40,12 @@ project_control_log_fields = {
     'data': fields.String,
     'project_id': fields.Integer
 }
+product_fields ={
+    'id':fields.Integer,
+    'name':fields.String,
+    'formular_id':fields.Integer,
+    'schema_id':fields.Integer
+}
 
 project_fields = {
     'id': fields.Integer,
@@ -50,7 +56,8 @@ project_fields = {
     'user_id': fields.Integer,
     'user_data': fields.Nested(user_fields),
     'control_log_state_id': fields.Integer,
-    'registration_number': fields.String
+    'registration_number': fields.String,
+    'product_data': fields.Nested(product_fields)
 }
 
 

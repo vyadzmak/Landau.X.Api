@@ -26,7 +26,8 @@ class UploadFile(Resource):
         try:
             f = request.form
             userId = f.get('userId')
-            project = Projects(userId)
+            product_id = f.get('productId')
+            project = Projects(userId,product_id)
             session.add(project)
             session.commit()
             system_chat = Chats('Обсуждение проекта', userId, project.id, [], True)
@@ -81,8 +82,10 @@ class UploadFile(Resource):
                         return {}
 
                 #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
+                if (product_id==None):
+                    product_id=-1
+                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' none '+str(product_id)
 
-                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' none'
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}
         except Exception as e:

@@ -28,7 +28,8 @@ class ClientSettings(Base):
     show_project_history = Column(Boolean)
     export_original_documents = Column(Boolean)
     show_consolidation_static_files= Column(Boolean)
-    def __init__(self, client_id, engine_number, show_project_error_states=True, show_project_registration_column=True, show_products_form=False,show_project_log=True,show_project_discussion=True,show_project_files=True,show_project_history=True,export_original_documents=True,show_consolidation_static_files=True):
+    show_product_name = Column(Boolean)
+    def __init__(self, client_id, engine_number, show_project_error_states=True, show_project_registration_column=True, show_products_form=False,show_project_log=True,show_project_discussion=True,show_project_files=True,show_project_history=True,export_original_documents=True,show_consolidation_static_files=True,show_product_name=True):
         self.client_id = client_id
         self.engine_number = engine_number
         self.show_project_error_states = show_project_error_states
@@ -40,6 +41,7 @@ class ClientSettings(Base):
         self.show_project_history = show_project_history
         self.export_original_documents = export_original_documents
         self.show_consolidation_static_files = show_consolidation_static_files
+        self.show_product_name = show_product_name
 
 class FormularVersionStorage(Base):
     __tablename__ = 'formular_versions_storage'
@@ -239,6 +241,27 @@ class ProjectSharing(Base):
         self.users_ids = users_ids
 
 
+# products
+class Products(Base):
+    __tablename__ = 'products_catalog'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256))
+    creation_date = Column(DateTime)
+
+    client_id = Column('client_id', ForeignKey('clients.id'))
+    user_creator_id = Column('user_creator_id', ForeignKey('users.id'))
+    schema_id = Column('schema_id', ForeignKey('analytic_rules.id'))
+    formular_id = Column('formular_id', ForeignKey('formulars.id'))
+    product_data = relationship("Projects", backref="product_data")
+
+    def __init__(self,client_id, user_id, schema_id, formular_id,name ):
+        self.creation_date = datetime.datetime.now()
+        self.user_creator_id = user_id
+        self.client_id = client_id
+        self.schema_id = schema_id
+        self.formular_id = formular_id
+        self.name = name
+
 class Projects(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
@@ -250,13 +273,16 @@ class Projects(Base):
     control_log_state_id = Column(Integer)
     chat_data = relationship("Chats", backref="project_data")
     sharing = relationship("ProjectSharing", backref="project")
+    product_id = Column('product_id', ForeignKey('products_catalog.id'))
 
-    def __init__(self, userId):
+    #product_id = relationship()
+    def __init__(self, userId,product_id=None):
         self.creation_date = datetime.datetime.now()
         self.name = "Заявка " + str(self.creation_date)
         self.state_id = 1
         self.user_id = userId
         self.control_log_state_id = 1
+        self.product_id = product_id
 
 
 # document states
@@ -299,6 +325,24 @@ class Documents(Base):
         self.is_excluded = False
 
 
+# documents
+class Formulars(Base):
+    __tablename__ = 'formulars'
+    id = Column(Integer, primary_key=True)
+    file_name = Column(String(256))
+    file_path = Column(String(256))
+    file_size = Column(Float)
+    creation_date = Column(DateTime)
+    client_id= Column('client_id', ForeignKey('clients.id'))
+    user_id = Column('user_id', ForeignKey('users.id'))
+
+    def __init__(self,client_id, user_id, file_name, file_path, file_size):
+        self.client_id = client_id
+        self.creation_date = datetime.datetime.now()
+        self.user_id = user_id
+        self.file_name = file_name
+        self.file_path = file_path
+        self.file_size = file_size
 # reports
 class Reports(Base):
     __tablename__ = 'reports'

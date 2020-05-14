@@ -65,6 +65,11 @@ from res.consolidate_mark_resources import *
 from res.build_consolidate_excluded_rows_resources import *
 from res.project_additional_documents_resources import *
 from res.export_additional_documents_resources import *
+from res.upload_formular_resources import *
+from res.client_formulars_resources import *
+from res.client_products_resources import *
+from res.client_product_model_resources import *
+from res.get_formular_resources import *
 # add resources v1
 # user roles
 api.add_resource(UserRoleListResource, '/userRoles', endpoint='user-roles')
@@ -94,6 +99,7 @@ api.add_resource(LogListResource, '/log', endpoint='log')
 
 # upload files
 api.add_resource(UploadFile, '/upload', endpoint='upload')
+api.add_resource(UploadFormular, '/uploadFormular', endpoint='uploadFormular')
 
 # projects
 api.add_resource(UserProjectList, '/userProjects/<int:id>', endpoint='userProjects')
@@ -252,6 +258,12 @@ api.add_resource(EnginePkbResource, '/pkbReport', endpoint='pkbReport')
 api.add_resource(ExportStaticDocumentsResource, '/exportStaticDocuments', endpoint='exportStaticDocuments')
 api.add_resource(ExportExcludeTransactionsDocumentsResource, '/exportExcludeTransactionsDocuments/<int:id>', endpoint='exportExcludeTransactionsDocuments')
 
+api.add_resource(ClientFormularListResource, '/clientFormulars/<int:id>', endpoint='clientFormulars')
+api.add_resource(ClientProductsListResource, '/clientProducts/<int:id>', endpoint='clientProducts')
+api.add_resource(ClientProductsResource, '/clientProduct/<int:id>', endpoint='clientProduct')
+api.add_resource(ClientProductsListResource, '/clientProducts', endpoint='clientProductsR')
+api.add_resource(ClientProductModelResource, '/clientProductModel/<int:id>', endpoint='clientProductModel')
+api.add_resource(GetFormularResource, '/getFormular/<int:id>', endpoint='getFormular')
 
 # generate routes V2
 resources_initializer.init_api_resources(api)

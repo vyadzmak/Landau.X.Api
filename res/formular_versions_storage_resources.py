@@ -9,7 +9,6 @@ class FormularVersionsStorageResources(Resource):
 
     def post(self):
         try:
-            t= session.query(ClientProducts).all()
 
             f = request.form
             user_id = int(f.get('user_id'))

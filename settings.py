@@ -9,7 +9,7 @@ DB_URI = 'postgresql://postgres:12345678@localhost/landau'
 #upload folder
 UPLOAD_FOLDER = 'd:\\Projects\\Backups\\Landau.X\\data\\uploads'
 #attachments folder
-ATTACHMENTS_FOLDER = 'd:\\attachments'
+ATTACHMENTS_FOLDER = 'd:\\Projects\\Backups\\Landau.X\\data\\attachments'
 
 #allowed extensions
 ALLOWED_EXTENSIONS = set(['xls','xlsx'])

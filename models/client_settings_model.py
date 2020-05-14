@@ -25,7 +25,7 @@ class ClientSettingsModel():
             self.show_project_history = True
             self.export_original_documents =True
             self.show_consolidation_static_files = True
-
+            self.show_product_name = True
 
             self.engine_versions = []
             self.init_engine_versions()

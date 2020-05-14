@@ -32,7 +32,7 @@ class ClientSettingsResource(Resource):
             result.show_project_history = client_settings.show_project_history
             result.export_original_documents = client_settings.export_original_documents
             result.show_consolidation_static_files = client_settings.show_consolidation_static_files
-
+            result.show_product_name = client_settings.show_product_name
 
             if not result:
                 abort(404, message="Client settings not found")
@@ -56,6 +56,7 @@ class ClientSettingsResource(Resource):
             client_settings.show_project_history = json_data["show_project_history"]
             client_settings.export_original_documents = json_data["export_original_documents"]
             client_settings.show_consolidation_static_files = json_data["show_consolidation_static_files"]
+            client_settings.show_product_name =json_data['show_product_name']
             session.add(client_settings)
             session.commit()
 
@@ -72,7 +73,7 @@ class ClientSettingsResource(Resource):
             result.show_project_history = client_settings.show_project_history
             result.export_original_documents = client_settings.export_original_documents
             result.show_consolidation_static_files = client_settings.show_consolidation_static_files
-
+            result.show_product_name = client_settings.show_product_name
             return encode_json(result),201
 
         except Exception as e:
