@@ -36,11 +36,14 @@ class MakeConsolidateResource(Resource):
             p_id = data["project_ids"][0]
             project = session.query(Projects).filter(Projects.id==p_id).first()
             user_id =project.user_id
+            t=0
+            product_id = project.product_id
 
-
+            if (product_id==None):
+                product_id = -1
 
             #здесь запускаем движок и консолидацию
-            tt = ENGINE_PATH + str(-1) + " " + str(user_id) + " 4 "+str(transfer_cell_id)
+            tt = ENGINE_PATH + str(-1) + " " + str(user_id) + " 4 "+str(transfer_cell_id)+" "+str(product_id)
             # os.system(tt)
             #РАСКОММЕНТИТЬ
             subprocess.Popen(tt, shell=True)

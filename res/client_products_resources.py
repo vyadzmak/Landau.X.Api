@@ -30,7 +30,7 @@ class ClientProductsResource(Resource):
         result.creation_date = client_product.creation_date
         return encode_json(result)
 
-    @marshal_with(client_product_fields)
+
     def put(self, id):
         json_data = request.get_json(force=True)
         schema_id = json_data['schema_id']
@@ -42,6 +42,16 @@ class ClientProductsResource(Resource):
         client_product.schema_id = schema_id
         session.add(client_product)
         session.commit()
+        result = ClientProduct()
+        result.id = client_product.id
+        result.init_empty_model(client_product.user_creator_id)
+        result.schema_id = client_product.schema_id
+        result.name = client_product.name
+        result.formular_id = client_product.formular_id
+        result.user_id = client_product.user_creator_id
+        result.client_id = client_product.client_id
+        result.creation_date = str(client_product.creation_date)
+        return encode_json(result)
 
     def delete(self, id):
         try:

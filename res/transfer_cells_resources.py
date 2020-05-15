@@ -39,9 +39,13 @@ class MakeTransferCellsResource(Resource):
             session.add(project)
             session.commit()
             user_id = project.user_id
+            product_id = project.product_id
+
+            if (product_id == None):
+                product_id = -1
             #здесь запускаем движок и переброску
             # здесь запускаем движок и консолидацию
-            tt = ENGINE_PATH + str(project_id) + " " + str(user_id) + " 1 " + str(transfer_cell_id)
+            tt = ENGINE_PATH + str(project_id) + " " + str(user_id) + " 1 " + str(transfer_cell_id)+" "+str(product_id)
             # os.system(tt)
             subprocess.Popen(tt, shell=True)
             return {"State": "OK"}

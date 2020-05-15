@@ -84,7 +84,7 @@ class UploadFile(Resource):
                 #"python d:\Projects\Github\Landau.Pyzzle.Engine\__init__.py "
                 if (product_id==None):
                     product_id=-1
-                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' none '+str(product_id)
+                tt = ENGINE_PATH+str(project.id)+" "+str(userId)+" 0 -1"+' '+str(product_id)
 
                 subprocess.Popen(tt, shell=True)
                 return {"State":"OK"}

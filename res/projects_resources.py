@@ -171,7 +171,13 @@ class ProjectListResource(Resource):
             json_data = request.get_json(force=True)
             if isinstance(json_data, str):
                 json_data = json.loads(json_data)
-            project = Projects(userId=json_data["user_id"])
+            exists = 'product_id' in json_data
+            product_id =None
+            if (exists==True):
+                product_id = json_data['product_id']
+                if (product_id==-1):
+                    product_id=None
+            project = Projects(userId=json_data["user_id"],product_id=product_id)
             session.add(project)
             session.commit()
             return project, 201

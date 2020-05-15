@@ -1,4 +1,4 @@
-from db_models.models import ConsolidateMarkData
+from db_models.models import ConsolidateMarkData, Projects
 from db.db import session
 from flask import Flask, jsonify, request
 from flask_restful import Resource, fields, marshal_with, abort, reqparse
@@ -28,6 +28,15 @@ class ConsolidateMarkResource(Resource):
         #id = json_data['id']
         data = json.dumps(json_data)
         transfer_cell_id = json_data['transfer_cell_id']
+        project_id = json_data['project_id']
+        project = session.query(Projects).filter(Projects.id==project_id).first()
+
+        product_id = None
+        if (project!=None):
+            product_id = project.product_id
+
+        if (product_id==None):
+            product_id=-1
 
         consolidate_mark = session.query(ConsolidateMarkData).filter(ConsolidateMarkData.id == id).first()
 
@@ -38,7 +47,7 @@ class ConsolidateMarkResource(Resource):
         session.add(consolidate_mark)
         session.commit()
 
-        tt = ENGINE_PATH + str(consolidate_mark.project_id) + " " + str(consolidate_mark.user_id) + " 2 " + str(transfer_cell_id)
+        tt = ENGINE_PATH + str(consolidate_mark.project_id) + " " + str(consolidate_mark.user_id) + " 2 " + str(transfer_cell_id)+" "+str(product_id)
         if (is_debug==False):
             subprocess.Popen(tt, shell=True)
 
