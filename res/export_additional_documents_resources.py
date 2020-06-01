@@ -7,12 +7,14 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import json
-from modules.documents_exporter import translit,clean_filename
+from modules.documents_exporter import translit, clean_filename
 from settings import EXPORT_FOLDER
 import os
 import uuid
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+
+
 class ExportExcludeTransactionsDocumentsResource(Resource):
     def get(self, id):
         try:
@@ -57,7 +59,7 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
             project_folder = os.path.join(EXPORT_FOLDER, dir_id)
             if not os.path.exists(project_folder):
                 os.makedirs(project_folder)
-            name = 'export_exclude_data_'+document.name+'.xlsx'
+            name = 'export_exclude_data_' + document.name + '.xlsx'
 
             name = str(name).replace('"', ' ')
             name = translit(name, 'ru', reversed=True)
@@ -65,32 +67,89 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
             file_name = clean_filename(name)
             file_name = file_name.replace('__', "_")
 
-
-
-
-            export_path = os.path.join(project_folder,file_name)
+            export_path = os.path.join(project_folder, file_name)
             wb = Workbook()
 
             balance_sheet = wb.create_sheet("Баланс")
+            index = 1
             for r in dataframe_to_rows(balance_frame, index=True, header=True):
+
                 balance_sheet.append(r)
+                if (index>2):
+                    for cell_index in range(5,11):
+                        value=balance_sheet.cell(index,cell_index).value
+                        value = str(value).replace(',','')
+                        #value = str(value).replace('.',',')
+                        value = float(value)
+                        balance_sheet.cell(index, cell_index).value = value
+
+                        balance_sheet.cell(index,cell_index).number_format = '#,##0'
+
+                index+=1
+
+            dims = {}
+            for row in balance_sheet.rows:
+                for cell in row:
+                    if cell.value:
+                        dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+            for col, value in dims.items():
+                balance_sheet.column_dimensions[col].width = value
 
             opiu_sheet = wb.create_sheet("ОПиУ")
+            index = 1
             for r in dataframe_to_rows(opiu_frame, index=True, header=True):
                 opiu_sheet.append(r)
+                if (index>2):
+                    for cell_index in range(8, 13):
+                        if (cell_index==10 or cell_index==12):
+                            value=opiu_sheet.cell(index,cell_index).value
+                            value = str(value).replace(',','')
+
+                            value = float(value)
+                            opiu_sheet.cell(index, cell_index).value = value
+
+                            opiu_sheet.cell(index,cell_index).number_format = '#,##0'
+
+                index+=1
+
+            dims = {}
+            for row in opiu_sheet.rows:
+                for cell in row:
+                    if cell.value:
+                        dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+            for col, value in dims.items():
+                opiu_sheet.column_dimensions[col].width = value
 
             odds_sheet = wb.create_sheet("ОДДС")
+            index = 1
             for r in dataframe_to_rows(odds_frame, index=True, header=True):
                 odds_sheet.append(r)
+                if (index>2):
+                    for cell_index in range(8, 13):
+                        if (cell_index==10 or cell_index==12):
+                            value=odds_sheet.cell(index,cell_index).value
+                            value = str(value).replace(',','')
+
+                            value = float(value)
+                            odds_sheet.cell(index, cell_index).value = value
+
+                            odds_sheet.cell(index,cell_index).number_format = '#,##0'
+
+                index+=1
+
+            dims = {}
+            for row in odds_sheet.rows:
+                for cell in row:
+                    if cell.value:
+                        dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+            for col, value in dims.items():
+                odds_sheet.column_dimensions[col].width = value
+
             r_sheet = wb.get_sheet_by_name('Sheet')
             wb.remove(r_sheet)
             wb.save(export_path)
 
-            # with pd.ExcelWriter(export_path) as writer:
-            #     balance_frame.to_excel(writer, sheet_name='Баланс')
-            #     opiu_frame.to_excel(writer, sheet_name='ОПиУ')
-            #
-            #     odds_frame.to_excel(writer, sheet_name='ОДДС')
+
 
             return send_from_directory(project_folder, file_name,
                                        as_attachment=True)
@@ -134,14 +193,11 @@ class ExportStaticDocumentsResource(Resource):
             file_ext = p.suffix
             name = str(file_path + file_ext).replace(' ', '_')
 
-
-
             name = str(name).replace('"', ' ')
             name = translit(name, 'ru', reversed=True)
 
             file_name = clean_filename(name)
             file_name = file_name.replace('__', "_")
-
 
             return send_from_directory(folder_path, file_path + file_ext, attachment_filename=file_name,
                                        as_attachment=True)

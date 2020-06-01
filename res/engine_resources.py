@@ -8,8 +8,14 @@ class ProjectRecalculationResource(Resource):
     def post(self):
         try:
             json_data = request.get_json(force=True)
+            product_id =-1
+            exists = 'product_id' in json_data
+            if (exists==True):
+                product_id = json_data['product_id']
 
-            tt = ENGINE_PATH+str(json_data["project_id"])+" "+str(json_data["user_id"])+" 3 -1"
+            if (product_id == None):
+                product_id = -1
+            tt = ENGINE_PATH+str(json_data["project_id"])+" "+str(json_data["user_id"])+" 3 -1"+' '+str(product_id)
 
             subprocess.Popen(tt, shell=True)
             return {"State":"OK"}, 200

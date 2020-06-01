@@ -133,12 +133,17 @@ def export_cells(worksheet, data, workbook):
         row_index = 0
         cell_index = 0
         header = None
+        is_osv = True
         none_headers = []
         if (len(data)>0):
             _header =data[0]
             if (len(_header)>0):
                 header = _header[0]
             index=0
+            if (len(header) > 0):
+                if (str(header[0]).startswith('Дата')==True or str(header[0]).startswith('Период')==True):
+                    is_osv = False
+
             for header_item in header:
                 if (header_item=='' or str(header_item).startswith('Обороты за ') or str(header_item).startswith('Сальдо на ') ):
                     none_headers.append(index)
@@ -173,7 +178,17 @@ def export_cells(worksheet, data, workbook):
                             _format = workbook.add_format()
                             _format.set_align('center')
                             _format.set_align('vcenter')
-                            _format.set_num_format('#,##0.00')
+                            if (is_osv == True):
+                                if (cell_index == 2 or cell_index == 3 or cell_index == 4 or cell_index == 5 or cell_index == 6 or cell_index == 7):
+                                    _format.set_num_format('#,###')
+                                else:
+                                    _format.set_num_format('#,##0.00')
+
+                            else:
+                                if (cell_index == 6 or cell_index == 8):
+                                    _format.set_num_format('#,###')
+                                else:
+                                    _format.set_num_format('#,##0.00')
 
                         if (_format != None):
                             worksheet.write(row_index - 1, cell_index - 1, value, _format)
