@@ -12,6 +12,7 @@ from settings import EXPORT_FOLDER
 import os
 import uuid
 from openpyxl import Workbook
+from openpyxl.styles import PatternFill,Alignment,Font,Border,Side
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 
@@ -73,27 +74,44 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
             balance_sheet = wb.create_sheet("Баланс")
             index = 1
             for r in dataframe_to_rows(balance_frame, index=True, header=True):
-
+                l = len(r)
                 balance_sheet.append(r)
-                if (index>2):
-                    for cell_index in range(5,11):
-                        value=balance_sheet.cell(index,cell_index).value
-                        value = str(value).replace(',','')
-                        #value = str(value).replace('.',',')
+                if (index > 2):
+                    for cell_index in range(6,10):
+                        value = balance_sheet.cell(index, cell_index).value
+                        value = str(value).replace(',', '')
+                        # value = str(value).replace('.',',')
                         value = float(value)
                         balance_sheet.cell(index, cell_index).value = value
 
-                        balance_sheet.cell(index,cell_index).number_format = '#,##0'
+                        balance_sheet.cell(index, cell_index).number_format = '#,##0'
+                        balance_sheet.cell(index, cell_index).alignment = Alignment(horizontal='center')
 
-                index+=1
+                index += 1
+
+            balance_sheet.delete_rows(2, 1)
+            balance_sheet.delete_cols(1, 1)
 
             dims = {}
             for row in balance_sheet.rows:
                 for cell in row:
                     if cell.value:
                         dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+
+
             for col, value in dims.items():
                 balance_sheet.column_dimensions[col].width = value
+            border = Border(left=Side(border_style='thin', color='000000'),
+                            right=Side(border_style='thin', color='000000'),
+                            top=Side(border_style='thin', color='000000'),
+                            bottom=Side(border_style='thin', color='000000'))
+            for rows in balance_sheet.iter_rows(min_row=1, max_row=1, min_col=1):
+                for cell in rows:
+                    cell.fill = PatternFill(start_color='d4f2ff', end_color='d4f2ff',  fill_type="solid")
+                    cell.alignment = Alignment(horizontal='center')
+                    cell.font = Font(bold = True)
+                    cell.border = border
+
 
             opiu_sheet = wb.create_sheet("ОПиУ")
             index = 1
@@ -107,18 +125,32 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
 
                             value = float(value)
                             opiu_sheet.cell(index, cell_index).value = value
-
+                            opiu_sheet.cell(index, cell_index).alignment = Alignment(horizontal='center')
                             opiu_sheet.cell(index,cell_index).number_format = '#,##0'
 
                 index+=1
 
+            opiu_sheet.delete_rows(2, 1)
+            opiu_sheet.delete_cols(1, 1)
+
             dims = {}
+
+
             for row in opiu_sheet.rows:
                 for cell in row:
                     if cell.value:
                         dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+                        cell.alignment= Alignment(horizontal='center')
             for col, value in dims.items():
                 opiu_sheet.column_dimensions[col].width = value
+
+            for rows in opiu_sheet.iter_rows(min_row=1, max_row=1, min_col=1):
+                for cell in rows:
+                    cell.fill = PatternFill(start_color='d4f2ff', end_color='d4f2ff',  fill_type="solid")
+                    cell.alignment = Alignment(horizontal='center')
+                    cell.font = Font(bold = True)
+                    cell.border = border
+
 
             odds_sheet = wb.create_sheet("ОДДС")
             index = 1
@@ -137,13 +169,25 @@ class ExportExcludeTransactionsDocumentsResource(Resource):
 
                 index+=1
 
+            odds_sheet.delete_rows(2, 1)
+            odds_sheet.delete_cols(1, 1)
+
             dims = {}
             for row in odds_sheet.rows:
                 for cell in row:
                     if cell.value:
                         dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))
+                        cell.alignment = Alignment(horizontal='center')
             for col, value in dims.items():
                 odds_sheet.column_dimensions[col].width = value
+
+
+            for rows in odds_sheet.iter_rows(min_row=1, max_row=1, min_col=1):
+                for cell in rows:
+                    cell.fill = PatternFill(start_color='d4f2ff', end_color='d4f2ff',  fill_type="solid")
+                    cell.alignment = Alignment(horizontal='center')
+                    cell.font = Font(bold = True)
+                    cell.border = border
 
             r_sheet = wb.get_sheet_by_name('Sheet')
             wb.remove(r_sheet)

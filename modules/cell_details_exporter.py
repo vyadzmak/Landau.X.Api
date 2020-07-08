@@ -59,7 +59,7 @@ def export_cells(worksheet, data, workbook):
             index = 0
 
             if (len(header) > 0):
-                if (str(header[0]).startswith('Дата')):
+                if (str(header[0]).startswith('Дата') or str(header[0]).startswith('Период')):
                     is_osv = False
 
             for header_item in header:

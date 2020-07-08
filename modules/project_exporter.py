@@ -44,9 +44,9 @@ def generate_cell_style(workbook,data):
         format.set_font_size(font_size)
         if (str(font_weight)=='bold'):
             format.set_bold()
-        if (fm=="money||2|none"):
-            format.set_num_format('#,##0.00')
-        elif (fm!='' and fm!="money||2|none"):
+        if (fm=="money||0|none"):
+            format.set_num_format('#,###')
+        elif (fm!='' and fm!="money||0|none"):
             pass
         format.set_align(text_align)
         format.set_font_name(font_family)
