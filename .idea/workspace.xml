@@ -34,9 +34,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1b9255eb-beb4-47a5-b237-fc53173ae547" name="Default" comment="added project sharing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/cell_details_exporter.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/cell_details_exporter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/project_exporter.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/project_exporter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/export_additional_documents_resources.py" beforeDir="false" afterPath="$PROJECT_DIR$/res/export_additional_documents_resources.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,8 +282,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.__init__" />
       <item itemvalue="Python.api" />
+      <item itemvalue="Python.__init__" />
     </list>
     <recent_temporary>
       <list>
