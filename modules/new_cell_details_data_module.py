@@ -39,7 +39,7 @@ def extract_data(project_id, sheet_name, row_index, column_index):
         alphabet = list(string.ascii_uppercase)
         cell_index = alphabet[column_index] + str(row_index + 1)
 
-        if (sheet_name=='Resume_RUR' or sheet_name=='Statyi balansa'):
+        if (sheet_name=='Resume_RUR' or sheet_name=='Statyi balansa' or sheet_name=='Баланс'):
             report_forms = session.query(ReportForms).filter(and_(
                 ReportForms.project_id == project_id,
             )
